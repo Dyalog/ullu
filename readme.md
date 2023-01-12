@@ -1,10 +1,10 @@
 ## BlackBox tests
 
-Black box Functional and performance testing of the membership function in Dyalog APL
+Black box Functionality and performance testing of the membership function in Dyalog APL
 
 This repository is has 2 notebooks:
 
-- [funcTest.ipynb](./funcTest.ipynb): Which contains the functional tests for the membership function
+- [funcTest.ipynb](./funcTest.ipynb): Which contains the functionality tests(unit tests) for the membership function
 - [perfTest.ipynb](./perfTest.ipynb): Which contains the performance tests for the membership function
 
 ## Configuration
