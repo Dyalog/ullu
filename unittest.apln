@@ -1,11 +1,32 @@
-:Namespace unittest
-    ⎕IO←0
+:Namespace trad_unittest
+    getTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
+        tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
+        tests←('.',⍨⍕⍵)∘,¨tests
+        0=≢tests:'no tests found' ⍝ TODO: this does not work
+        tests
+    }
 
-      run←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
-          tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
-          tests←('.',⍨⍕⍵)∘,¨tests
-          0=≢tests:'no tests found'
-          ↑{⍺,('.'/⍨50-≢⍺),⍵⊃'[FAIL]' '[OK]'}⌿↑tests(⍎¨tests,¨⊂' ⍬')
-      }
+    passOrFail←{⍵:'[OK]'⋄'[FAIL]'}
+
+    ∇ runTests args ⍝ this function runs the tests specifed in test_ns
+        :If (≢args)≠3 ⍝ TODO: add better error handling for verbose and stop
+            ⎕←'missing or extra arguments. Correct usage is: [test_ns] [verbose= 1|0] [stop=1|0]' ⎕SIGNAL 11
+        :EndIf
+        
+        test_ns←⊃args
+        verbose←2⊃args
+        stop←3⊃args
+
+        ⎕←'verbose: ', verbose
+        ⎕←'stop: ',stop
+        
+        tests←getTests test_ns
+        r←⍳≢tests
+        :For i :In r
+            t←i⊃tests
+            r[i]←⍎t,' ⍬'
+            ⎕ ← t, ': ', passOrFail r[i]
+        :EndFor
+    ∇
 
 :EndNamespace
