@@ -1,4 +1,4 @@
-:Namespace trad_unittest
+:Namespace unittest
     getTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
         tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
         tests←('.',⍨⍕⍵)∘,¨tests
@@ -19,6 +19,8 @@
 
         ⎕←'verbose: ', verbose
         ⎕←'stop: ',stop
+
+        ⍝ todo: figure out what to do with verbose and stop
         
         tests←getTests test_ns
         r←⍳≢tests
