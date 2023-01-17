@@ -5,5 +5,5 @@
     test_Eg01←{1 1 0 0 1 0 1 0 0≡'THIS NOUN'∊'THAT WORD'}
     test_Eg2←{1 1 0≡'CAT' 'DOG' 'MOUSE'∊'CAT' 'FOX' 'DOG' 'LLAMA'}
     test_Large01←{1≡6∊100000⍴⍳10}
-    test_Large02←{1≡100∊100000000⍴⍳100}
+    test_Large02←{1≡1000∊100000000⍴⍳100}
 :EndNamespace
