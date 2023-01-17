@@ -4,8 +4,8 @@ Black box Functionality and performance testing of the membership function in Dy
 
 This repository is has 2 notebooks:
 
-- [funcTest.ipynb](./funcTest.ipynb): Which contains the functionality tests(unit tests) for the membership function
-- [perfTest.ipynb](./perfTest.ipynb): Which contains the performance tests for the membership function
+- [funcTest.ipynb](./jupyter-files/funcTest.ipynb): Which contains the functionality tests(unit tests) for the membership function
+- [perfTest.ipynb](./jupyter-files/perfTest.ipynb): Which contains the performance tests for the membership function
 
 ## Configuration
 

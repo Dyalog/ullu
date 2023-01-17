@@ -1,0 +1,11 @@
+:Namespace unittest
+    ⎕IO←0
+
+      run←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
+          tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
+          tests←('.',⍨⍕⍵)∘,¨tests
+          0=≢tests:'no tests found'
+          ↑{⍺,('.'/⍨50-≢⍺),⍵⊃'[FAIL]' '[OK]'}⌿↑tests(⍎¨tests,¨⊂' ⍬')
+      }
+
+:EndNamespace
