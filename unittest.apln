@@ -12,7 +12,7 @@
 
         :Section parseArguments ⍝ This section parses and verifies input arguments
             :If (≢args)≠3 
-                ⎕←'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0]'⎕SIGNAL 11
+                'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0]'⎕SIGNAL 11
             :EndIf
             
             testNS←⊃args
@@ -28,23 +28,23 @@
             :EndIf
 
             :If ~verbose ∊ 0 1
-                ⎕←'Verbose can only be 0 or 1'⎕SIGNAL 11
+                'Verbose can only be 0 or 1'⎕SIGNAL 11
             :ElseIf ~stop ∊ 0 1
-                ⎕←'Stop can only be 0 or 1'⎕SIGNAL 11
+                'Stop can only be 0 or 1'⎕SIGNAL 11
             :EndIf
         :EndSection
         
         :Section FetchTests
             tests←GetTests testNS
             :IF 0=≢tests
-                ⎕←'no tests found'⎕SIGNAL 11 
+                'no tests found'⎕SIGNAL 11 
             :EndIf
         :EndSection
         
         :Section ExecuteTests
             r←⍳≢tests
             pass←0 ⋄ fail←0
-            FAIL_OK←'[FAIL]' '[OK]'
+            FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
 
             :For i :In r
                 t←i⊃tests
