@@ -56,6 +56,8 @@
             :EndIf
             :If verbose=1
                 ⎕ ← t, ': ', passOrFail r[i]
+            :ElseIf r[i]=0
+                 ⎕←t, ': [FAIL]'
             :EndIf
         :EndFor
 
