@@ -9,6 +9,8 @@
     passOrFail←{⍵:'[OK]'⋄'[FAIL]'}
 
     ∇ runTests args ⍝ this function runs the tests specifed in test_ns
+        st← ⎕TS ⍝ Start time of execution of tests 
+
         :If (≢args)≠3 
             ⎕←'missing or extra arguments. Correct usage is: [test_ns] [verbose= 1|0] [stop=1|0]' ⎕SIGNAL 11
         :EndIf
@@ -32,7 +34,7 @@
         pass←0 ⋄ fail←0
         
         tests←getTests test_ns
-        
+
         r←⍳≢tests
         :For i :In r
             t←i⊃tests
@@ -54,8 +56,9 @@
                 ⎕ ← t, ': ', passOrFail r[i]
             :EndIf
         :EndFor
+        
         ⎕←''
-        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ','x','s'  
+        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.tsToSeconds (⎕TS-st),'s'  
     ∇
 
 :EndNamespace
