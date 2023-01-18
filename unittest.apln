@@ -1,17 +1,15 @@
 :Namespace unittest
     getTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
         tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
-        tests←('.',⍨⍕⍵)∘,¨tests
+        tests←('.', ⍨⍕⍵)∘, ¨tests
         tests
     }
-
-    passOrFail←{⍵:'[OK]'⋄'[FAIL]'}
 
     ∇ runTests args ⍝ this function runs the tests specifed in test_ns
         st← ⎕TS ⍝ Start time of execution of tests 
 
         :If (≢args)≠3 
-            ⎕←'missing or extra arguments. Correct usage is: [test_ns] [verbose= 1|0] [stop=1|0]' ⎕SIGNAL 11
+            ⎕←'missing or extra arguments. Correct usage is: [test_ns] [verbose= 1|0] [stop=1|0]'⎕SIGNAL 11
         :EndIf
         
         test_ns←⊃args
@@ -50,19 +48,19 @@
 
             :If r[i]=0
                 :If stop=1
-                    ⎕←t, ': [FAIL]'
+                    ⎕←t, ': ', #.utils.boolToRes r[i]
                     :Leave
                 :EndIf
             :EndIf
             :If verbose=1
-                ⎕ ← t, ': ', passOrFail r[i]
+                ⎕←t, ': ', #.utils.boolToRes r[i]
             :ElseIf r[i]=0
-                 ⎕←t, ': [FAIL]'
+                 ⎕←t, ': ', #.utils.boolToRes r[i]
             :EndIf
         :EndFor
 
         ⎕←''
-        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.tsToSeconds (⎕TS-st),'s'  
+        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.tsToSeconds (⎕TS-st), 's'  
     ∇
 
 :EndNamespace
