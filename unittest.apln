@@ -9,7 +9,7 @@
     passOrFail←{⍵:'[OK]'⋄'[FAIL]'}
 
     ∇ runTests args ⍝ this function runs the tests specifed in test_ns
-        :If (≢args)≠3 ⍝ TODO: add better error handling for verbose and stop
+        :If (≢args)≠3 
             ⎕←'missing or extra arguments. Correct usage is: [test_ns] [verbose= 1|0] [stop=1|0]' ⎕SIGNAL 11
         :EndIf
         
@@ -17,9 +17,16 @@
         verbose←2⊃args
         stop←3⊃args
 
+        ⎕←'Options: '
         ⎕←'verbose: ', verbose
         ⎕←'stop: ',stop
 
+        :If ~verbose ∊ 0 1
+            ⎕←'Verbose can only be 0 or 1'⎕SIGNAL 11
+        :ElseIf ~stop ∊ 0 1
+            ⎕←'Stop can only be 0 or 1'⎕SIGNAL 11
+        :EndIf
+        
         ⍝ todo: figure out what to do with verbose and stop
         
         tests←getTests test_ns
