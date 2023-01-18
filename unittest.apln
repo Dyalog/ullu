@@ -2,7 +2,6 @@
     getTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
         tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
         tests←('.',⍨⍕⍵)∘,¨tests
-        0=≢tests:'no tests found' ⍝ TODO: this does not work
         tests
     }
 
@@ -34,7 +33,10 @@
         pass←0 ⋄ fail←0
         
         tests←getTests test_ns
-
+        :IF 0=≢tests
+            ⎕←'no tests found'⎕SIGNAL 11 
+        :EndIf
+        
         r←⍳≢tests
         :For i :In r
             t←i⊃tests
@@ -56,7 +58,7 @@
                 ⎕ ← t, ': ', passOrFail r[i]
             :EndIf
         :EndFor
-        
+
         ⎕←''
         ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.tsToSeconds (⎕TS-st),'s'  
     ∇
