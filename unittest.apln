@@ -1,6 +1,6 @@
 :Namespace unittest
     GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
-        tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
+        tests←'Test_.+'⎕S'&'⍵.⎕NL ¯3
         tests←('.', ⍨⍕⍵)∘, ¨tests
         tests
     }
@@ -19,11 +19,13 @@
             verbose←2⊃args
             stop←3⊃args
             
-            ⎕←''
-            ⎕←'Options: '
-            ⎕←'verbose: ', verbose
-            ⎕←'stop: ', stop
-            ⎕←''
+            :If verbose=1
+                ⎕←''
+                ⎕←'Options: '
+                ⎕←'verbose: ', verbose
+                ⎕←'stop: ', stop
+                ⎕←''
+            :EndIf
 
             :If ~verbose ∊ 0 1
                 ⎕←'Verbose can only be 0 or 1'⎕SIGNAL 11
@@ -42,6 +44,7 @@
         :Section ExecuteTests
             r←⍳≢tests
             pass←0 ⋄ fail←0
+            FAIL_OK←'[FAIL]' '[OK]'
 
             :For i :In r
                 t←i⊃tests
@@ -55,18 +58,19 @@
 
                 :If r[i]=0
                     :If stop=1
-                        ⎕←t, ': ', #.utils.BoolToRes r[i]
+                        ⎕←t, ': ', FAIL_OK[1+r[i]]
+                        ⎕←'Stopping on failure of:' ⋄ ⎕←(6⍴' '),t
                         :Leave
                     :EndIf
                 :EndIf
                 :If verbose=1
-                    ⎕←t, ': ', #.utils.BoolToRes r[i]
+                    ⎕←t, ': ', FAIL_OK[1+r[i]]
                 :ElseIf r[i]=0
-                    ⎕←t, ': ', #.utils.BoolToRes r[i]
+                    ⎕←t, ': ', FAIL_OK[1+r[i]]
                 :EndIf
             :EndFor
         :EndSection
-        
+
         ⎕←''
         ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.TsToSeconds (⎕TS-st), 's'  
     ∇
