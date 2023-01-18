@@ -1,66 +1,74 @@
 :Namespace unittest
-    getTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
+    GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
         tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
         tests←('.', ⍨⍕⍵)∘, ¨tests
         tests
     }
 
-    ∇ runTests args ⍝ this function runs the tests specifed in test_ns
+    ⍝ This function runs the tests
+    ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
+    ∇ RunTests args 
         st← ⎕TS ⍝ Start time of execution of tests 
 
-        :If (≢args)≠3 
-            ⎕←'missing or extra arguments. Correct usage is: [test_ns] [verbose= 1|0] [stop=1|0]'⎕SIGNAL 11
-        :EndIf
-        
-        test_ns←⊃args
-        verbose←2⊃args
-        stop←3⊃args
-        
-        ⎕←''
-        ⎕←'Options: '
-        ⎕←'verbose: ', verbose
-        ⎕←'stop: ', stop
-        ⎕←''
-
-        :If ~verbose ∊ 0 1
-            ⎕←'Verbose can only be 0 or 1'⎕SIGNAL 11
-        :ElseIf ~stop ∊ 0 1
-            ⎕←'Stop can only be 0 or 1'⎕SIGNAL 11
-        :EndIf
-        
-        pass←0 ⋄ fail←0
-        
-        tests←getTests test_ns
-        :IF 0=≢tests
-            ⎕←'no tests found'⎕SIGNAL 11 
-        :EndIf
-        
-        r←⍳≢tests
-        :For i :In r
-            t←i⊃tests
-            r[i]←⍎t,' ⍬'
-
-            :If r[i]
-                pass←pass+1
-            :Else
-                fail←fail+1
+        :Section parseArguments ⍝ This section parses and verifies input arguments
+            :If (≢args)≠3 
+                ⎕←'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0]'⎕SIGNAL 11
             :EndIf
+            
+            testNS←⊃args
+            verbose←2⊃args
+            stop←3⊃args
+            
+            ⎕←''
+            ⎕←'Options: '
+            ⎕←'verbose: ', verbose
+            ⎕←'stop: ', stop
+            ⎕←''
 
-            :If r[i]=0
-                :If stop=1
-                    ⎕←t, ': ', #.utils.boolToRes r[i]
-                    :Leave
+            :If ~verbose ∊ 0 1
+                ⎕←'Verbose can only be 0 or 1'⎕SIGNAL 11
+            :ElseIf ~stop ∊ 0 1
+                ⎕←'Stop can only be 0 or 1'⎕SIGNAL 11
+            :EndIf
+        :EndSection
+        
+        :Section FetchTests
+            tests←GetTests testNS
+            :IF 0=≢tests
+                ⎕←'no tests found'⎕SIGNAL 11 
+            :EndIf
+        :EndSection
+        
+        :Section ExecuteTests
+            r←⍳≢tests
+            pass←0 ⋄ fail←0
+
+            :For i :In r
+                t←i⊃tests
+                r[i]←⍎t,' ⍬'
+
+                :If r[i]
+                    pass←pass+1
+                :Else
+                    fail←fail+1
                 :EndIf
-            :EndIf
-            :If verbose=1
-                ⎕←t, ': ', #.utils.boolToRes r[i]
-            :ElseIf r[i]=0
-                 ⎕←t, ': ', #.utils.boolToRes r[i]
-            :EndIf
-        :EndFor
 
+                :If r[i]=0
+                    :If stop=1
+                        ⎕←t, ': ', #.utils.BoolToRes r[i]
+                        :Leave
+                    :EndIf
+                :EndIf
+                :If verbose=1
+                    ⎕←t, ': ', #.utils.BoolToRes r[i]
+                :ElseIf r[i]=0
+                    ⎕←t, ': ', #.utils.BoolToRes r[i]
+                :EndIf
+            :EndFor
+        :EndSection
+        
         ⎕←''
-        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.tsToSeconds (⎕TS-st), 's'  
+        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.TsToSeconds (⎕TS-st), 's'  
     ∇
 
 :EndNamespace

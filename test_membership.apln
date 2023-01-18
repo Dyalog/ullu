@@ -1,9 +1,9 @@
 :Namespace test_membership
-    test_Single01←{1≡2∊1 2 3 4}
-    test_Multiple01←{1 1 1 0≡1 2 3 5∊1 2 3 4}
-    test_Multiple02←{1 0 0 0≡1 2 3 4∊1}
-    test_Eg01←{1 1 0 0 1 0 1 0 0≡'THIS NOUN'∊'THAT WORD'}
-    test_Eg2←{1 1 0≡'CAT' 'DOG' 'MOUSE'∊'CAT' 'FOX' 'DOG' 'LLAMA'}
-    test_Large01←{1≡6∊100000⍴⍳10}
-    test_Large02←{1≡1000∊100000000⍴⍳100} ⍝ Known incorrect test case, should be 100 instead of 1000 
+    Test_Single01←{1≡2∊1 2 3 4}
+    Test_Multiple01←{1 1 1 0≡1 2 3 5∊1 2 3 4}
+    Test_Multiple02←{1 0 0 0≡1 2 3 4∊1}
+    Test_Eg01←{1 1 0 0 1 0 1 0 0≡'THIS NOUN'∊'THAT WORD'}
+    Test_Eg2←{1 1 0≡'CAT' 'DOG' 'MOUSE'∊'CAT' 'FOX' 'DOG' 'LLAMA'}
+    Test_Large01←{1≡6∊100000⍴⍳10}
+    Test_Large02←{1≡1000∊100000000⍴⍳100} ⍝ Known incorrect test case, should be 100 instead of 1000 
 :EndNamespace
