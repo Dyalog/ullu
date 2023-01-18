@@ -16,10 +16,12 @@
         test_ns←⊃args
         verbose←2⊃args
         stop←3⊃args
-
+        
+        ⎕←''
         ⎕←'Options: '
         ⎕←'verbose: ', verbose
-        ⎕←'stop: ',stop
+        ⎕←'stop: ', stop
+        ⎕←''
 
         :If ~verbose ∊ 0 1
             ⎕←'Verbose can only be 0 or 1'⎕SIGNAL 11
@@ -27,15 +29,33 @@
             ⎕←'Stop can only be 0 or 1'⎕SIGNAL 11
         :EndIf
         
-        ⍝ todo: figure out what to do with verbose and stop
+        pass←0 ⋄ fail←0
         
         tests←getTests test_ns
+        
         r←⍳≢tests
         :For i :In r
             t←i⊃tests
             r[i]←⍎t,' ⍬'
-            ⎕ ← t, ': ', passOrFail r[i]
+
+            :If r[i]
+                pass←pass+1
+            :Else
+                fail←fail+1
+            :EndIf
+
+            :If r[i]=0
+                :If stop=1
+                    ⎕←t, ': [FAIL]'
+                    :Leave
+                :EndIf
+            :EndIf
+            :If verbose=1
+                ⎕ ← t, ': ', passOrFail r[i]
+            :EndIf
         :EndFor
+        ⎕←''
+        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ','x','s'  
     ∇
 
 :EndNamespace
