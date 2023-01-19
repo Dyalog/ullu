@@ -5,5 +5,6 @@
     Test_Eg01←{1 1 0 0 1 0 1 0 0≡'THIS NOUN'∊'THAT WORD'}
     Test_Eg2←{1 1 0≡'CAT' 'DOG' 'MOUSE'∊'CAT' 'FOX' 'DOG' 'LLAMA'}
     Test_Large01←{1≡6∊100000⍴⍳10}
-    Test_Large02←{1≡1000∊100000000⍴⍳100} ⍝ Known incorrect test case, should be 100 instead of 1000 
+    Test_Large02←{1≡100∊100000000⍴⍳100} 
+    Test_Failing←{1=2∊1 3 4} ⍝ Known incorrect test case 
 :EndNamespace

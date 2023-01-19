@@ -10,27 +10,20 @@
     ∇ RunTests args 
         st←⎕AI[2] ⍝ Start time of execution of tests 
         :Section parseArguments ⍝ This section parses and verifies input arguments
-            :If (≢args)≠3 
-                'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0]'⎕SIGNAL 11
-            :EndIf
+            'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0]'⎕SIGNAL ((≢args)=3)↓11
             
             testNS←⊃args
             verbose←2⊃args
             stop←3⊃args
             
             :If verbose=1
-                ⎕←''
-                ⎕←'Options: '
-                ⎕←(6⍴' '),'verbose: ', verbose
-                ⎕←(6⍴' '),'stop: ', stop
-                ⎕←''
+                ⎕←'' ⋄ ⎕←'Options:'
+                ⎕←(6⍴' '),'verbose:', verbose
+                ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
             :EndIf
 
-            :If ~verbose ∊ 0 1
-                'Verbose can only be 0 or 1'⎕SIGNAL 11
-            :ElseIf ~stop ∊ 0 1
-                'Stop can only be 0 or 1'⎕SIGNAL 11
-            :EndIf
+            'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
+            'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11
         :EndSection
         
         :Section FetchTests
@@ -57,9 +50,9 @@
                     :Leave
                 :EndIf
                 :If verbose
-                    ⎕←t, ': ', FAIL_OK[1+r[i]]
+                    ⎕←t, ':', FAIL_OK[1+r[i]]
                 :ElseIf ~r[i]
-                    ⎕←t, ': ', FAIL_OK[1+r[i]]
+                    ⎕←t, ':', FAIL_OK[1+r[i]]
                 :EndIf
             :EndFor
         :EndSection
@@ -67,8 +60,7 @@
         :Section EvalResult            
             pass←(+/,)r ⋄ fail←(≢r)-pass
 
-            ⎕←''
-            ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', ((⎕AI[2]-st)÷1000), 's' 
+            ⎕←'' ⋄ ⎕←'Tests completed: ', (≢r), 'ran,', fail, 'failed test,', pass, 'successes in', ((⎕AI[2]-st)÷1000), 's' 
         :EndSection
     ∇
 
