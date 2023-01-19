@@ -7,8 +7,9 @@
 
     ⍝ This function runs the tests
     ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
-    ∇ RunTests args 
+    ∇ RunTests args ;testNS;stop;verbose;tests;pass;fail;FAIL_OK
         st←⎕AI[2] ⍝ Start time of execution of tests 
+        ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
             'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0]'⎕SIGNAL ((≢args)=3)↓11
             
@@ -17,7 +18,7 @@
             stop←3⊃args
             
             :If verbose=1
-                ⎕←'' ⋄ ⎕←'Options:'
+                ⎕←'Options:'
                 ⎕←(6⍴' '),'verbose:', verbose
                 ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
             :EndIf
@@ -60,7 +61,7 @@
         :Section EvalResult            
             pass←(+/,)r ⋄ fail←(≢r)-pass
 
-            ⎕←'' ⋄ ⎕←'Tests completed: ', (≢r), 'ran,', fail, 'failed test,', pass, 'successes in', ((⎕AI[2]-st)÷1000), 's' 
+            ⎕←''⋄⎕←'Tests completed: ', (≢r), 'ran,', fail, 'failed test,', pass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
         :EndSection
     ∇
 
