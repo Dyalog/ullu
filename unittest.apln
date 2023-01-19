@@ -17,7 +17,7 @@
             verbose←2⊃args
             stop←3⊃args
             
-            :If verbose=1
+            :If verbose
                 ⎕←'Options:'
                 ⎕←(6⍴' '),'verbose:', verbose
                 ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
@@ -29,9 +29,7 @@
         
         :Section FetchTests
             tests←GetTests testNS
-            :IF 0=≢tests
-                'no tests found'⎕SIGNAL 11 
-            :EndIf
+            'no tests found'⎕SIGNAL (~(0=≢tests))↓11 
         :EndSection
         
         :Section ExecuteTests
