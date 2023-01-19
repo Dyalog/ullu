@@ -1,13 +1,29 @@
-## BlackBox tests
+# Dtests
 
-Black box Functionality and performance testing of the membership function in Dyalog APL
+Testing Dyalog APL Code using a custom test framework.
 
-This repository is has 2 notebooks:
+## Usage
+### Using RIDE:
+Open ride in the repository
+Link the namespaces:
 
-- [funcTest.ipynb](./jupyter-files/funcTest.ipynb): Which contains the functionality tests(unit tests) for the membership function
-- [perfTest.ipynb](./jupyter-files/perfTest.ipynb): Which contains the performance tests for the membership function
+```
+]LINK.Create # .
+```
+Run the test cases
+```
+unittest.RunTests [test_namespace] [verbose=0|1] [Stop=0|1]
+```
+verbose: if set to 0, only output failing tests and a single summary line.
 
-## Configuration
+stop: if set to 1, any test which fails causes the framework to stop and allows the developer to inspect the failing test.
+
+Example:
+```
+unittest.RunTests test_membership 1 0
+```
+
+<!-- ## Configuration
 
 #### APL information:
 
@@ -34,4 +50,4 @@ This repository is has 2 notebooks:
                                GPU: NVIDIA GeForce GTX 1650 Mobile / Max-Q 
                                GPU: AMD ATI Radeon Vega Series / Radeon Vega Mobile Series 
                                Memory: 5497MiB / 15807MiB                        
-```
+``` -->
