@@ -8,8 +8,7 @@
     ⍝ This function runs the tests
     ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
     ∇ RunTests args 
-        st←⎕TS ⍝ Start time of execution of tests 
-
+        st←⎕AI[2] ⍝ Start time of execution of tests 
         :Section parseArguments ⍝ This section parses and verifies input arguments
             :If (≢args)≠3 
                 'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0]'⎕SIGNAL 11
@@ -69,7 +68,7 @@
             pass←(+/,)r ⋄ fail←(≢r)-pass
 
             ⎕←''
-            ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.TsToSeconds (⎕TS-st), 's'  
+            ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', ((⎕AI[2]-st)÷1000), 's' 
         :EndSection
     ∇
 

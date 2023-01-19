@@ -1,6 +1,0 @@
-:Namespace utils 
-    TsToSeconds ←{ ⍝ Converts timestamp to seconds, only configured to work in timestamp upto days
-       r←(86400×⍵[3])+(3600×⍵[4])+(60×⍵[5])+(1×⍵[6])+(0.01×⍵[7])
-       r,'s'
-    }
-:EndNamespace
