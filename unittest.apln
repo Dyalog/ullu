@@ -8,7 +8,7 @@
     ⍝ This function runs the tests
     ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
     ∇ RunTests args 
-        st← ⎕TS ⍝ Start time of execution of tests 
+        st←⎕TS ⍝ Start time of execution of tests 
 
         :Section parseArguments ⍝ This section parses and verifies input arguments
             :If (≢args)≠3 
@@ -22,8 +22,8 @@
             :If verbose=1
                 ⎕←''
                 ⎕←'Options: '
-                ⎕←'verbose: ', verbose
-                ⎕←'stop: ', stop
+                ⎕←(6⍴' '),'verbose: ', verbose
+                ⎕←(6⍴' '),'stop: ', stop
                 ⎕←''
             :EndIf
 
@@ -42,37 +42,35 @@
         :EndSection
         
         :Section ExecuteTests
-            r←⍳≢tests
+            tList←⍳≢tests
+            r←(≢tList)⍴0
             pass←0 ⋄ fail←0
             FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
 
-            :For i :In r
+            :For i :In tList
                 t←i⊃tests
-                r[i]←⍎t,' ⍬'
+                r[i]←⍎expr←t,' ⍬'
 
-                :If r[i]
-                    pass←pass+1
-                :Else
-                    fail←fail+1
-                :EndIf
-
-                :If r[i]=0
-                    :If stop=1
-                        ⎕←t, ': ', FAIL_OK[1+r[i]]
-                        ⎕←'Stopping on failure of:' ⋄ ⎕←(6⍴' '),t
-                        :Leave
-                    :EndIf
-                :EndIf
-                :If verbose=1
+                :If (~r[i])∧stop
                     ⎕←t, ': ', FAIL_OK[1+r[i]]
-                :ElseIf r[i]=0
+                    ⎕←'Stopping on failure of:' ⋄ ⎕←(6⍴' '), expr
+                    r←i↑r
+                    :Leave
+                :EndIf
+                :If verbose
+                    ⎕←t, ': ', FAIL_OK[1+r[i]]
+                :ElseIf ~r[i]
                     ⎕←t, ': ', FAIL_OK[1+r[i]]
                 :EndIf
             :EndFor
         :EndSection
 
-        ⎕←''
-        ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.TsToSeconds (⎕TS-st), 's'  
+        :Section EvalResult            
+            pass←(+/,)r ⋄ fail←(≢r)-pass
+
+            ⎕←''
+            ⎕←'Tests completed: ', fail, ' failed test, ', pass, 'successes',' in ', #.utils.TsToSeconds (⎕TS-st), 's'  
+        :EndSection
     ∇
 
 :EndNamespace
