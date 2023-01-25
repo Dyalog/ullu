@@ -7,62 +7,61 @@
     ⍝ This section of testcases are categorised based on the ⎕DR model.
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     :Section Based on DR
-        ⍝ 11	  1 bit Boolean type arrays
-        ⍝ 80	  8 bits character
-        ⍝ 83	  8 bits signed integer
-        ⍝ 160	  16 bits character
-        ⍝ 163	  16 bits signed integer
-        ⍝ 320	  32 bits character
-        ⍝ 323	  32 bits signed  integer
-        ⍝ 326	  Pointer (32-bit or 64-bit as appropriate)
-        ⍝ 645	  64 bits Floating
+        ⍝D 11	  1 bit Boolean type arrays
+        ⍝D 80	  8 bits character
+        ⍝D 83	  8 bits signed integer
+        ⍝D 160	  16 bits character
+        ⍝D 163	  16 bits signed integer
+        ⍝D 320	  32 bits character
+        ⍝D 323	  32 bits signed  integer
+        ⍝D 326	  Pointer (32-bit or 64-bit as appropriate)
+        ⍝D 645	  64 bits Floating
         ⍝ 1287  128 bits Decimal
         ⍝ 1289  128 bits Complex
 
+        ⍝ TODO: move assert to utils namespace
         ∇ assert arg
             r←⊃arg
             testName←2⊃arg
             :If r
-                'pass '
+                'pass ', ⎕dr (3⊃arg)
             :Else
                 'fail ', testName, ⎕dr (3⊃arg)
             :EndIf
         ∇
             
         ∇ Test_DR
-            bool←0 1
-
-            i1←¯60+⍳120
-
-            i2←{⍵,-⍵}10000+⍳1000
-
-            i4←{⍵,-⍵}100000+⍳1000
-
-            dbl←{⍵,-⍵}i4+0.1
-            ⍝ And so on...
-            :For data :In bool i1 i2 i4 dbl
+            bool←0 1 ⍝ 11:1 bit Boolean type arrays
+            i1←¯60+⍳120 ⍝ 83: 8 bits signed integer
+            ⍝ char1←⎕A ⍝ 80: 8 bits character
+            char1←⎕UCS ⍳255 ⍝ 80: 8 bits character
+            char2←⎕UCS ⍳10000 ⍝ 160: 16 bits character
+            i2←{⍵,-⍵}10000+⍳1000 ⍝ 163: 16 bits signed integer
+            char3←⎕UCS ⍳100000 ⍝ 320: 32 bits character
+            i4←{⍵,-⍵}100000+⍳1000 ⍝ 323: 32 bits signed  integer
+            ptr←2,/⎕A ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+            dbl←{⍵,-⍵}i4+0.1 ⍝ 645: 64 bits Floating
+            ⍝ TODO:
+                        ⍝ 1287  128 bits Decimal
+                        ⍝ 1289  128 bits Complex
+            :For data :In bool i1 i2 i4 dbl char1 char2 char3 ptr
 
                 :If 11≠type←⎕DR data
 
                     assert ((data[?≢data])∊data) 't1' data ⍝ random element is found
 
-                    assert (~((1↑data)-1)∊data) 't2' data   ⍝ element outside set is not found
-
+                    assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' data ⍝ All elements return 0 except last
                     assert (((≢data)⍴1)≡data∊data) 't3' data ⍝ all elements return 1
 
-                    assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't4' data ⍝ All elements return 0 except last
-
-                    ⍝ assert ((10⍴1 0)≡(10↑data)∊,data[5?≢data],⍪(¯1↑data)+⍳5) 't5'
-
-                    ⍝ …. And so on and so forth …
+                    ⍝ Todo: add more tests
+                :ElseIf 80≠type←⎕DR data ⍝ because lower does not exist, so it is handled separately
+                    assert (~((1⊃data)-1)∊data) 't4' data   ⍝ element outside set is not found
 
                 :Else ⍝ Booleans need special tests
-
                     ⍝ Boolean tests here because the domain is so small
-
                     assert (0∊0) 'tb1' data
                     assert (~0∊1) 'tb2' data
-                    ⍝ … etc …
+                    assert (1 1≡bool∊data) 'tb3' data
 
                 :EndIf
             :EndFor
