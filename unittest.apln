@@ -41,7 +41,7 @@
             :For i :In tList
                 t←i⊃tests
                 r[i]←⍎expr←t,' ⍬'
-
+                ⍝ r[i]←⍎expr←t
                 :If (~r[i])∧stop
                     ⎕←t, ': ', FAIL_OK[1+r[i]]
                     ⎕←'Stopping on failure of:' ⋄ ⎕←(6⍴' '), expr
