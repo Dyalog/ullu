@@ -1,4 +1,5 @@
 :Namespace test_membership
+    assert←#.utils.assert
     ⍝ Failing Test cases to test the testing suite
     ⍝ :Section Failing
     ⍝     Test_Failing01←{1=2∊1 3 4} ⍝ Known incorrect test case
@@ -6,35 +7,11 @@
 
     ⍝ This section of testcases are categorised based on the ⎕DR model.
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
-    :Section Based on DR
-        ⍝D 11	  1 bit Boolean type arrays
-        ⍝D 80	  8 bits character
-        ⍝D 83	  8 bits signed integer
-        ⍝D 160	  16 bits character
-        ⍝D 163	  16 bits signed integer
-        ⍝D 320	  32 bits character
-        ⍝D 323	  32 bits signed  integer
-        ⍝D 326	  Pointer (32-bit or 64-bit as appropriate)
-        ⍝D 645	  64 bits Floating
-        ⍝ 1287  128 bits Decimal
-        ⍝ 1289  128 bits Complex
-
-        ⍝ TODO: move assert to utils namespace qith more relevant returns
-        ∇ assert arg
-            r←⊃arg
-            testID←2⊃arg
-            :If r
-                'pass ',testID, ⎕dr (3⊃arg)
-            :Else
-                'fail ', testID, ⎕dr (3⊃arg)
-            :EndIf
-        ∇
-            
+    :Section Based on DR            
         ∇ Test_DR
-            bool←0 1 ⍝ 11:1 bit Boolean type arrays
+            bool←0 1 ⍝ 11: 1 bit Boolean type arrays
             i1←¯60+⍳120 ⍝ 83: 8 bits signed integer
             char1←⎕UCS ⍳255 ⍝ 80: 8 bits character
-            ⍝ char1←⎕A
             char2←⎕UCS ⍳10000 ⍝ 160: 16 bits character
             i2←{⍵,-⍵}10000+⍳1000 ⍝ 163: 16 bits signed integer
             char3←⎕UCS ⍳100000 ⍝ 320: 32 bits character
@@ -51,7 +28,6 @@
                     assert ((data[?≢data])∊data) 't1' data ⍝ random element is found
                     assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' data ⍝ All elements return 0 except last
                     assert (((≢data)⍴1)≡data∊data) 't3' data ⍝ all elements return 1
-
 
                     :If (80≠type←⎕DR data)∧(160≠type←⎕DR data)∧(320≠type←⎕DR data)⍝ ⎕ucs conversion reqd for char
                         :If 326=type←⎕DR data ⍝ not relevant for ptr
