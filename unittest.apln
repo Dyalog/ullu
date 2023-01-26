@@ -1,5 +1,6 @@
 :Namespace unittest
     GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
+        ⍝ 'Not a test ns'⎕SIGNAL ('test_.+'⎕S'&'⍵.⎕NL)↓11
         tests←'Test_.+'⎕S'&'⍵.⎕NL ¯3
         tests←('.', ⍨⍕⍵)∘, ¨tests
         tests
@@ -7,7 +8,7 @@
 
     ⍝ This function runs the tests
     ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
-    ∇ RunTests args ;testNS;stop;verbose;tests;pass;fail;FAIL_OK
+    ∇ RunTests args ;testNS;tests;pass;fail;FAIL_OK
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
@@ -40,8 +41,8 @@
 
             :For i :In tList
                 t←i⊃tests
-                r[i]←⍎expr←t,' ⍬'
-                ⍝ r[i]←⍎expr←t
+                ⍝ r[i]←⍎expr←t,' ⍬'
+                r[i]←⍎expr←t
                 :If (~r[i])∧stop
                     ⎕←t, ': ', FAIL_OK[1+r[i]]
                     ⎕←'Stopping on failure of:' ⋄ ⎕←(6⍴' '), expr

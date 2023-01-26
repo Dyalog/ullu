@@ -3,7 +3,10 @@
     ⍝ - include stuff related to stop and verbose
     ⍝ - beautify outputs
     ⍝ - return meaning full information so final result can be evaluated
-    ∇ assert arg
+    ∇ assert arg ;testID;r
+        verbose←unittest.verbose
+        stop←unittest.stop
+        ⎕←'jajaja',stop
         r←⊃arg
         testID←2⊃arg
         :If r
