@@ -8,7 +8,7 @@
 
     ⍝ This function runs the tests
     ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
-    ∇ RunTests args ;testNS;tests;pass;fail;FAIL_OK
+    ∇ RunTests args ;testNS;tests;nPass;nFail;FAIL_OK
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
@@ -35,32 +35,19 @@
         
         :Section ExecuteTests
             tList←⍳≢tests
-            r←(≢tList)⍴0
-            pass←0 ⋄ fail←0
-            FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
+            nPass←0 ⋄ nFail←0
 
+            ⎕←tests
             :For i :In tList
                 t←i⊃tests
-                ⍝ r[i]←⍎expr←t,' ⍬'
-                r[i]←⍎expr←t
-                :If (~r[i])∧stop
-                    ⎕←t, ': ', FAIL_OK[1+r[i]]
-                    ⎕←'Stopping on failure of:' ⋄ ⎕←(6⍴' '), expr
-                    r←i↑r
-                    :Leave
-                :EndIf
-                :If verbose
-                    ⎕←t, ':', FAIL_OK[1+r[i]]
-                :ElseIf ~r[i]
-                    ⎕←t, ':', FAIL_OK[1+r[i]]
-                :EndIf
+                r←⍎expr←t
             :EndFor
         :EndSection
 
         :Section EvalResult            
-            pass←(+/,)r ⋄ fail←(≢r)-pass
+            nPass←(+/,)r ⋄ nFail←(≢r)-nPass
 
-            ⎕←''⋄⎕←'Tests completed: ', (≢r), 'ran,', fail, 'failed test,', pass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
+            ⎕←''⋄⎕←'Tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
         :EndSection
     ∇
 
