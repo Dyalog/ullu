@@ -37,8 +37,8 @@
             tList←⍳≢tests
             nPass←0 ⋄ nFail←0
 
-            ⎕←tests
             :For i :In tList
+                ⎕←tests[i]
                 t←i⊃tests
                 r←⍎expr←t
             :EndFor

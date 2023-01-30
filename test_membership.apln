@@ -1,4 +1,5 @@
 :Namespace test_membership
+    ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
     ∇ ret←assert arg ;r;testID;i;miscData;stop;verbose;FAIL_OK ⍝ to evauate result
         verbose←#.unittest.verbose
         stop←#.unittest.stop
@@ -39,24 +40,26 @@
             i3←{⍵,-⍵}100000+⍳1000 ⍝ 323: 32 bits signed  integer
             ptr←2,/⎕A ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
             dbl←{⍵,-⍵}i3+0.1 ⍝ 645: 64 bits Floating
-            ⍝ todo: figure out how to change ⎕fr for fl
             ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645⍝ 1287: 128 bits Decimal
             cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000 ⍝ 1289: 128 bits Complex
 
-            r←42⍴0 ⍝ number of tests is 42
+            r←42⍴0 ⍝ number of tests int the loop are 42
             i←1 ⍝ iterator
             :For data :In bool i1 i2 i3 dbl char1 char2 char3 ptr fl cmplx
                 :If 11≠type←⎕DR data
                     r[i] i leave←assert ((data[?≢data])∊data) 't1' i ('for ⎕DR', ⎕DR data)  ⍝ random element is found
                     :If leave
+                        r←(i-1)↑r
                         :Leave 
                     :EndIf
                     r[i] i leave←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' i ('for ⎕DR', ⎕DR data) ⍝ All elements return 0 except last
                     :If leave
-                        :Leave 
+                        r←(i-1)↑r
+                        :Leave
                     :EndIf
                     r[i] i leave←assert (((≢data)⍴1)≡data∊data) 't3' i ('for ⎕DR', ⎕DR data) ⍝ all elements return 1
                     :If leave
+                        r←(i-1)↑r
                         :Leave 
                     :EndIf
                     :If (80≠type←⎕DR data)∧(160≠type←⎕DR data)∧(320≠type←⎕DR data)⍝ ⎕UCS conversion reqd for char
@@ -65,11 +68,13 @@
                         :EndIf
                         r[i] i leave←assert (~((1⊃data)-1)∊data) 't4.1' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                         :If leave
+                            r←(i-1)↑r
                             :Leave 
                         :EndIf
                     :Else
                         r[i] i leave←assert (~(⎕UCS((⎕UCS(1⊃data))-1))∊data) 't4.2' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                         :If leave
+                            r←(i-1)↑r
                             :Leave 
                         :EndIf
                     :EndIf
@@ -78,14 +83,17 @@
                     ⍝ Boolean tests here because the domain is so small
                     r[i] i leave←assert (0∊0) 'tb1' i ('for ⎕DR', ⎕DR data)
                     :If leave
+                        r←(i-1)↑r
                         :Leave 
                     :EndIf
                     r[i] i leave←assert (~0∊1) 'tb2' i ('for ⎕DR', ⎕DR data)
                     :If leave
+                        r←(i-1)↑r
                         :Leave 
                     :EndIf
                     r[i] i leave←assert (1 1≡bool∊bool) 'tb3' i ('for ⎕DR', ⎕DR bool)
                     :If leave
+                        r←(i-1)↑r
                         :Leave
                     :EndIf
                 :EndIf
