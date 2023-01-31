@@ -1,12 +1,11 @@
 :Namespace test_membership
     ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
-    ∇ ret←assert args ;r;testID;i;miscData;stop;verbose;FAIL_OK ⍝ to evauate result
+    ∇ r←assert args ;r;testID;i;miscData;stop;verbose;FAIL_OK ⍝ to output result of tests
         verbose←#.unittest.verbose
         stop←#.unittest.stop
 
         (r testID miscData)←args
 
-        ret←0 1
         FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
 
         ⍝ TODO create one output rather than again and again printing
@@ -19,7 +18,6 @@
         :ElseIf ~r∨stop
             ⎕←testID,' ', miscData, ':', FAIL_OK[1+r]
         :EndIf
-        ret←r
     ∇
 
     ⍝ This section of testcases are categorised based on the ⎕DR model.
@@ -39,7 +37,7 @@
             cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000       ⍝ 1289: 128 bits Complex
 
             r←⍬
-            :For data :In bool i1 i2 i3 dbl char1 char2 char3 ptr fl cmplx
+            :For data :In bool i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx
                 :If 11≠type←⎕DR data
                     r,←assert ((data[?≢data])∊data) 't1' ('for ⎕DR', ⎕DR data)  ⍝ random element is found
                     r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' ('for ⎕DR', ⎕DR data) ⍝ All elements return 0 except last
@@ -49,9 +47,9 @@
                             :continue
                         :EndIf
                         ⍝ todo: try to get rid of special case
-                        r,←assert (~((1⊃data)-1)∊data) 't4.1' ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
+                        r,←assert (~((⊃data)-1)∊data) 't4.1' ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                     :Else
-                        r,←assert (~(⎕UCS((⎕UCS(1⊃data))-1))∊data) 't4.2' ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
+                        r,←assert (~(⎕UCS((⎕UCS(⊃data))-1))∊data) 't4.2' ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                     :EndIf
                     ⍝ Todo: add more tests
                 :Else ⍝ Booleans need special tests

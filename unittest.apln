@@ -1,6 +1,5 @@
 :Namespace unittest
     GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
-        ⍝ 'Not a test ns'⎕SIGNAL ('test_.+'⎕S'&'⍵.⎕NL)↓11
         tests←'Test_.+'⎕S'&'⍵.⎕NL ¯3
         tests←('.', ⍨⍕⍵)∘, ¨tests
         tests
@@ -34,11 +33,11 @@
         :Section ExecuteTests
             tList←⍳≢tests
             nPass←0 ⋄ nFail←0
-
+            r←⍬
             :For i :In tList
                 ⎕←tests[i]
                 t←i⊃tests
-                r←⍎expr←t
+                r,←⍎expr←t
             :EndFor
         :EndSection
 
