@@ -1,101 +1,67 @@
 :Namespace test_membership
     ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
-    ∇ ret←assert arg ;r;testID;i;miscData;stop;verbose;FAIL_OK ⍝ to evauate result
+    ∇ ret←assert args ;r;testID;i;miscData;stop;verbose;FAIL_OK ⍝ to evauate result
         verbose←#.unittest.verbose
         stop←#.unittest.stop
 
-        r←⊃arg
-        testID←2⊃arg
-        i←3⊃arg
-        miscData←4⊃arg
+        (r testID i miscData)←args
 
         ret←0 1
-        leave←0
         FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
 
+        ⍝ TODO create one output rather than again and again printing
         :If (~r)∧stop
             ⎕←testID,' ', miscData, ': ', FAIL_OK[1+r]
-            ⎕←'Stopping on failure of:' ⋄ ⎕←(6⍴' '), testID
-            leave←1
+            'Stopping on failure of:' ⎕SIGNAL 500
         :EndIf
         :If verbose
             ⎕←testID,' ', miscData, ':', FAIL_OK[1+r]
         :ElseIf ~r∨stop
             ⎕←testID,' ', miscData, ':', FAIL_OK[1+r]
         :EndIf
-        i←i+1
-        ret←r i leave
+        i+←1
+        ret←r i
     ∇
 
     ⍝ This section of testcases are categorised based on the ⎕DR model.
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
-    :Section Based on DR
-        ∇ r←Test_DR ;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;data;i
-            bool←0 1 ⍝ 11: 1 bit Boolean type arrays
-            i1←¯60+⍳120 ⍝ 83: 8 bits signed integer
-            char1←⎕UCS ⍳255 ⍝ 80: 8 bits character
-            char2←⎕UCS ⍳10000 ⍝ 160: 16 bits character
-            i2←{⍵,-⍵}10000+⍳1000 ⍝ 163: 16 bits signed integer
-            char3←⎕UCS ⍳100000 ⍝ 320: 32 bits character
-            i3←{⍵,-⍵}100000+⍳1000 ⍝ 323: 32 bits signed  integer
-            ptr←2,/⎕A ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-            dbl←{⍵,-⍵}i3+0.1 ⍝ 645: 64 bits Floating
-            ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645⍝ 1287: 128 bits Decimal
-            cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000 ⍝ 1289: 128 bits Complex
+    :Section Testing for all datatypes
+        ∇ r←Test_DR ;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;data;i;type
+            bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
+            i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
+            char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
+            char2←⎕UCS ⍳10000                       ⍝ 160: 16 bits character
+            i2←{⍵,-⍵}10000+⍳1000                    ⍝ 163: 16 bits signed integer
+            char3←⎕UCS ⍳100000                      ⍝ 320: 32 bits character
+            i3←{⍵,-⍵}100000+⍳1000                   ⍝ 323: 32 bits signed  integer
+            ptr←2,/⎕A                               ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+            dbl←{⍵,-⍵}i3+0.1                        ⍝ 645: 64 bits Floating
+            ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
+            cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000       ⍝ 1289: 128 bits Complex
 
-            r←42⍴0 ⍝ number of tests int the loop are 42
-            i←1 ⍝ iterator
+            ⍝ Todo: get test count automatically
+            r←42⍴0 ⍝ number of tests in the loop are 42
+            i←1
             :For data :In bool i1 i2 i3 dbl char1 char2 char3 ptr fl cmplx
                 :If 11≠type←⎕DR data
-                    r[i] i leave←assert ((data[?≢data])∊data) 't1' i ('for ⎕DR', ⎕DR data)  ⍝ random element is found
-                    :If leave
-                        r←(i-1)↑r
-                        :Leave 
-                    :EndIf
-                    r[i] i leave←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' i ('for ⎕DR', ⎕DR data) ⍝ All elements return 0 except last
-                    :If leave
-                        r←(i-1)↑r
-                        :Leave
-                    :EndIf
-                    r[i] i leave←assert (((≢data)⍴1)≡data∊data) 't3' i ('for ⎕DR', ⎕DR data) ⍝ all elements return 1
-                    :If leave
-                        r←(i-1)↑r
-                        :Leave 
-                    :EndIf
+                    r[i] i←assert ((data[?≢data])∊data) 't1' i ('for ⎕DR', ⎕DR data)  ⍝ random element is found
+                    r[i] i←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' i ('for ⎕DR', ⎕DR data) ⍝ All elements return 0 except last
+                    r[i] i←assert (((≢data)⍴1)≡data∊data) 't3' i ('for ⎕DR', ⎕DR data) ⍝ all elements return 1
                     :If (80≠type←⎕DR data)∧(160≠type←⎕DR data)∧(320≠type←⎕DR data)⍝ ⎕UCS conversion reqd for char
                         :If 326=type←⎕DR data ⍝ not relevant for ptr
                             :continue
                         :EndIf
-                        r[i] i leave←assert (~((1⊃data)-1)∊data) 't4.1' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
-                        :If leave
-                            r←(i-1)↑r
-                            :Leave 
-                        :EndIf
+                        ⍝ todo: try to get rid of special case
+                        r[i] i←assert (~((1⊃data)-1)∊data) 't4.1' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                     :Else
-                        r[i] i leave←assert (~(⎕UCS((⎕UCS(1⊃data))-1))∊data) 't4.2' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
-                        :If leave
-                            r←(i-1)↑r
-                            :Leave 
-                        :EndIf
+                        r[i] i←assert (~(⎕UCS((⎕UCS(1⊃data))-1))∊data) 't4.2' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                     :EndIf
                     ⍝ Todo: add more tests
                 :Else ⍝ Booleans need special tests
                     ⍝ Boolean tests here because the domain is so small
-                    r[i] i leave←assert (0∊0) 'tb1' i ('for ⎕DR', ⎕DR data)
-                    :If leave
-                        r←(i-1)↑r
-                        :Leave 
-                    :EndIf
-                    r[i] i leave←assert (~0∊1) 'tb2' i ('for ⎕DR', ⎕DR data)
-                    :If leave
-                        r←(i-1)↑r
-                        :Leave 
-                    :EndIf
-                    r[i] i leave←assert (1 1≡bool∊bool) 'tb3' i ('for ⎕DR', ⎕DR bool)
-                    :If leave
-                        r←(i-1)↑r
-                        :Leave
-                    :EndIf
+                    r[i] i←assert (0∊0) 'tb1' i ('for ⎕DR', ⎕DR data)
+                    r[i] i←assert (~0∊1) 'tb2' i ('for ⎕DR', ⎕DR data)
+                    r[i] i←assert (1 1≡bool∊bool) 'tb3' i ('for ⎕DR', ⎕DR bool)
                 :EndIf
             :EndFor
         ∇
