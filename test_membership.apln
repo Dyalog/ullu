@@ -4,7 +4,7 @@
         verbose←#.unittest.verbose
         stop←#.unittest.stop
 
-        (r testID i miscData)←args
+        (r testID miscData)←args
 
         ret←0 1
         FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
@@ -19,8 +19,7 @@
         :ElseIf ~r∨stop
             ⎕←testID,' ', miscData, ':', FAIL_OK[1+r]
         :EndIf
-        i+←1
-        ret←r i
+        ret←r
     ∇
 
     ⍝ This section of testcases are categorised based on the ⎕DR model.
@@ -39,29 +38,27 @@
             ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
             cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000       ⍝ 1289: 128 bits Complex
 
-            ⍝ Todo: get test count automatically
-            r←42⍴0 ⍝ number of tests in the loop are 42
-            i←1
+            r←⍬
             :For data :In bool i1 i2 i3 dbl char1 char2 char3 ptr fl cmplx
                 :If 11≠type←⎕DR data
-                    r[i] i←assert ((data[?≢data])∊data) 't1' i ('for ⎕DR', ⎕DR data)  ⍝ random element is found
-                    r[i] i←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' i ('for ⎕DR', ⎕DR data) ⍝ All elements return 0 except last
-                    r[i] i←assert (((≢data)⍴1)≡data∊data) 't3' i ('for ⎕DR', ⎕DR data) ⍝ all elements return 1
+                    r,←assert ((data[?≢data])∊data) 't1' ('for ⎕DR', ⎕DR data)  ⍝ random element is found
+                    r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' ('for ⎕DR', ⎕DR data) ⍝ All elements return 0 except last
+                    r,←assert (((≢data)⍴1)≡data∊data) 't3' ('for ⎕DR', ⎕DR data) ⍝ all elements return 1
                     :If (80≠type←⎕DR data)∧(160≠type←⎕DR data)∧(320≠type←⎕DR data)⍝ ⎕UCS conversion reqd for char
                         :If 326=type←⎕DR data ⍝ not relevant for ptr
                             :continue
                         :EndIf
                         ⍝ todo: try to get rid of special case
-                        r[i] i←assert (~((1⊃data)-1)∊data) 't4.1' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
+                        r,←assert (~((1⊃data)-1)∊data) 't4.1' ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                     :Else
-                        r[i] i←assert (~(⎕UCS((⎕UCS(1⊃data))-1))∊data) 't4.2' i ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
+                        r,←assert (~(⎕UCS((⎕UCS(1⊃data))-1))∊data) 't4.2' ('for ⎕DR', ⎕DR data) ⍝ element outside set is not found
                     :EndIf
                     ⍝ Todo: add more tests
                 :Else ⍝ Booleans need special tests
                     ⍝ Boolean tests here because the domain is so small
-                    r[i] i←assert (0∊0) 'tb1' i ('for ⎕DR', ⎕DR data)
-                    r[i] i←assert (~0∊1) 'tb2' i ('for ⎕DR', ⎕DR data)
-                    r[i] i←assert (1 1≡bool∊bool) 'tb3' i ('for ⎕DR', ⎕DR bool)
+                    r,←assert (0∊0) 'tb1' ('for ⎕DR', ⎕DR data)
+                    r,←assert (~0∊1) 'tb2' ('for ⎕DR', ⎕DR data)
+                    r,←assert (1 1≡bool∊bool) 'tb3' ('for ⎕DR', ⎕DR bool)
                 :EndIf
             :EndFor
         ∇
