@@ -5,9 +5,28 @@
         tests
     }
 
+    FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
+
+    ⍝ Pretty print test result
+    PPTestResult←{⍵[2], ⍵[3], ': ', FAIL_OK[1+⍵[1]]}
+
+    ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
+    ∇ r←assert args ;r;testID;i;miscData ⍝ to output result of tests
+        (r testID miscData)←args
+        :If (~r)∧stop
+            PPTestResult args
+            'Stopping on failure of:' ⎕SIGNAL 500
+        :EndIf
+        :If verbose
+            PPTestResult args
+        :ElseIf ~r∨stop
+            PPTestResult args
+        :EndIf
+    ∇
+
     ⍝ This function runs the tests
     ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
-    ∇ RunTests args ;testNS;tests;nPass;nFail;FAIL_OK
+    ∇ RunTests args ;testNS;tests;nPass;nFail
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
@@ -32,7 +51,6 @@
         
         :Section ExecuteTests
             tList←⍳≢tests
-            nPass←0 ⋄ nFail←0
             r←⍬
             :For i :In tList
                 ⎕←tests[i]

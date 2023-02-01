@@ -1,24 +1,5 @@
 :Namespace test_membership
-    ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
-    ∇ r←assert args ;r;testID;i;miscData;stop;verbose;FAIL_OK ⍝ to output result of tests
-        verbose←#.unittest.verbose
-        stop←#.unittest.stop
-
-        (r testID miscData)←args
-
-        FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
-
-        ⍝ TODO create one output rather than again and again printing
-        :If (~r)∧stop
-            ⎕←testID,' ', miscData, ': ', FAIL_OK[1+r]
-            'Stopping on failure of:' ⎕SIGNAL 500
-        :EndIf
-        :If verbose
-            ⎕←testID,' ', miscData, ':', FAIL_OK[1+r]
-        :ElseIf ~r∨stop
-            ⎕←testID,' ', miscData, ':', FAIL_OK[1+r]
-        :EndIf
-    ∇
+    assert←#.unittest.assert
 
     ⍝ This section of testcases are categorised based on the ⎕DR model.
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
