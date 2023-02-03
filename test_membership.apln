@@ -56,7 +56,14 @@
     ⍝ Tests based upon ⎕CT value
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
     :Section Based on CT
-        ⍝ TODO
+        ∇ r←Test_CT
+            r←⍬
+            ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
+            r,←assert (1≡(1E14∊1E14+1)) 'ct1' 'no'
+
+            ⎕CT←0 ⍝ Exact comparisons, like in C or most other languages
+            r,←assert (0≡(1E14∊1E14+1)) 'ct1' 'no'
+        ∇
     :EndSection
 
 :EndNamespace
