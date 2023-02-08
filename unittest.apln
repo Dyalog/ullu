@@ -26,7 +26,7 @@
 
     ⍝ This function runs the tests
     ⍝ It takes 3 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0]
-    ∇ RunTests args ;testNS;tests;nPass;nFail
+    ∇ RunTests args ;testNS;tests;tList;expr;t;r;nPass;nFail
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments

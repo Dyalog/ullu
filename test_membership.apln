@@ -8,29 +8,30 @@
             bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
             i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
             char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
-            char2←⎕UCS ⍳10000                       ⍝ 160: 16 bits character
+            char2←⎕UCS (256+⍳10000)                 ⍝ 160: 16 bits character
             i2←{⍵,-⍵}10000+⍳1000                    ⍝ 163: 16 bits signed integer
-            char3←⎕UCS ⍳100000                      ⍝ 320: 32 bits character
+            char3←⎕UCS (10256+⍳100000)              ⍝ 320: 32 bits character
             i3←{⍵,-⍵}100000+⍳1000                   ⍝ 323: 32 bits signed  integer
             ptr←2,/⎕A                               ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
             dbl←{⍵,-⍵}i3+0.1                        ⍝ 645: 64 bits Floating
             ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
             cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000       ⍝ 1289: 128 bits Complex
 
-            CustomMem←{
-                w←,⍵
-                n←(≢w)+1
-                n>w⍳⍺
-            }
-
             r←⍬
             :For data :In bool i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx
-                ⍝ testing the datatype with all other data types using a custom function
-                :For data2 :In bool i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx                  
-                    r,←assert ((data CustomMem data2)≡(data ∊ data2)) 'tcross' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2))
-                :EndFor
                 :If 11≠type←⎕DR data
-                    r,←assert (1≡(data[?≢data])∊data) 't1' ('for ⎕DR', ⎕DR data)                  ⍝ random element is found
+                    ⍝ Cross DR testing
+                    :For data2 :In i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx
+                        :If (data≡data2)
+                            r,←assert (((≢data)⍴1) ≡ (data∊data2)) 'tcross0' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2))
+                            :Continue
+                        :EndIf
+                        r,←assert (((≢data)⍴0) ≡ (data∊data2)) 'tcross1' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ no match, all return 0
+                        r,←assert (((≢data2)⍴0) ≡ (data2∊data)) 'tcross2' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ no match, all return 0
+                        r,←assert (((≢data)⍴1) ≡ (data∊data,data2)) 'tcross3' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ first data match, returns 1
+                        r,←assert ((((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data)) 'tcross4' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ data match, data2 no match
+                    :EndFor
+                    r,←assert ((data[?≢data])∊data) 't1' ('for ⎕DR', ⎕DR data)                  ⍝ random element is found
                     r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' ('for ⎕DR', ⎕DR data)  ⍝ All elements return 0 except last
                     r,←assert (((≢data)⍴1)≡data∊data) 't3' ('for ⎕DR', ⎕DR data)                ⍝ all elements return 1
                     :If (80≠type←⎕DR data)∧(160≠type←⎕DR data)∧(320≠type←⎕DR data)              ⍝ ⎕UCS conversion reqd for char
@@ -48,6 +49,15 @@
                     r,←assert (0∊0) 'tb1' ('for ⎕DR', ⎕DR data)
                     r,←assert (~0∊1) 'tb2' ('for ⎕DR', ⎕DR data)
                     r,←assert (1 1≡bool∊bool) 'tb3' ('for ⎕DR', ⎕DR bool)
+                    :For data2 :In i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx ⍝ bool requires separate cross tests because of overlap with i1
+                        :If (83≠type←⎕DR data2)
+                                r,←assert (((≢bool)⍴0) ≡ (bool∊data2)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 0
+                                r,←assert (((≢data2)⍴0) ≡ (data2∊bool)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 0
+                            :Else
+                                r,←assert (((≢bool)⍴1) ≡ (bool∊data2)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 1
+                                r,←assert (((⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ overlaping 0 1 returns 1
+                        :EndIf
+                    :EndFor
                 :EndIf
             :EndFor
         ∇
