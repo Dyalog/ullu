@@ -4,7 +4,7 @@
     ⍝ This section of testcases are categorised based on the ⎕DR model.
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     :Section Testing for all datatypes
-        ∇ r←Test_DR ;w;n;r;data;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx
+        ∇ r←Test_DR ;w;n;r;data;data2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx
             bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
             i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
             char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
@@ -66,7 +66,7 @@
     ⍝ Tests based upon ⎕CT value
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
     :Section Based on CT and DCT
-        ∇ r←Test_CT ;type;dbl;fl;cmplx;data
+        ∇ r←Test_CT ;type;dbl;d;fl;f;cmplx;c
             r←⍬
             dbl←{⍵,-⍵}1E14+⍳100
             ⎕FR←1287 ⋄ fl←{⍵,-⍵}1E14+⍳100 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
