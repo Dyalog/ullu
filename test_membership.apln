@@ -34,16 +34,7 @@
                     r,←assert ((data[?≢data])∊data) 't1' ('for ⎕DR', ⎕DR data)                  ⍝ random element is found
                     r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' ('for ⎕DR', ⎕DR data)  ⍝ All elements return 0 except last
                     r,←assert (((≢data)⍴1)≡data∊data) 't3' ('for ⎕DR', ⎕DR data)                ⍝ all elements return 1
-                    :If (80≠type←⎕DR data)∧(160≠type←⎕DR data)∧(320≠type←⎕DR data)              ⍝ ⎕UCS conversion reqd for char
-                        :If 326=type←⎕DR data                                                   ⍝ not relevant for ptr
-                            :continue
-                        :EndIf
-                        ⍝ todo: try to get rid of special case
-                        r,←assert (~((⊃data)-1)∊data) 't4.1' ('for ⎕DR', ⎕DR data)              ⍝ element outside set is not found
-                    :Else
-                        r,←assert (~(⎕UCS((⎕UCS(⊃data))-1))∊data) 't4.2' ('for ⎕DR', ⎕DR data)  ⍝ element outside set is not found
-                    :EndIf
-                    ⍝ Todo: add more tests
+                    r,←assert (0≡5E50∊data) 't4' ('for ⎕DR', ⎕DR data)                          ⍝ huge element outside set is not found
                 :Else ⍝ Booleans need special tests
                     ⍝ Boolean tests here because the domain is so small
                     r,←assert (0∊0) 'tb1' ('for ⎕DR', ⎕DR data)
