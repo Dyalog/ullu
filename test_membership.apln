@@ -66,26 +66,23 @@
     ⍝ Tests based upon ⎕CT value
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
     :Section Based on CT and DCT
-        ∇ r←Test_CT ;type;dbl;d;fl;f;cmplx;c
+        ∇ r←Test_CT ;type;dbl;fl;cmplx;data;d
             r←⍬
-            dbl←{⍵,-⍵}1E14+⍳100
+            dbl←{⍵,-⍵}1E14+⍳100                       ⍝ 645: 64 bits Floating
             ⎕FR←1287 ⋄ fl←{⍵,-⍵}1E14+⍳100 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
-            cmplx←{⍵,-⍵}(1E13J1E13×⍳100)
-            d←dbl[?≢dbl]
-            f←fl[?≢fl]
-            c←cmplx[?≢cmplx]
+            cmplx←{⍵,-⍵}(1E13J1E13×⍳100)              ⍝ 1289: 128 bits Complex
+            
+            :For data :In dbl fl cmplx
+                d←data[?≢data]
+                
+                ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
+                ⎕DCT←1E¯28
+                r,←assert (1≡(d∊d+1)) 'CTDefault' (⎕DR d)
 
-            r,←assert (1≡(d∊d+1)) 'ct1' (⎕DR d)
-            r,←assert (1≡(f∊(f+1))) 'dct1.1' (⎕DR f)
-            r,←assert (1≡(c∊(c+1))) 'dct1.2' (⎕DR c)
-
-            ⎕CT←0 ⍝ Exact comparisons, like in C or most other languages
-            ⎕DCT←0
-            r,←assert (0≡(d∊d+1)) 'ct2' (⎕DR d)
-            r,←assert (0≡(f∊(f+1))) 'dct2.1' (⎕DR f)
-            r,←assert (0≡(c∊(c+1))) 'dct2.2' (⎕DR c)
-            ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
-            ⎕DCT←1E¯28
+                ⎕CT←0 ⍝ Exact comparisons, like in C or most other languages
+                ⎕DCT←0
+                r,←assert (0≡(d∊d+1)) 'CTZero' (⎕DR d)
+            :EndFor
         ∇
     :EndSection
 
