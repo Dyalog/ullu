@@ -67,68 +67,23 @@
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
     :Section Based on CT and DCT
         ∇ r←Test_CT ;type;dbl;fl;cmplx;data
-            ⍝ dbl←1E14
-            ⍝ ⎕FR←1287
-            ⍝     fl←1E28
-            ⍝ ⎕FR←645
-            ⍝     r,←assert (1≡(fl∊(fl+1))) 'dct1' (⎕DR fl)
-
-            ⍝ ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
-            ⍝ ⎕DCT←1E¯28
-            
-            
-            ⍝ dbl←1E15                        ⍝ 645: 64 bits Floating
-            ⍝ ⎕FR←1287
-            ⍝ fl←1E28
-            ⍝ ⎕FR←645   ⍝ 1287: 128 bits Decimal
-            ⍝ cmplx←{⍵,-⍵}((0J1E28+0.5)×⍳10000)+⌽⍳10000⍝ 1289: 128 bits Complex
             r←⍬
+            dbl←{⍵,-⍵}1E14+⍳100
+            ⎕FR←1287 ⋄ fl←{⍵,-⍵}1E14+⍳100 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
+            cmplx←{⍵,-⍵}(1E13J1E13×⍳100)
+            d←dbl[?≢dbl]
+            f←fl[?≢fl]
+            c←cmplx[?≢cmplx]
 
-            ⍝ :For data :In dbl fl
-            ⍝     :If 645≠type←⎕DR data
-            ⍝         ⎕DCT←1E¯28
-            ⍝         r,←assert (1≡(data[?≢data]∊data∘+1)) 'ct3' ('for ⎕DR', ⎕DR data)
-
-            ⍝         ⎕DCT←0
-            ⍝         r,←assert (0≡(data[?≢data]∊data+1)) 'ct4' ('for ⎕DR', ⎕DR data)
-                        
-            ⍝     :Else
-            ⍝         ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
-            ⍝         ⎕DCT←1E¯28
-            ⍝         r,←assert (1≡(data∊data+1)) 'ct1' ('for ⎕DR', ⎕DR data)
-
-            ⍝         ⎕CT←0 ⍝ Exact comparisons, like in C or most other languages
-            ⍝         ⎕DCT←0
-            ⍝         r,←assert (0≡(data∊data+1)) 'ct2' ('for ⎕DR', ⎕DR data)
-            ⍝     :EndIf
-            ⍝ :EndFor
-
-            ⍝ ⎕FR←1287
-            ⍝ fl←1E100
-            ⍝ ⎕FR←645   ⍝ 1287: 128 bits Decimal
-            dbl←1E14
-
-
-            ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
-            ⎕DCT←1E¯28
-
-            r,←assert (1≡(dbl∊dbl+1)) 'ct1' (⎕DR dbl)
-            
-            ⎕FR←1287
-                fl←1E28
-                r,←assert (1≡(fl∊(fl+1))) 'dct1' (⎕DR fl)
-            ⎕FR←645
-            r,←assert (1≡(1E16J1∊(1E16J1+1))) 'dct2' (⎕DR 1E29J1)
+            r,←assert (1≡(d∊d+1)) 'ct1' (⎕DR d)
+            r,←assert (1≡(f∊(f+1))) 'dct1.1' (⎕DR f)
+            r,←assert (1≡(c∊(c+1))) 'dct1.2' (⎕DR c)
 
             ⎕CT←0 ⍝ Exact comparisons, like in C or most other languages
             ⎕DCT←0
-            r,←assert (0≡(dbl∊dbl+1)) 'ct2' (⎕DR dbl)
-            ⎕FR←1287
-                ⍝ fl←1E28
-                r,←assert (0≡(fl∊(fl+1))) 'dct3' (⎕DR fl)
-            
-            ⎕FR←645
-                r,←assert (0≡(1E15J1∊(1E15J1+1))) 'dct4' (⎕DR 1E16J1)
+            r,←assert (0≡(d∊d+1)) 'ct2' (⎕DR d)
+            r,←assert (0≡(f∊(f+1))) 'dct2.1' (⎕DR f)
+            r,←assert (0≡(c∊(c+1))) 'dct2.2' (⎕DR c)
             ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
             ⎕DCT←1E¯28
         ∇

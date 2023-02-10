@@ -53,7 +53,7 @@
             tList←⍳≢tests
             r←⍬
             :For i :In tList
-                ⎕←tests[i]
+                ⎕←''⋄tests[i]⋄⎕←''
                 t←i⊃tests
                 r,←⍎expr←t
             :EndFor
