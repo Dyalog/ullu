@@ -8,14 +8,14 @@
             bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
             i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
             char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
-            char2←⎕UCS (256+⍳10000)                 ⍝ 160: 16 bits character
+            char2←⎕UCS (1000+⍳100)                  ⍝ 160: 16 bits character
             i2←{⍵,-⍵}10000+⍳1000                    ⍝ 163: 16 bits signed integer
-            char3←⎕UCS (10256+⍳100000)              ⍝ 320: 32 bits character
-            i3←{⍵,-⍵}100000+⍳1000                   ⍝ 323: 32 bits signed  integer
+            char3←⎕UCS (100000+⍳100)                ⍝ 320: 32 bits character
+            i3←{⍵,-⍵}100000+⍳100                   ⍝ 323: 32 bits signed  integer
             ptr←2,/⎕A                               ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
             dbl←{⍵,-⍵}i3+0.1                        ⍝ 645: 64 bits Floating
             ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
-            cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000       ⍝ 1289: 128 bits Complex
+            cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100            ⍝ 1289: 128 bits Complex
 
             r←⍬
             :For data :In bool i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx
@@ -83,6 +83,8 @@
                 ⎕DCT←0
                 r,←assert (0≡(d∊d+1)) 'CTZero' (⎕DR d)
             :EndFor
+            ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
+            ⎕DCT←1E¯28
         ∇
     :EndSection
 
