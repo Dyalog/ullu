@@ -4,18 +4,18 @@
     ⍝ This section of testcases are categorised based on the ⎕DR model.
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     :Section Testing for all datatypes
-        ∇ r←Test_DR ;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;w;n;r;data;type
+        ∇ r←Test_DR ;w;n;r;data;data2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx
             bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
             i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
             char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
-            char2←⎕UCS (256+⍳10000)                 ⍝ 160: 16 bits character
+            char2←⎕UCS (1000+⍳100)                  ⍝ 160: 16 bits character
             i2←{⍵,-⍵}10000+⍳1000                    ⍝ 163: 16 bits signed integer
-            char3←⎕UCS (10256+⍳100000)              ⍝ 320: 32 bits character
-            i3←{⍵,-⍵}100000+⍳1000                   ⍝ 323: 32 bits signed  integer
+            char3←⎕UCS (100000+⍳100)                ⍝ 320: 32 bits character
+            i3←{⍵,-⍵}100000+⍳100                   ⍝ 323: 32 bits signed  integer
             ptr←2,/⎕A                               ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
             dbl←{⍵,-⍵}i3+0.1                        ⍝ 645: 64 bits Floating
             ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
-            cmplx←{⍵,-⍵}(0J1×⍳10000)+⌽⍳10000       ⍝ 1289: 128 bits Complex
+            cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100            ⍝ 1289: 128 bits Complex
 
             r←⍬
             :For data :In bool i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx
@@ -56,8 +56,27 @@
 
     ⍝ Tests based upon ⎕CT value
     ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    :Section Based on CT
-        ⍝ TODO
+    :Section Based on CT and DCT
+        ∇ r←Test_CT ;type;dbl;fl;cmplx;data;d
+            r←⍬
+            dbl←{⍵,-⍵}1E14+⍳100                       ⍝ 645: 64 bits Floating
+            ⎕FR←1287 ⋄ fl←{⍵,-⍵}1E14+⍳100 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
+            cmplx←{⍵,-⍵}(1E13J1E13×⍳100)              ⍝ 1289: 128 bits Complex
+            
+            :For data :In dbl fl cmplx
+                d←data[?≢data]
+                
+                ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
+                ⎕DCT←1E¯28
+                r,←assert (1≡(d∊d+1)) 'CTDefault' (⎕DR d)
+
+                ⎕CT←0 ⍝ Exact comparisons, like in C or most other languages
+                ⎕DCT←0
+                r,←assert (0≡(d∊d+1)) 'CTZero' (⎕DR d)
+            :EndFor
+            ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
+            ⎕DCT←1E¯28
+        ∇
     :EndSection
 
 :EndNamespace
