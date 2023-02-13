@@ -23,7 +23,7 @@
                 r,←assert ((getMagGen d)≡|d) 't2' ('for ⎕DR' (⎕DR data))
             :Else
                 r,←assert (0 1≡|bool) 'tb1' ('for ⎕DR' (⎕DR data))
-                r,←assert (0≡|0) 'tb2'  ('for  ⎕DR' (⎕DR 0))
+                r,←assert (0≡|⊃bool) 'tb2'  ('for  ⎕DR' (⎕DR bool))
             :EndIf
         :EndFor
     ∇
