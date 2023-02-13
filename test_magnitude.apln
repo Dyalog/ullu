@@ -33,7 +33,8 @@
         getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
         r←⍬
         :For c :In cmplx
-            r,←assert ((getMagCmplx c)≡|c) 'tc1' 'for cmplx'
+            r,←assert ((getMagCmplx c)≡|c) 'tc1' ('for' c)
         :EndFor
+        r,←assert ((getMagCmplx¨cmplx)≡|cmplx) 'tc2' 'for cmplx'
     ∇
 :EndNamespace
