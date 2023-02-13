@@ -3,7 +3,7 @@
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ r←Test_Membership ;w;n;r;data;data2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx
+    ∇ r←Test_Membership ;w;n;r;data;data2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct
         bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
         char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
@@ -63,7 +63,7 @@
                     r,←assert (~0∊1) 'tb2' ('for ⎕DR'(⎕DR data)'with ⎕CT, ⎕DCT:'⎕CT','⎕DCT)
                     r,←assert (1 1≡bool∊bool) 'tb3' ('for ⎕DR', ⎕DR bool)
                     :For data2 :In i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx ⍝ bool requires separate cross tests because of overlap with i1
-                        :If (83≠type←⎕DR data2)
+                        :If (83≠type←⎕DR data2) ⍝ special case because of overlap
                                 r,←assert (((≢bool)⍴0) ≡ (bool∊data2)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 0
                                 r,←assert (((≢data2)⍴0) ≡ (data2∊bool)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 0
                         :Else
