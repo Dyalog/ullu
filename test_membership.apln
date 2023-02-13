@@ -15,9 +15,9 @@
         dbl←{⍵,-⍵}i3+0.1                        ⍝ 645: 64 bits Floating
         ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645    ⍝ 1287: 128 bits Decimal
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100            ⍝ 1289: 128 bits Complex
-        Hdbl←{⍵,-⍵}1E14+⍳50                     ⍝ 645: 64 bits Floating
-        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}1E14+⍳50 ⋄ ⎕FR←645  ⍝ 1287: 128 bits Decimal
-        Hcmplx←{⍵,-⍵}(1E13J1E13×⍳50)            ⍝ 1289: 128 bits Complex
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)                     ⍝ 645: 64 bits Floating
+        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E15+(500×⍳10) ⋄ ⎕FR←645  ⍝ 1287: 128 bits Decimal
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)            ⍝ 1289: 128 bits Complex
 
         r←⍬
         :For ct :In 1 0 
