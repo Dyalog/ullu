@@ -1,0 +1,36 @@
+:Namespace test_magnitude
+    assert←#.unittest.assert
+    ∇ r←Test_Magnitude_General ;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;Hdbl;Hfl
+        bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
+        i1←{⍵,-⍵}+⍳120                             ⍝ 83: 8 bits signed integer
+        ⍝ char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
+        ⍝ char2←⎕UCS (1000+⍳100)                  ⍝ 160: 16 bits character
+        i2←{⍵,-⍵}10000+⍳1000                    ⍝ 163: 16 bits signed integer
+        ⍝ char3←⎕UCS (100000+⍳100)                ⍝ 320: 32 bits character
+        i3←{⍵,-⍵}100000+⍳100                    ⍝ 323: 32 bits signed  integer
+        ⍝ ptr←2,/⎕A                               ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        dbl←{⍵,-⍵}1000.5+⍳100                        ⍝ 645: 64 bits Floating
+        ⎕FR←1287 ⋄ fl←{⍵,-⍵}1000.5+⍳100 ⋄ ⎕FR←645    ⍝ 1287: 128 bits Decimal
+        Hdbl←{⍵,-⍵}1E14+⍳50                     ⍝ 645: 64 bits Floating
+        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}1E14+⍳50 ⋄ ⎕FR←645  ⍝ 1287: 128 bits Decimal
+
+        r←⍬
+        :For data :In bool i1 i2 i3 dbl fl
+            :If 11≠type←⎕DR data
+                r,←assert (({⍵,⍵}{((≢⍵)÷2)↑⍵}data)≡|data) 't2' ('for' (⎕DR data))
+            :Else
+                r,←assert (0 1≡|bool) 'tb1' ('for' (⎕DR data))
+            :EndIf
+        :EndFor
+    ∇
+
+    ∇ r←Test_Magnitude_Cmplx ;cmplx
+        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100            ⍝ 1289: 128 bits Complex
+        breakCmplx←{9 11○⊂⍵}
+        getMag←{*∘0.5+/2*⍨9 11○⊂⍵}
+        r←⍬
+        :For c :In cmplx
+            r,←assert ((getMag c)≡|c) 'tc1' 'for cmplx'
+        :EndFor
+    ∇
+:EndNamespace
