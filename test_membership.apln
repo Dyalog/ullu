@@ -3,31 +3,35 @@
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ r←Test_Membership ;w;n;r;data;data2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct
-        bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
-        i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
-        char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
-        char2←⎕UCS (1000+⍳100)                  ⍝ 160: 16 bits character
-        i2←{⍵,-⍵}10000+⍳1000                    ⍝ 163: 16 bits signed integer
-        char3←⎕UCS (100000+⍳100)                ⍝ 320: 32 bits character
-        i3←{⍵,-⍵}100000+⍳100                    ⍝ 323: 32 bits signed  integer
-        ptr←2,/⎕A                               ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-        dbl←{⍵,-⍵}i3+0.1                        ⍝ 645: 64 bits Floating
-        ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645    ⍝ 1287: 128 bits Decimal
-        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100            ⍝ 1289: 128 bits Complex
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)                     ⍝ 645: 64 bits Floating
-        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E15+(500×⍳10) ⋄ ⎕FR←645  ⍝ 1287: 128 bits Decimal
-        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)            ⍝ 1289: 128 bits Complex
+    ∇ r←Test_Membership ;w;n;r;data;data2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR
+        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+        i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
+        char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
+        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
+        i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
+        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
+        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+        ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645         ⍝ 1287: 128 bits Decimal
+        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
+        ⍝ Hdbl is 645 but higher order to test for CT value
+        ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
+        ⍝ come under the region of tolerant equality
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
+        ⍝ Hfl is 1287 but higher order to test for CT value
+        ⍝ far intervals are chosen for non overlap 
+        ⍝ with region of tolerant equality
+        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E15+(500×⍳10) ⋄ ⎕FR←645 
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
+        
+        ct_default←1E¯14
+        dct_default←1E¯28
 
         r←⍬
         :For ct :In 1 0 
-            :If ct
-                ⎕CT←1E¯14
-                ⎕DCT←1E¯28
-            :Else
-                ⎕CT←0
-                ⎕DCT←0
-            :EndIf               
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+
             :For data :In bool i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx Hdbl Hfl Hcmplx
                 :If 11≠type←⎕DR data
                     ⍝ Cross DR testing
@@ -47,10 +51,13 @@
                     r,←assert (0≡5E50∊data) 't4' ('for ⎕DR'(⎕DR data)'with ⎕CT, ⎕DCT:'⎕CT','⎕DCT)                          ⍝ huge element outside set is not found
                     d←data[?≢data]
                     :If ct
-                        :If (((⎕DR data) ∊ 80 83 160 163 320 323 326)) ∨ (data≡dbl) ∨ (data≡fl) ∨ (data≡cmplx)
-                            :continue
+                        ⍝ case for CT default
+                        :If (data≡Hdbl) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
+                            ⍝ next number is equal for Hdbl as it comes under the region of tolerant equality
+                            r,←assert (1≡(d∊d+1)) 'CTDefault' ('for ⎕DR'(⎕DR d)'with ⎕CT, ⎕DCT:'⎕CT','⎕DCT)
+                        :Else
+                            :Continue ⍝ not relevant for other datatypes
                         :EndIf
-                        r,←assert (1≡(d∊d+1)) 'CTDefault' ('for ⎕DR'(⎕DR d)'with ⎕CT, ⎕DCT:'⎕CT','⎕DCT)
                     :Else
                         :If ((⎕DR data) ∊ 80 160 320 326)
                             :continue
