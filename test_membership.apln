@@ -29,38 +29,40 @@
         dct_default←1E¯28
 
         r←⍬
-        testDesc←{'for',⍵[1],({⍵≡0:'' ⋄ ',',⍵}⍵[2]),'& ⎕CT ⎕DCT:',⍵[3],⍵[4]}
+        testDesc←{'for ',case,{1∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT}
+
         :For ct :In 1 0 
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
 
             :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                 data←⍎case
-                ⍝ same type tests
-                r,←assert ((data[?≢data])∊data) 't1' (testDesc (case 0 ⎕CT ⎕DCT))                  ⍝ random element is found
-                r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' (testDesc (case 0 ⎕CT ⎕DCT))  ⍝ All elements return 0 except last
-                r,←assert (((≢data)⍴1)≡data∊data) 't3' (testDesc (case 0 ⎕CT ⎕DCT))                ⍝ all elements return 1
-                r,←assert (0≡5E50∊data) 't4' (testDesc (case 0 ⎕CT ⎕DCT))                          ⍝ huge element outside set is not found
-                d←data[?≢data]
-                
                 ⍝ Cross type tests
                 :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                     data2←⍎case2
                     :If (data≡data2)
-                        r,←assert (((≢data)⍴1) ≡ (data∊data2)) 'tcross0' (testDesc (case case2 ⎕CT ⎕DCT))
+                        r,←assert (((≢data)⍴1) ≡ (data∊data2)) 'tcross0' (testDesc⍬)
                         :Continue
                     :EndIf
-                    r,←assert (((≢data)⍴0) ≡ (data∊data2)) 'tcross1' (testDesc (case case2 ⎕CT ⎕DCT)) ⍝ no match, all return 0
-                    r,←assert (((≢data2)⍴0) ≡ (data2∊data)) 'tcross2' (testDesc (case case2 ⎕CT ⎕DCT)) ⍝ no match, all return 0
-                    r,←assert (((≢data)⍴1) ≡ (data∊data,data2)) 'tcross3' (testDesc (case case2 ⎕CT ⎕DCT)) ⍝ first data match, returns 1
-                    r,←assert ((((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data)) 'tcross4' (testDesc (case case2 ⎕CT ⎕DCT)) ⍝ data match, data2 no match
+                    r,←assert (((≢data)⍴0) ≡ (data∊data2)) 'tcross1' (testDesc⍬) ⍝ no match, all return 0
+                    r,←assert (((≢data2)⍴0) ≡ (data2∊data)) 'tcross2' (testDesc⍬) ⍝ no match, all return 0
+                    r,←assert (((≢data)⍴1) ≡ (data∊data,data2)) 'tcross3' (testDesc⍬) ⍝ first data match, returns 1
+                    r,←assert ((((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data)) 'tcross4' (testDesc⍬) ⍝ data match, data2 no match
                 :EndFor
+                case2←⍬ ⍝ disposing case2 for testDesc
+
+                ⍝ same type tests
+                r,←assert ((data[?≢data])∊data) 't1' (testDesc⍬)                  ⍝ random element is found
+                r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' (testDesc⍬)  ⍝ All elements return 0 except last
+                r,←assert (((≢data)⍴1)≡data∊data) 't3' (testDesc⍬)                ⍝ all elements return 1
+                r,←assert (0≡5E50∊data) 't4' (testDesc⍬)                          ⍝ huge element outside set is not found
+                d←data[?≢data]
 
                 ⍝ tests with comparision tolerance
                 :If ct
                     ⍝ case for CT default
                     :If (data≡Hdbl) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
                         ⍝ next number is equal for Hdbl as it comes under the region of tolerant equality
-                        r,←assert (1≡(d∊d+1)) 'CTDefault' (testDesc (case 0 ⎕CT ⎕DCT))
+                        r,←assert (1≡(d∊d+1)) 'CTDefault' (testDesc⍬)
                     :Else
                         :Continue ⍝ not relevant for other datatypes
                     :EndIf
@@ -68,27 +70,28 @@
                     :If ((⎕DR data) ∊ 80 160 320 326)
                         :continue
                     :EndIf
-                    r,←assert (0≡(d∊d+1)) 'CTZero' (testDesc (case 0 ⎕CT ⎕DCT))
+                    r,←assert (0≡(d∊d+1)) 'CTZero' (testDesc⍬)
                 :EndIf
             :EndFor
 
             ⍝ Booleans need special tests
-            r,←assert (0∊0) 'tb1' (testDesc (case 0 ⎕CT ⎕DCT))
-            r,←assert (~0∊1) 'tb2' (testDesc (case 0 ⎕CT ⎕DCT))
+            case←'bool'
+            r,←assert (0∊0) 'tb1' (testDesc⍬)
+            r,←assert (~0∊1) 'tb2' (testDesc⍬)
             r,←assert (1 1≡bool∊bool) 'tb3' ('for bool')
             
             ⍝ Boolean cross type tests
             :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx' ⍝ bool requires separate cross tests because of overlap with i1
                 data2←⍎case2
                 :If (83≠type←⎕DR data2) ⍝ special case because of overlap
-                        r,←assert (((≢bool)⍴0) ≡ (bool∊data2)) 'tcrossBool' (testDesc ('bool' case2 ⎕CT ⎕DCT)) ⍝ All elements return 0
-                        r,←assert (((≢data2)⍴0) ≡ (data2∊bool)) 'tcrossBool' (testDesc ('bool' case2 ⎕CT ⎕DCT)) ⍝ All elements return 0
+                        r,←assert (((≢bool)⍴0) ≡ (bool∊data2)) 'tcrossBool1' (testDesc⍬) ⍝ All elements return 0
+                        r,←assert (((≢data2)⍴0) ≡ (data2∊bool)) 'tcrossBool2' (testDesc⍬) ⍝ All elements return 0
                 :Else
-                    r,←assert (((≢bool)⍴1) ≡ (bool∊data2)) 'tcrossBool' (testDesc ('bool' case2 ⎕CT ⎕DCT)) ⍝ All elements return 1
-                    r,←assert (((⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool)) 'tcrossBool' (testDesc ('bool' case2 ⎕CT ⎕DCT)) ⍝ overlaping 0 1 returns 1
+                    r,←assert (((≢bool)⍴1) ≡ (bool∊data2)) 'tcrossBooli1' (testDesc⍬) ⍝ All elements return 1
+                    r,←assert (((⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool)) 'tcrossBooli2' (testDesc⍬) ⍝ overlaping 0 1 returns 1
                 :EndIf
             :EndFor
-
+            case2←⍬
         :EndFor
     ∇
 :EndNamespace
