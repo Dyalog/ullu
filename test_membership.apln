@@ -3,7 +3,7 @@
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;testDesc;desc
+    ∇ r←Test_Membership ;w;n;r;case;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;testDesc;desc
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
         char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
@@ -41,21 +41,21 @@
                     data2←⍎case2
                     desc←testDesc⍬
                     :If (data≡data2)
-                        r,←'tcross0' desc Assert '((≢data)⍴1)' '(data∊data2)'
+                        r,←'tcross0' desc Assert '(≢data)⍴1' 'data∊data2'
                         :Continue
                     :EndIf
-                    r,← 'tcross1' desc Assert '((≢data)⍴0)' '(data∊data2)'                     ⍝ no match, all return 0
-                    r,← 'tcross2' desc Assert '((≢data2)⍴0)' '(data2∊data)'                    ⍝ no match, all return 0
-                    r,← 'tcross3' desc Assert '((≢data)⍴1)' '(data∊data,data2)'                ⍝ first data match, returns 1
-                    r,← 'tcross4' desc Assert '(((≢data)⍴1),((≢data2)⍴0))' '((data,data2)∊data)' ⍝ data match, data2 no match
+                    r,← 'tcross1' desc Assert '(≢data)⍴0' 'data∊data2'                     ⍝ no match, all return 0
+                    r,← 'tcross2' desc Assert '(≢data2)⍴0' 'data2∊data'                    ⍝ no match, all return 0
+                    r,← 'tcross3' desc Assert '(≢data)⍴1' 'data∊data,data2'                ⍝ first data match, returns 1
+                    r,← 'tcross4' desc Assert '((≢data)⍴1),((≢data2)⍴0)' '(data,data2)∊data' ⍝ data match, data2 no match
                 :EndFor
                 case2←⍬ ⍝ disposing case2 for testDesc
                 desc←testDesc⍬
 
                 ⍝ same type tests
                 r,← 't1' desc Assert '1' '(data[?≢data])∊data'                ⍝ random element is found
-                r,← 't2' desc Assert '((((≢data)-1)⍴0), 1)' 'data∊(¯1↑data)'  ⍝ All elements return 0 except last
-                r,← 't3' desc Assert '((≢data)⍴1)' 'data∊data'                ⍝ all elements return 1
+                r,← 't2' desc Assert '(((≢data)-1)⍴0), 1' 'data∊(¯1↑data)'  ⍝ All elements return 0 except last
+                r,← 't3' desc Assert '(≢data)⍴1' 'data∊data'                ⍝ all elements return 1
                 r,← 't4' desc Assert '0' '5E50∊data'                          ⍝ huge element outside set is not found
 
                 ⍝ tests with comparision tolerance
@@ -64,7 +64,7 @@
                     ⍝ case for CT default
                     :If (data≡Hdbl) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
                         ⍝ next number is equal for Hdbl as it comes under the region of tolerant equality
-                        r,← 'CTDefault' desc Assert '1' '(d∊d+1)'
+                        r,← 'CTDefault' desc Assert '1' 'd∊d+1'
                     :Else
                         :Continue ⍝ not relevant for other datatypes
                     :EndIf
@@ -73,7 +73,7 @@
                         :continue
                     :EndIf
                     ⍝ When exact tolerance is applied, region of tolerant equality is reduced
-                    r,← 'CTZero' desc Assert '0' '(d∊d+1)'
+                    r,← 'CTZero' desc Assert '0' 'd∊d+1'
                 :EndIf
             :EndFor
 
@@ -90,11 +90,11 @@
                 data2←⍎case2
                 desc←testDesc⍬
                 :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
-                    r,← 'tcrossBool1' desc Assert '((≢bool)⍴0)' '(bool∊data2)'      ⍝ All elements return 0
-                    r,← 'tcrossBool2' desc Assert '((≢data2)⍴0)' '(data2∊bool)'     ⍝ All elements return 0
+                    r,← 'tcrossBool1' desc Assert '(≢bool)⍴0' '(bool∊data2)'      ⍝ All elements return 0
+                    r,← 'tcrossBool2' desc Assert '(≢data2)⍴0' '(data2∊bool)'     ⍝ All elements return 0
                 :Else
-                    r,← 'tcrossBooli1' desc Assert '((≢bool)⍴1)' '(bool∊data2)'     ⍝ All elements return 1
-                    r,← 'tcrossBooli2' desc Assert '((⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1))' '(data2∊bool)' ⍝ overlaping 0 1 returns 1
+                    r,← 'tcrossBooli1' desc Assert '(≢bool)⍴1' '(bool∊data2)'     ⍝ All elements return 1
+                    r,← 'tcrossBooli2' desc Assert '(⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1)' 'data2∊bool' ⍝ overlaping 0 1 returns 1
                 :EndIf
             :EndFor
             ⍝ disposing case for testDesc

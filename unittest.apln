@@ -13,7 +13,8 @@
     ∇ r←tData Assert tCode ;r;tID;tCmt ⍝ to output result of tests
         (tID tCmt)←tData
         (exR acR)←tCode
-        r←⍎(exR)≡⍎(acR) ⍝ todo: throws an error because data and data2 are in the other namespace
+        r←⍎((2⊃⎕XSI),'.',(exR))≡⍎((2⊃⎕XSI),'.',(acR)) ⍝ todo: throws an error because data and data2 are in the other namespace
+        ⍝ r←((⊃⎕XSI)⍎exR)≡((⊃⎕XSI)⍎acR)
         :If (~r)∧stop
             PPTestResult r tID tCmt
             'Stopping on failure of:' ⎕SIGNAL 500
