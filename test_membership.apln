@@ -3,7 +3,7 @@
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;testDesc
+    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;testDesc;desc
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
         char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character

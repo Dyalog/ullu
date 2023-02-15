@@ -10,8 +10,7 @@
     ⍝ Pretty print test result
     PPTestResult←{⍵[2], ⍵[3], ': ', FAIL_OK[1+⍵[1]]}
 
-    ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
-    ∇ r←tData Assert r ;r;testID;i;miscData ⍝ to output result of tests
+    ∇ r←tData Assert r ;r;tID;tCmt ⍝ to output result of tests
         (tID tCmt)←tData
         :If (~r)∧stop
             PPTestResult r tID tCmt
