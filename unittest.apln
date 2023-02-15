@@ -11,16 +11,16 @@
     PPTestResult←{⍵[2], ⍵[3], ': ', FAIL_OK[1+⍵[1]]}
 
     ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
-    ∇ r←assert args ;r;testID;i;miscData ⍝ to output result of tests
-        (r testID miscData)←args
+    ∇ r←tData Assert r ;r;testID;i;miscData ⍝ to output result of tests
+        (tID tCmt)←tData
         :If (~r)∧stop
-            PPTestResult args
+            PPTestResult r tID tCmt
             'Stopping on failure of:' ⎕SIGNAL 500
         :EndIf
         :If verbose
-            PPTestResult args
+            PPTestResult r tID tCmt
         :ElseIf ~r∨stop
-            PPTestResult args
+            PPTestResult r tID tCmt
         :EndIf
     ∇
 
