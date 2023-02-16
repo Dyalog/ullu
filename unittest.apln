@@ -6,6 +6,7 @@
     }
 
     FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
+    ⎕RL←randLink←?1000
 
     ⍝ Pretty print test result
     PPTestResult←{⍵[2], ⍵[3], ': ', FAIL_OK[1+⍵[1]]}
@@ -34,14 +35,15 @@
             
             (testNS verbose stop)←args
             
+            'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
+            'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11       
+            
             :If verbose
                 ⎕←'Options:'
                 ⎕←(6⍴' '),'verbose:', verbose
-                ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
+                ⎕←(6⍴' '),'stop:', stop
+                ⎕←(6⍴' '),'⎕RL is set to:', randLink ⋄ ⎕←''
             :EndIf
-
-            'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
-            'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11
         :EndSection
         
         :Section FetchTests
