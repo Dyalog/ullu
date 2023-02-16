@@ -37,12 +37,12 @@
             
             'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
             'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11       
-            
+
+            ⎕←'Options:'
+            ⎕←(6⍴' '),'⎕RL is set to:', randLink
             :If verbose
-                ⎕←'Options:'
                 ⎕←(6⍴' '),'verbose:', verbose
-                ⎕←(6⍴' '),'stop:', stop
-                ⎕←(6⍴' '),'⎕RL is set to:', randLink ⋄ ⎕←''
+                ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
             :EndIf
         :EndSection
         
