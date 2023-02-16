@@ -1,6 +1,6 @@
 :Namespace test_membership
     assert←#.unittest.assert
-    ⎕RL←#.unittest.randLink
+    ⎕RL←#.unittest.rl
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
