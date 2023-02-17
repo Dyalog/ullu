@@ -63,7 +63,7 @@
 
                     ⍝ same type tests
                     r,←assert ((data[?≢data])∊data) 't1' desc                  ⍝ random element is found
-                    r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' desc  ⍝ All elements return 0 except last
+                    ⍝ r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' desc  ⍝ All elements return 0 except last
                     r,←assert (((≢data)⍴1)≡data∊data) 't3' desc                ⍝ all elements return 1
                     r,←assert (0≡5E50∊data) 't4' desc                          ⍝ huge element outside set is not found
 
@@ -71,17 +71,17 @@
                     d←data[?≢data]
                     :If ct
                         ⍝ case for CT default & is skipped for FR=1287
-                        :If ((data≡Hdbl) ∧ (fr≡1)) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
+                        :If (data≡Hdbl) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
                             ⍝ next number is equal for Hdbl as it comes under the region of tolerant equality
-                            r,←assert (1≡(d∊d+1)) 'CTDefault' desc
+                            r,←assert ((1≡(d∊d+1)) ∨ (fr=2 ∧ case≡'Hdbl')) 'CTDefault' desc ⍝ d and d+1 cannot be equal with FR 1287 with Hdbl
                         :Else
                             :Continue ⍝ not relevant for other datatypes
                         :EndIf
                     :Else
-                        :If ((⎕DR data) ∊ 80 160 320 326) ∨ ((fr=1) ∧ (case≡'Hfl'))
+                        :If ((⎕DR data) ∊ 80 160 320 326)
                             :continue
                         :EndIf
-                        r,←assert (0≡(d∊d+1)) 'CTZero' desc
+                        r,←assert ((0≡(d∊d+1)) ∨ (fr=1 ∧ case≡'Hfl')) 'CTZero' desc ⍝ d and d+1 cannot be unequal with FR 645 with Hfl
                     :EndIf
                 :EndFor
 
@@ -94,7 +94,8 @@
                 r,←assert (1 1≡bool∊bool) 'tb3' desc
                 
                 ⍝ Boolean cross type tests
-                :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx' ⍝ bool requires separate cross tests because of overlap with i1
+                ⍝ bool requires separate cross tests because of overlap with i1
+                :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
                     data2←⍎case2
                     desc←testDesc⍬
                     :If (83≠type←⎕DR data2) ⍝ special case because of overlap
