@@ -22,7 +22,7 @@
         ⍝ Hfl is 1287 but higher order to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
-        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(500×⍳10) ⋄ ⎕FR←645 
+        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
         
         ct_default←1E¯14
@@ -63,7 +63,7 @@
 
                     ⍝ same type tests
                     r,←assert ((data[?≢data])∊data) 't1' desc                  ⍝ random element is found
-                    ⍝ r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' desc  ⍝ All elements return 0 except last
+                    r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' desc  ⍝ All elements return 0 except last
                     r,←assert (((≢data)⍴1)≡data∊data) 't3' desc                ⍝ all elements return 1
                     r,←assert (0≡5E50∊data) 't4' desc                          ⍝ huge element outside set is not found
 
