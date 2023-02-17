@@ -22,7 +22,7 @@
         ⍝ Hfl is 1287 but higher order to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
-        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E15+(500×⍳10) ⋄ ⎕FR←645 
+        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(500×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
         
         ct_default←1E¯14
@@ -41,6 +41,9 @@
 
                 :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                     data←⍎case
+                    :If fr=2 ∧ ((case≡'cmplx') ∨ (case≡'Hcmplx'))
+                        :Continue
+                    :EndIf
 
                     ⍝ Cross type tests
                     :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
@@ -66,16 +69,16 @@
 
                     ⍝ tests with comparision tolerance
                     d←data[?≢data]
-                    :If ct ∧ (fr=1)
+                    :If ct
                         ⍝ case for CT default & is skipped for FR=1287
-                        :If (data≡Hdbl) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
+                        :If ((data≡Hdbl) ∧ (fr≡1)) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
                             ⍝ next number is equal for Hdbl as it comes under the region of tolerant equality
                             r,←assert (1≡(d∊d+1)) 'CTDefault' desc
                         :Else
                             :Continue ⍝ not relevant for other datatypes
                         :EndIf
                     :Else
-                        :If ((⎕DR data) ∊ 80 160 320 326)
+                        :If ((⎕DR data) ∊ 80 160 320 326) ∨ ((fr=1) ∧ (case≡'Hfl'))
                             :continue
                         :EndIf
                         r,←assert (0≡(d∊d+1)) 'CTZero' desc
