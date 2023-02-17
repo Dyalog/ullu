@@ -27,7 +27,7 @@
 
     ⍝ This function runs the tests
     ⍝ It takes 4 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value] (0 default)
-    ∇ RunTests args ;st;testNS;tests;i;tList;expr;t;r;nPass;nFail;randLink
+    ∇ RunTests args ;st;testNS;tests;i;tList;expr;t;r;nPass;nFail;randLink;rl
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
