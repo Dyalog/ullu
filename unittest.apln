@@ -13,6 +13,7 @@
     ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
     ∇ r←assert args ;r;testID;i;miscData ⍝ to output result of tests
         (r testID miscData)←args
+        ⎕RL←rl ⍝ Reset ⎕RL after each test
         :If (~r)∧stop
             PPTestResult args
             'Stopping on failure of:' ⎕SIGNAL 500
@@ -25,22 +26,22 @@
     ∇
 
     ⍝ This function runs the tests
-    ⍝ It takes 4 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=(⍬ for default)]
+    ⍝ It takes 4 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value] (0 default)
     ∇ RunTests args ;st;testNS;tests;i;tList;expr;t;r;nPass;nFail;randLink
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
-            'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=(⍬ for default)]'⎕SIGNAL ((≢args)=4)↓11
+            'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(''?'' for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳4)↓11
+            ⍝ having 0 default for RL so tests are predictable, tests can be done with ⍬ for random seed values
+            (testNS verbose stop randLink)←4↑args,0 0 0 0
 
-            (testNS verbose stop randLink)←args
-            
             'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
             'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11       
 
-            ⎕RL←rl←{(≢⍵)≡0:(?(¯2+2*31))⋄⍵} randLink
-
+            ⍝ ⎕RL←rl←{(≢⍵)≡0:(?(¯2+2*31))⋄⍵} randLink
+            ⎕RL←rl←{⍵≡'?':(?(¯2+2*31))⋄⍵} randLink
             ⎕←'Options:'
-            ⎕←(6⍴' '),'⎕RL is set to:', rl
+            ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl
             :If verbose
                 ⎕←(6⍴' '),'verbose:', verbose
                 ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
@@ -64,7 +65,6 @@
 
         :Section EvalResult            
             nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-
             ⎕←''⋄⎕←'Tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
         :EndSection
     ∇
