@@ -10,24 +10,23 @@
     ⍝ Pretty print test result
     PPTestResult←{⍵[2], ⍵[3], ': ', FAIL_OK[1+⍵[1]]}
 
-    ⍝ Assert takes 4 mandatory arguments [result=1|0] [testID] [iterator] [miscData]
-    ∇ r←assert args ;r;testID;i;miscData ⍝ to output result of tests
-        (r testID miscData)←args
+    ∇ r←tData Assert r ;r;tID;tCmt ⍝ to output result of tests
+        (tID tCmt)←tData
         ⎕RL←rl ⍝ Reset ⎕RL after each test
         :If (~r)∧stop
-            PPTestResult args
+            PPTestResult r tID tCmt
             'Stopping on failure of:' ⎕SIGNAL 500
         :EndIf
         :If verbose
-            PPTestResult args
+            PPTestResult r tID tCmt
         :ElseIf ~r∨stop
-            PPTestResult args
+            PPTestResult r tID tCmt
         :EndIf
     ∇
 
     ⍝ This function runs the tests
     ⍝ It takes 4 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value] (0 default)
-    ∇ RunTests args ;st;testNS;tests;i;tList;expr;t;r;nPass;nFail;randLink;rl
+    ∇ RunTests args ;st;testNS;tests;i;tList;expr;t;r;nPass;nFail;randLink
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
