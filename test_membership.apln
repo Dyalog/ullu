@@ -25,6 +25,10 @@
         ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
         
+        emp1←⍬, '', ⍳0, 0⍴⊂i1, 0⍴⊂char1
+⍝ todo: expand this to generate differntly shaped arrays
+        emp2←0⍴⊂2 2⍴0
+
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -108,6 +112,13 @@
                 case←⍬
                 case2←⍬
             :EndFor
+        :EndFor
+
+        ⍝ tests for empty/differently shaped arrays
+        :For case :In 'emp1' 'emp2'
+            data←⍎case
+            desc←testDesc⍬
+            r,← 'empty' desc Assert 0 ≡ (0∊data)
         :EndFor
     ∇
 :EndNamespace
