@@ -12,15 +12,21 @@ Link the namespaces:
 ```
 Run the test cases
 ```
-unittest.RunTests [test_namespace] [verbose=0|1] [Stop=0|1]
+unittest.RunTests [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(''?'' for random)] (0 default)
 ```
 verbose: if set to 0, only output failing tests and a single summary line.
 
 stop: if set to 1, any test which fails causes the framework to stop and allows the developer to inspect the failing test.
 
+⎕RL: Seed value to for the random link variable that generates random numbers through the tests (it gets reset after each test)
+
 Example:
 ```
-unittest.RunTests test_membership 1 0
+unittest.RunTests test_membership 1 0 1232
+```
+or
+```
+unittest.RunTests test_membership
 ```
 
 <!-- ## Configuration
