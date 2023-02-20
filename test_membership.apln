@@ -28,7 +28,7 @@
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
-        fr_fl←1287
+        fr_decf←1287
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
@@ -37,11 +37,11 @@
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
 
             :For fr :In 1 2
-                ⎕FR←fr⊃fr_dbl fr_fl
+                ⎕FR←fr⊃fr_dbl fr_decf
 
                 :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                     data←⍎case
-                    :If fr=2 ∧ ((case≡'cmplx') ∨ (case≡'Hcmplx'))
+                    :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
                         :Continue
                     :EndIf
 
@@ -70,19 +70,17 @@
 
                     ⍝ tests with comparision tolerance
                     d←data[?≢data]
-                    :If ct
+                    :If ct ⍝ tolerant
                         ⍝ case for CT default & is skipped for FR=1287
-                        :If (data≡Hdbl) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
-                            ⍝ next number is equal for Hdbl as it comes under the region of tolerant equality
-                            r,← 'CTDefault' desc Assert (1≡(d∊d+1)) ∨ (fr=2 ∧ case≡'Hdbl') ⍝ d and d+1 cannot be equal with FR 1287 with Hdbl
-                        :Else
-                            :Continue ⍝ not relevant for other datatypes
+                        :If (⊂data)∊Hdbl Hfl Hcmplx
+                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                            r,← 'CTDefault' desc Assert ((1≡(d∊d+1)) ∨ (fr=2 ∧ case≡'Hdbl'))
                         :EndIf
-                    :Else
-                        :If ((⎕DR data) ∊ 80 160 320 326)
-                            :continue
+                    :Else  ⍝ exact
+                        :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                            ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                            r,← 'CTZero' desc Assert ((0≡(d∊d+1)) ∨ (fr=1 ∧ case≡'Hfl'))
                         :EndIf
-                        r,← 'CTZero' desc Assert ((0≡(d∊d+1)) ∨ (fr=1 ∧ case≡'Hfl')) ⍝ d and d+1 cannot be unequal with FR 645 with Hfl
                     :EndIf
                 :EndFor
 
@@ -103,7 +101,7 @@
                         r,← 'tcrossBool2' desc Assert ((≢data2)⍴0) ≡ (data2∊bool)     ⍝ All elements return 0
                     :Else
                         r,← 'tcrossBooli1' desc Assert ((≢bool)⍴1) ≡ (bool∊data2)     ⍝ All elements return 1
-                        r,← 'tcrossBooli2' desc Assert ((⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
+                        r,← 'tcrossBooli2' desc Assert ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
                     :EndIf
                 :EndFor
                 ⍝ disposing case for testDesc
