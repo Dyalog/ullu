@@ -22,84 +22,92 @@
         ⍝ Hfl is 1287 but higher order to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
-        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E15+(500×⍳10) ⋄ ⎕FR←645 
+        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
         
         ct_default←1E¯14
         dct_default←1E¯28
+        fr_dbl←645
+        fr_decf←1287
 
         r←⍬
-        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT}
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
         :For ct :In 1 0 
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
 
-            :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                data←⍎case
-                ⍝ Cross type tests
-                :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                    data2←⍎case2
-                    desc←testDesc⍬
-                    :If (data≡data2)
-                        r,←'tcross0' desc Assert ((≢data)⍴1) ≡ (data∊data2)
+            :For fr :In 1 2
+                ⎕FR←fr⊃fr_dbl fr_decf
+
+                :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                    data←⍎case
+                    :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
                         :Continue
                     :EndIf
-                    r,← 'tcross1' desc Assert ((≢data)⍴0) ≡ (data∊data2)                     ⍝ no match, all return 0
-                    r,← 'tcross2' desc Assert ((≢data2)⍴0) ≡ (data2∊data)                    ⍝ no match, all return 0
-                    r,← 'tcross3' desc Assert ((≢data)⍴1) ≡ (data∊data,data2)                ⍝ first data match, returns 1
-                    r,← 'tcross4' desc Assert (((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data) ⍝ data match, data2 no match
+
+                    ⍝ Cross type tests
+                    :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        data2←⍎case2
+                        desc←testDesc⍬
+                        :If (data≡data2)
+                            r,←'tcross0' desc Assert ((≢data)⍴1) ≡ (data∊data2)
+                            :Continue
+                        :EndIf
+                        r,← 'tcross1' desc Assert ((≢data)⍴0) ≡ (data∊data2)                     ⍝ no match, all return 0
+                        r,← 'tcross2' desc Assert ((≢data2)⍴0) ≡ (data2∊data)                    ⍝ no match, all return 0
+                        r,← 'tcross3' desc Assert ((≢data)⍴1) ≡ (data∊data,data2)                ⍝ first data match, returns 1
+                        r,← 'tcross4' desc Assert (((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data) ⍝ data match, data2 no match
+                    :EndFor
+                    case2←⍬ ⍝ disposing case2 for testDesc
+                    desc←testDesc⍬
+
+
+                    ⍝ same type tests
+                    r,← 't1' desc Assert (data[?≢data])∊data                  ⍝ random element is found
+                    r,← 't2' desc Assert ((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)  ⍝ All elements return 0 except last
+                    r,← 't3' desc Assert ((≢data)⍴1)≡data∊data                ⍝ all elements return 1
+                    r,← 't4' desc Assert 0≡5E50∊data                          ⍝ huge element outside set is not found
+
+                    ⍝ tests with comparision tolerance
+                    d←data[?≢data]
+                    :If ct ⍝ tolerant
+                        ⍝ case for CT default & is skipped for FR=1287
+                        :If (⊂data)∊Hdbl Hfl Hcmplx
+                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                            r,← 'CTDefault' desc Assert ((1≡(d∊d+1)) ∨ (fr=2 ∧ case≡'Hdbl'))
+                        :EndIf
+                    :Else  ⍝ exact
+                        :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                            ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                            r,← 'CTZero' desc Assert ((0≡(d∊d+1)) ∨ (fr=1 ∧ case≡'Hfl'))
+                        :EndIf
+                    :EndIf
                 :EndFor
-                case2←⍬ ⍝ disposing case2 for testDesc
+
+                ⍝ Booleans need special tests
+                case←'bool'
                 desc←testDesc⍬
 
-                ⍝ same type tests
-                r,← 't1' desc Assert (data[?≢data])∊data                  ⍝ random element is found
-                r,← 't2' desc Assert ((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)  ⍝ All elements return 0 except last
-                r,← 't3' desc Assert ((≢data)⍴1)≡data∊data                ⍝ all elements return 1
-                r,← 't4' desc Assert 0≡5E50∊data                          ⍝ huge element outside set is not found
-
-                ⍝ tests with comparision tolerance
-                d←data[?≢data]
-                :If ct
-                    ⍝ case for CT default
-                    :If (data≡Hdbl) ∨ (data≡Hfl) ∨ (data≡Hcmplx)
-                        ⍝ next number is equal for Hdbl as it comes under the region of tolerant equality
-                        r,← 'CTDefault' desc Assert 1≡(d∊d+1)
+                r,← 'tb1' desc Assert 0∊0
+                r,← 'tb2' desc Assert ~0∊1
+                r,← 'tb3' desc Assert 1 1≡bool∊bool
+                
+                ⍝ Boolean cross type tests
+                :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
+                    data2←⍎case2
+                    desc←testDesc⍬
+                    :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
+                        r,← 'tcrossBool1' desc Assert ((≢bool)⍴0) ≡ (bool∊data2)      ⍝ All elements return 0
+                        r,← 'tcrossBool2' desc Assert ((≢data2)⍴0) ≡ (data2∊bool)     ⍝ All elements return 0
                     :Else
-                        :Continue ⍝ not relevant for other datatypes
+                        r,← 'tcrossBooli1' desc Assert ((≢bool)⍴1) ≡ (bool∊data2)     ⍝ All elements return 1
+                        r,← 'tcrossBooli2' desc Assert ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
                     :EndIf
-                :Else
-                    :If ((⎕DR data) ∊ 80 160 320 326)
-                        :continue
-                    :EndIf
-                    ⍝ When exact tolerance is applied, region of tolerant equality is reduced
-                    r,← 'CTZero' desc Assert 0≡(d∊d+1)
-                :EndIf
+                :EndFor
+                ⍝ disposing case for testDesc
+                case←⍬
+                case2←⍬
             :EndFor
-
-            ⍝ Booleans need special tests
-            case←'bool'
-            desc←testDesc⍬
-
-            r,← 'tb1' desc Assert 0∊0
-            r,← 'tb2' desc Assert ~0∊1
-            r,← 'tb3' desc Assert 1 1≡bool∊bool
-            
-            ⍝ Boolean cross type tests
-            :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
-                data2←⍎case2
-                desc←testDesc⍬
-                :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
-                    r,← 'tcrossBool1' desc Assert ((≢bool)⍴0) ≡ (bool∊data2)      ⍝ All elements return 0
-                    r,← 'tcrossBool2' desc Assert ((≢data2)⍴0) ≡ (data2∊bool)     ⍝ All elements return 0
-                :Else
-                    r,← 'tcrossBooli1' desc Assert ((≢bool)⍴1) ≡ (bool∊data2)     ⍝ All elements return 1
-                    r,← 'tcrossBooli2' desc Assert ((⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
-                :EndIf
-            :EndFor
-            ⍝ disposing case for testDesc
-            case←⍬
-            case2←⍬
         :EndFor
     ∇
 :EndNamespace
