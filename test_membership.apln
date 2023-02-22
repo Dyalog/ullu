@@ -25,9 +25,10 @@
         ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
         
-        emp1←⍬, '', ⍳0, 0⍴⊂i1, 0⍴⊂char1
-⍝ todo: expand this to generate differntly shaped arrays
-        emp2←0⍴⊂2 2⍴0
+        empOneDim←⍬, '', ⍳0, 0⍴⊂i1, 0⍴⊂char1 ⍝ concat of different types of empty arrays
+        empMultiDim←{0⍴⊂((?(⍳(?⍵)))⍴0)} ⍝ generate differently shaped empty arrays
+
+        multiDim←{(⍳⍵)⍴(⍳10)} ⍝ generates arrays of upto 11 dimentions
 
         ct_default←1E¯14
         dct_default←1E¯28
@@ -108,17 +109,27 @@
                         r,← 'tcrossBooli2' desc Assert ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
                     :EndIf
                 :EndFor
-                ⍝ disposing case for testDesc
-                case←⍬
-                case2←⍬
+                case2←⍬                
+                
+                ⍝ tests for empty/differently shaped arrays
+                case←'dif. shaped arrays'
+                desc←testDesc⍬
+                r,← 'emptyLinear' desc Assert 0 ≡ (0∊empOneDim) ⍝ 0 is not found as an element of the array
+                :For itr :In ⍳11 ⍝ Multi Dimention empty
+                    empMultiDimArr←empMultiDim itr
+
+                    r,←('empty',itr) desc Assert 0≡(0∊empMultiDimArr) ⍝ 0 is not found as an element of the array
+                :EndFor
+
+                :For itr :In ⍳11 ⍝ Multi Dimention non-empty
+                    shape←?itr
+                    multiDimArr←multiDim shape
+                    eleInMultiDimArr←multiDimArr[⊂?(⍳shape)]
+
+                    r,←('multiDim',itr) desc Assert 1≡(eleInMultiDimArr∊multiDimArr) ⍝ random element in multi dimention array is found
+                :EndFor
             :EndFor
         :EndFor
 
-        ⍝ tests for empty/differently shaped arrays
-        :For case :In 'emp1' 'emp2'
-            data←⍎case
-            desc←testDesc⍬
-            r,← 'empty' desc Assert 0 ≡ (0∊data)
-        :EndFor
     ∇
 :EndNamespace
