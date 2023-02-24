@@ -5,14 +5,22 @@
         (exR left right)←exp
         (tID tCmt)←tData
         tRes←⍬
-
+        
+        ⍝ normal
         acR←left∊right ⍝ actual result
         res←exR≡acR
         tRes,←tData Assert res
         
+        ⍝ empty
         acRE←left∊(0⍴⊂right) ⍝ generating empty array from right
         res←(0×exR)≡acRE ⍝ all 0s in exR is the new expected result
         tRes,←('Empty',tID) tCmt Assert res
+        
+        ⍝ different shapes
+        leftshape←⍳4 ⍝ todo: needs randomization
+        rightshape←⍳7 ⍝ todo: needs randomization
+        res←(leftshape⍴exR) ≡ (leftshape⍴left)∊(rightshape⍴right)
+        tRes,←('Multiple',tID) tCmt Assert res
     ∇
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
