@@ -1,6 +1,13 @@
 :Namespace test_membership
     Assert←#.unittest.Assert
 
+    ∇ tRes←tData Eval exp
+        (exR left right)←exp
+        acR←left∊right
+        res←exR≡acR
+        tRes←tData Assert res
+    ∇
+
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
     ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;testDesc;desc
@@ -37,13 +44,6 @@
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
-
-        Eval←{
-            (exR left right)←⍵
-            acR←left∊right
-            res←exR≡acR
-            ⍺ Assert res
-        }
 
         :For ct :In 1 0 
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
