@@ -38,6 +38,13 @@
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
+        Eval←{
+            (exR left right)←⍵
+            acR←left∊right
+            res←exR≡acR
+            ⍺ Assert res
+        }
+
         :For ct :In 1 0 
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
 
@@ -55,24 +62,25 @@
                         data2←⍎case2
                         desc←testDesc⍬
                         :If (data≡data2)
-                            r,←'tcross0' desc Assert ((≢data)⍴1) ≡ (data∊data2)
+                            r,←'tcross0' desc Eval ((≢data)⍴1) data data2
                             :Continue
                         :EndIf
-                        r,← 'tcross1' desc Assert ((≢data)⍴0) ≡ (data∊data2)                     ⍝ no match, all return 0
-                        r,← 'tcross2' desc Assert ((≢data2)⍴0) ≡ (data2∊data)                    ⍝ no match, all return 0
-                        r,← 'tcross3' desc Assert ((≢data)⍴1) ≡ (data∊data,data2)                ⍝ first data match, returns 1
-                        r,← 'tcross4' desc Assert (((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data) ⍝ data match, data2 no match
+                        r,← 'tcross1' desc Eval ((≢data)⍴0) data data2                       ⍝ no match, all return 0
+                        r,← 'tcross2' desc Eval ((≢data2)⍴0) data2 data                      ⍝ no match, all return 0
+                        r,← 'tcross3' desc Eval ((≢data)⍴1) data (data,data2)                  ⍝ first data match, returns 1
+                        r,← 'tcross4' desc Eval (((≢data)⍴1),((≢data2)⍴0)) (data,data2) data ⍝ data match, data2 no match
                     :EndFor
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
 
                     ⍝ same type tests
-                    r,← 't1' desc Assert (data[?≢data])∊data                  ⍝ random element is found
-                    r,← 't2' desc Assert ((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)  ⍝ All elements return 0 except last
-                    r,← 't3' desc Assert ((≢data)⍴1)≡data∊data                ⍝ all elements return 1
-                    r,← 't4' desc Assert 0≡5E50∊data                          ⍝ huge element outside set is not found
+                    r,← 't1' desc Eval 1 (data[?≢data]) data                  ⍝ random element is found
+                    r,← 't2' desc Eval ((((≢data)-1)⍴0), 1) data (¯1↑data)  ⍝ All elements return 0 except last
+                    r,← 't3' desc Eval ((≢data)⍴1) data data                ⍝ all elements return 1
+                    r,← 't4' desc Eval 0 5E50 data                          ⍝ huge element outside set is not found
 
+                    ⍝ todo: change these to settle with Eval when Eval matures
                     ⍝ tests with comparision tolerance
                     d←data[?≢data]
                     :If ct ⍝ tolerant
@@ -89,24 +97,24 @@
                     :EndIf
                 :EndFor
 
-                ⍝ Booleans need special tests
+                ⍝ ⍝ Booleans need special tests
                 case←'bool'
                 desc←testDesc⍬
 
-                r,← 'tb1' desc Assert 0∊0
-                r,← 'tb2' desc Assert ~0∊1
-                r,← 'tb3' desc Assert 1 1≡bool∊bool
+                r,← 'tb1' desc Eval 1 0 0
+                r,← 'tb2' desc Eval 1 (~0) 1
+                r,← 'tb3' desc Eval (1 1) bool bool
                 
                 ⍝ Boolean cross type tests
                 :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
                     data2←⍎case2
                     desc←testDesc⍬
                     :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
-                        r,← 'tcrossBool1' desc Assert ((≢bool)⍴0) ≡ (bool∊data2)      ⍝ All elements return 0
-                        r,← 'tcrossBool2' desc Assert ((≢data2)⍴0) ≡ (data2∊bool)     ⍝ All elements return 0
+                        r,← 'tcrossBool1' desc Eval ((≢bool)⍴0) bool data2      ⍝ All elements return 0
+                        r,← 'tcrossBool2' desc Eval ((≢data2)⍴0) data2 bool      ⍝ All elements return 0
                     :Else
-                        r,← 'tcrossBooli1' desc Assert ((≢bool)⍴1) ≡ (bool∊data2)     ⍝ All elements return 1
-                        r,← 'tcrossBooli2' desc Assert ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
+                        r,← 'tcrossBooli1' desc Eval ((≢bool)⍴1) bool data2     ⍝ All elements return 1
+                        r,← 'tcrossBooli2' desc Eval ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) data2 bool ⍝ overlaping 0 1 returns 1
                     :EndIf
                 :EndFor
                 case2←⍬                
@@ -114,11 +122,11 @@
                 ⍝ tests for empty/differently shaped arrays
                 case←'dif. shaped arrays'
                 desc←testDesc⍬
-                r,← 'emptyLinear' desc Assert 0 ≡ (0∊empOneDim) ⍝ 0 is not found as an element of the array
+                r,← 'emptyLinear' desc Eval 0 0 empOneDim ⍝ 0 is not found as an element of the array
                 :For itr :In ⍳11 ⍝ Multi Dimention empty
                     empMultiDimArr←empMultiDim itr
 
-                    r,←('empty',itr) desc Assert 0≡(0∊empMultiDimArr) ⍝ 0 is not found as an element of the array
+                    r,←('empty',itr) desc Eval 0 0 empMultiDimArr ⍝ 0 is not found as an element of the array
                 :EndFor
 
                 :For itr :In ⍳11 ⍝ Multi Dimention non-empty
@@ -126,7 +134,7 @@
                     multiDimArr←multiDim shape
                     eleInMultiDimArr←multiDimArr[⊂?(⍳shape)]
 
-                    r,←('multiDim',itr) desc Assert 1≡(eleInMultiDimArr∊multiDimArr) ⍝ random element in multi dimention array is found
+                    r,←('multiDim',itr) desc Eval 1 eleInMultiDimArr multiDimArr ⍝ random element in multi dimention array is found
                 :EndFor
             :EndFor
         :EndFor
