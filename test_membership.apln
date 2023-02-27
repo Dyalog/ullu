@@ -1,6 +1,7 @@
 :Namespace test_membership
     Assert←#.unittest.Assert
 
+    ⍝ evaluate each test with normal, empty and multiple shaped data
     ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt
         (exR left right)←exp
         (tID tCmt)←tData
@@ -46,11 +47,6 @@
         ⍝ with region of tolerant equality
         ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
-
-        ⍝ empOneDim←⍬, '', ⍳0, 0⍴⊂i1, 0⍴⊂char1 ⍝ concat of different types of empty arrays
-        ⍝ empMultiDim←{0⍴⊂((`?(⍳(?⍵)))⍴0)} ⍝ generate differently shaped empty arrays
-
-        ⍝ multiDim←{(⍳⍵)⍴(⍳10)} ⍝ generates arrays of upto 11 dimentions
 
         ct_default←1E¯14
         dct_default←1E¯28
@@ -131,25 +127,7 @@
                         r,← 'TCrossBooli2' desc Eval ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) data2 bool ⍝ overlaping 0 1 returns 1
                     :EndIf
                 :EndFor
-                case2←⍬                
-                
-                ⍝ tests for empty/differently shaped arrays
-                ⍝ case←'dif. shaped arrays'
-                ⍝ desc←testDesc⍬
-                ⍝ r,← 'TEmptyLinear' desc Eval 0 0 empOneDim ⍝ 0 is not found as an element of the array
-                ⍝ :For itr :In ⍳11 ⍝ Multi Dimention empty
-                ⍝     empMultiDimArr←empMultiDim itr
-
-                ⍝     r,←('TEmpty',itr) desc Eval 0 0 empMultiDimArr ⍝ 0 is not found as an element of the array
-                ⍝ :EndFor
-
-                ⍝ :For itr :In ⍳11 ⍝ Multi Dimention non-empty
-                ⍝     shape←?itr
-                ⍝     multiDimArr←multiDim shape
-                ⍝     eleInMultiDimArr←multiDimArr[⊂?(⍳shape)]
-
-                ⍝     r,←('TMultiDim',itr) desc Eval 1 eleInMultiDimArr multiDimArr ⍝ random element in multi dimention array is found
-                ⍝ :EndFor
+                case2←⍬
             :EndFor
         :EndFor
 
