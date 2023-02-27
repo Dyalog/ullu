@@ -18,7 +18,7 @@
 
         ⍝ different shapes
         leftshape←?⍳?7
-        rightshape←⍳6 ⍝ todo: needs randomization
+        rightshape←{(×/(x←?(?7)/?12))>≢right:x ⋄ ∇⍵}⍬
         res←(leftshape⍴exR) ≡ (leftshape⍴left)∊(rightshape⍴right)
         tRes,←('Multiple',tID) tCmt Assert res
     ∇
