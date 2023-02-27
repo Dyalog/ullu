@@ -5,20 +5,20 @@
         (exR left right)←exp
         (tID tCmt)←tData
         tRes←⍬
-        
+
         ⍝ normal
         acR←left∊right ⍝ actual result
         res←exR≡acR
         tRes,←tData Assert res
-        
+
         ⍝ empty
         acRE←left∊(0⍴⊂right) ⍝ generating empty array from right
         res←(0×exR)≡acRE ⍝ all 0s in exR is the new expected result
         tRes,←('Empty',tID) tCmt Assert res
-        
+
         ⍝ different shapes
-        leftshape←⍳4 ⍝ todo: needs randomization
-        rightshape←⍳7 ⍝ todo: needs randomization
+        leftshape←?⍳?7
+        rightshape←⍳6 ⍝ todo: needs randomization
         res←(leftshape⍴exR) ≡ (leftshape⍴left)∊(rightshape⍴right)
         tRes,←('Multiple',tID) tCmt Assert res
     ∇
@@ -30,7 +30,7 @@
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
         char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
         char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
-        i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
+        i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
@@ -46,7 +46,7 @@
         ⍝ with region of tolerant equality
         ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
-        
+
         ⍝ empOneDim←⍬, '', ⍳0, 0⍴⊂i1, 0⍴⊂char1 ⍝ concat of different types of empty arrays
         ⍝ empMultiDim←{0⍴⊂((`?(⍳(?⍵)))⍴0)} ⍝ generate differently shaped empty arrays
 
@@ -87,7 +87,6 @@
                     :EndFor
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
-
 
                     ⍝ same type tests
                     r,← 'T1' desc Eval 1 (data[?≢data]) data                  ⍝ random element is found
