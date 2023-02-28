@@ -17,15 +17,11 @@
         res←(0⍴⊂p)≡acRE ⍝ all 0s in exR is the new expected result
         tRes,←('Empty',tID) tCmt Assert res
 
-        ⍝ ⍝ different shapes
-        ⍝ ⍝ for ANY array leftshape, and for any rightshape where (≢right)≤×/rightshape
-        ⍝ ⍝ the condition guarantees that (rightshape⍴right) will create an array
-        ⍝ ⍝ which contains ALL the elements of right, possibly more than once
-        ⍝ leftshape←?⍳?7
-        ⍝ ⍝ randomized shape which has ≤7 elements and each elements is ≤12 and satisfies above condition
-        ⍝ rightshape←{(×/(x←(?7)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
-        ⍝ res←(leftshape⍴exR) ≡ (leftshape⍴left)∊(rightshape⍴right)
-        ⍝ tRes,←('Multiple',tID) tCmt Assert res
+        ⍝ different shapes
+        shape←(?⍳?7)
+        acRM←|shape⍴acR
+        res←(shape⍴exR)≡acRM
+        tRes,←('Multiple',tID) tCmt Assert res
     ∇
 
     ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;getMagGen;case;data;d;testDesc;desc;fr
