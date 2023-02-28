@@ -13,9 +13,9 @@
         tRes,←tData Assert res
 
         ⍝ ⍝ empty
-        ⍝ acRE←|(0⍴⊂p) ⍝ generating empty array from right
-        ⍝ res←⍬≡acRE ⍝ all 0s in exR is the new expected result
-        ⍝ tRes,←('Empty',tID) tCmt Assert res
+        acRE←|(0⍴⊂p) ⍝ generating empty array from right
+        res←(0⍴⊂p)≡acRE ⍝ all 0s in exR is the new expected result
+        tRes,←('Empty',tID) tCmt Assert res
 
         ⍝ ⍝ different shapes
         ⍝ ⍝ for ANY array leftshape, and for any rightshape where (≢right)≤×/rightshape
@@ -57,12 +57,12 @@
                 data←⍎case
                 desc←testDesc⍬
                 :If case≢'bool'
-                    r,←'t1' desc Eval ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data
+                    r,←'T1' desc Eval ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data
                     d←data[?≢data]
-                    r,←'t2' desc Eval (getMagGen d) d
+                    r,←'T2' desc Eval (getMagGen d) d
                 :Else
-                    r,←'tb1' desc Eval (0 1) bool
-                    r,← 'tb2' desc Eval 0 (⊃bool)
+                    r,←'Tb1' desc Eval (0 1) bool
+                    r,← 'Tb2' desc Eval 0 (⊃bool)
                 :EndIf
             :EndFor
         :EndFor
@@ -75,7 +75,7 @@
         getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
         r←⍬
         :For c :In cmplx⍝, Hcmplx
-            r,←'tc1' ('for' c) Eval (getMagCmplx c) c
+            r,←'Tc1' ('for' c) Eval (getMagCmplx c) c
         :EndFor
         ⍝ r,←'tc2' 'for cmplx' Eval (getMagCmplx¨cmplx) |cmplx
     ∇
