@@ -2,7 +2,7 @@
     Assert←#.unittest.Assert
     
     ⍝ evaluate each test with normal, empty and multiple shaped data
-    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt;p
+    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt;p;shape;acRM
         (exR p)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -64,7 +64,7 @@
         :EndFor
     ∇
 
-    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;c
+    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;d;case;data;desc
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)          ⍝ 1289 but higher order to test for CT value
         
