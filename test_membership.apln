@@ -1,82 +1,113 @@
 :Namespace test_membership
-    assert←#.unittest.assert
+    Assert←#.unittest.Assert
 
-    ⍝ This section of testcases are categorised based on the ⎕DR model.
-    ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
-    :Section Testing for all datatypes
-        ∇ r←Test_DR ;w;n;r;data;data2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx
-            bool←0 1                                ⍝ 11: 1 bit Boolean type arrays
-            i1←¯60+⍳120                             ⍝ 83: 8 bits signed integer
-            char1←⎕UCS ⍳255                         ⍝ 80: 8 bits character
-            char2←⎕UCS (1000+⍳100)                  ⍝ 160: 16 bits character
-            i2←{⍵,-⍵}10000+⍳1000                    ⍝ 163: 16 bits signed integer
-            char3←⎕UCS (100000+⍳100)                ⍝ 320: 32 bits character
-            i3←{⍵,-⍵}100000+⍳100                   ⍝ 323: 32 bits signed  integer
-            ptr←2,/⎕A                               ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-            dbl←{⍵,-⍵}i3+0.1                        ⍝ 645: 64 bits Floating
-            ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
-            cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100            ⍝ 1289: 128 bits Complex
+    ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
+    ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
+    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;testDesc;desc
+        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+        i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
+        char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
+        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
+        i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
+        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
+        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+        ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645         ⍝ 1287: 128 bits Decimal
+        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
+        ⍝ Hdbl is 645 but higher order to test for CT value
+        ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
+        ⍝ come under the region of tolerant equality
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
+        ⍝ Hfl is 1287 but higher order to test for CT value
+        ⍝ far intervals are chosen for non overlap 
+        ⍝ with region of tolerant equality
+        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
+        
+        ct_default←1E¯14
+        dct_default←1E¯28
+        fr_dbl←645
+        fr_decf←1287
 
-            r←⍬
-            :For data :In bool i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx
-                :If 11≠type←⎕DR data
-                    ⍝ Cross DR testing
-                    :For data2 :In i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx
+        r←⍬
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
+
+        :For ct :In 1 0 
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+
+            :For fr :In 1 2
+                ⎕FR←fr⊃fr_dbl fr_decf
+
+                :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                    data←⍎case
+                    :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
+                        :Continue
+                    :EndIf
+
+                    ⍝ Cross type tests
+                    :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        data2←⍎case2
+                        desc←testDesc⍬
                         :If (data≡data2)
-                            r,←assert (((≢data)⍴1) ≡ (data∊data2)) 'tcross0' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2))
+                            r,←'tcross0' desc Assert ((≢data)⍴1) ≡ (data∊data2)
                             :Continue
                         :EndIf
-                        r,←assert (((≢data)⍴0) ≡ (data∊data2)) 'tcross1' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ no match, all return 0
-                        r,←assert (((≢data2)⍴0) ≡ (data2∊data)) 'tcross2' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ no match, all return 0
-                        r,←assert (((≢data)⍴1) ≡ (data∊data,data2)) 'tcross3' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ first data match, returns 1
-                        r,←assert ((((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data)) 'tcross4' ('for ⎕DR', (⎕DR data), 'and', (⎕DR data2)) ⍝ data match, data2 no match
+                        r,← 'tcross1' desc Assert ((≢data)⍴0) ≡ (data∊data2)                     ⍝ no match, all return 0
+                        r,← 'tcross2' desc Assert ((≢data2)⍴0) ≡ (data2∊data)                    ⍝ no match, all return 0
+                        r,← 'tcross3' desc Assert ((≢data)⍴1) ≡ (data∊data,data2)                ⍝ first data match, returns 1
+                        r,← 'tcross4' desc Assert (((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data) ⍝ data match, data2 no match
                     :EndFor
-                    r,←assert ((data[?≢data])∊data) 't1' ('for ⎕DR', ⎕DR data)                  ⍝ random element is found
-                    r,←assert (((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)) 't2' ('for ⎕DR', ⎕DR data)  ⍝ All elements return 0 except last
-                    r,←assert (((≢data)⍴1)≡data∊data) 't3' ('for ⎕DR', ⎕DR data)                ⍝ all elements return 1
-                    r,←assert (0≡5E50∊data) 't4' ('for ⎕DR', ⎕DR data)                          ⍝ huge element outside set is not found
-                :Else ⍝ Booleans need special tests
-                    ⍝ Boolean tests here because the domain is so small
-                    r,←assert (0∊0) 'tb1' ('for ⎕DR', ⎕DR data)
-                    r,←assert (~0∊1) 'tb2' ('for ⎕DR', ⎕DR data)
-                    r,←assert (1 1≡bool∊bool) 'tb3' ('for ⎕DR', ⎕DR bool)
-                    :For data2 :In i1 i2 i3 char1 char2 char3 ptr dbl fl cmplx ⍝ bool requires separate cross tests because of overlap with i1
-                        :If (83≠type←⎕DR data2)
-                                r,←assert (((≢bool)⍴0) ≡ (bool∊data2)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 0
-                                r,←assert (((≢data2)⍴0) ≡ (data2∊bool)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 0
-                            :Else
-                                r,←assert (((≢bool)⍴1) ≡ (bool∊data2)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ All elements return 1
-                                r,←assert (((⊣,(⌽⊣))((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool)) 'tcrossBool' ('for ⎕DR', (⎕DR bool), 'and', (⎕DR data2)) ⍝ overlaping 0 1 returns 1
+                    case2←⍬ ⍝ disposing case2 for testDesc
+                    desc←testDesc⍬
+
+
+                    ⍝ same type tests
+                    r,← 't1' desc Assert (data[?≢data])∊data                  ⍝ random element is found
+                    r,← 't2' desc Assert ((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)  ⍝ All elements return 0 except last
+                    r,← 't3' desc Assert ((≢data)⍴1)≡data∊data                ⍝ all elements return 1
+                    r,← 't4' desc Assert 0≡5E50∊data                          ⍝ huge element outside set is not found
+
+                    ⍝ tests with comparision tolerance
+                    d←data[?≢data]
+                    :If ct ⍝ tolerant
+                        ⍝ case for CT default & is skipped for FR=1287
+                        :If (⊂data)∊Hdbl Hfl Hcmplx
+                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                            r,← 'CTDefault' desc Assert ((1≡(d∊d+1)) ∨ (fr=2 ∧ case≡'Hdbl'))
                         :EndIf
-                    :EndFor
-                :EndIf
-            :EndFor
-        ∇
-    :EndSection
+                    :Else  ⍝ exact
+                        :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                            ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                            r,← 'CTZero' desc Assert ((0≡(d∊d+1)) ∨ (fr=1 ∧ case≡'Hfl'))
+                        :EndIf
+                    :EndIf
+                :EndFor
 
-    ⍝ Tests based upon ⎕CT value
-    ⍝ Read more: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    :Section Based on CT and DCT
-        ∇ r←Test_CT ;type;dbl;fl;cmplx;data;d
-            r←⍬
-            dbl←{⍵,-⍵}1E14+⍳100                       ⍝ 645: 64 bits Floating
-            ⎕FR←1287 ⋄ fl←{⍵,-⍵}1E14+⍳100 ⋄ ⎕FR←645   ⍝ 1287: 128 bits Decimal
-            cmplx←{⍵,-⍵}(1E13J1E13×⍳100)              ⍝ 1289: 128 bits Complex
-            
-            :For data :In dbl fl cmplx
-                d←data[?≢data]
+                ⍝ Booleans need special tests
+                case←'bool'
+                desc←testDesc⍬
+
+                r,← 'tb1' desc Assert 0∊0
+                r,← 'tb2' desc Assert ~0∊1
+                r,← 'tb3' desc Assert 1 1≡bool∊bool
                 
-                ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
-                ⎕DCT←1E¯28
-                r,←assert (1≡(d∊d+1)) 'CTDefault' (⎕DR d)
-
-                ⎕CT←0 ⍝ Exact comparisons, like in C or most other languages
-                ⎕DCT←0
-                r,←assert (0≡(d∊d+1)) 'CTZero' (⎕DR d)
+                ⍝ Boolean cross type tests
+                :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
+                    data2←⍎case2
+                    desc←testDesc⍬
+                    :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
+                        r,← 'tcrossBool1' desc Assert ((≢bool)⍴0) ≡ (bool∊data2)      ⍝ All elements return 0
+                        r,← 'tcrossBool2' desc Assert ((≢data2)⍴0) ≡ (data2∊bool)     ⍝ All elements return 0
+                    :Else
+                        r,← 'tcrossBooli1' desc Assert ((≢bool)⍴1) ≡ (bool∊data2)     ⍝ All elements return 1
+                        r,← 'tcrossBooli2' desc Assert ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
+                    :EndIf
+                :EndFor
+                ⍝ disposing case for testDesc
+                case←⍬
+                case2←⍬
             :EndFor
-            ⎕CT←1E¯14 ⍝ The default, ignores differences beyond the 14th digit or so
-            ⎕DCT←1E¯28
-        ∇
-    :EndSection
-
+        :EndFor
+    ∇
 :EndNamespace
