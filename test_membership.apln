@@ -24,7 +24,8 @@
         leftshape←?⍳?7
         ⍝ randomized shape which has ≤7 elements and each elements is ≤12 and satisfies above condition
         rightshape←{(×/(x←(?7)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
-        res←(leftshape⍴exR) ≡ (leftshape⍴left)∊(rightshape⍴right)
+        acRM←(leftshape⍴left)∊(rightshape⍴right)
+        res←(leftshape⍴exR) ≡ acRM
         tRes,←('Multiple',tID) tCmt Assert res
     ∇
 
