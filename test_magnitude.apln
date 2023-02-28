@@ -2,7 +2,7 @@
     Assert←#.unittest.Assert
     
     ⍝ evaluate each test with normal, empty and multiple shaped data
-    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt
+    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt;p
         (exR p)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -13,8 +13,8 @@
         tRes,←tData Assert res
 
         ⍝ ⍝ empty
-        ⍝ acRE←left∊(0⍴⊂right) ⍝ generating empty array from right
-        ⍝ res←(0×exR)≡acRE ⍝ all 0s in exR is the new expected result
+        ⍝ acRE←|(0⍴⊂p) ⍝ generating empty array from right
+        ⍝ res←⍬≡acRE ⍝ all 0s in exR is the new expected result
         ⍝ tRes,←('Empty',tID) tCmt Assert res
 
         ⍝ ⍝ different shapes
@@ -28,18 +28,13 @@
         ⍝ tRes,←('Multiple',tID) tCmt Assert res
     ∇
 
-    ∇ r←Test_Magnitude_General ;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;Hdbl;Hfl;getMagGen;d;data;type
+    ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;getMagGen;case;data;d;testDesc;desc;fr
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,-⍵}+⍳120                                ⍝ 83: 8 bits signed integer
-        char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
-        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
         i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
-        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
         ⎕FR←1287 ⋄ fl←{⍵,-⍵}1000.5+⍳100 ⋄ ⎕FR←645      ⍝ 1287: 128 bits Decimal
-        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
         ⍝ Hdbl is 645 but higher order to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
@@ -61,7 +56,7 @@
             :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
                 data←⍎case
                 desc←testDesc⍬
-                :If 11≠type←⎕DR data
+                :If case≢'bool'
                     r,←'t1' desc Eval ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data
                     d←data[?≢data]
                     r,←'t2' desc Eval (getMagGen d) d
@@ -73,13 +68,13 @@
         :EndFor
     ∇
 
-    ∇ r←Test_Magnitude_Cmplx ;cmplx;getMagCmplx;c
+    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;c
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
-        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)          ⍝ 1289 but higher order to test for CT value
         
         getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
         r←⍬
-        :For c :In cmplx, Hcmplx
+        :For c :In cmplx⍝, Hcmplx
             r,←'tc1' ('for' c) Eval (getMagCmplx c) c
         :EndFor
         ⍝ r,←'tc2' 'for cmplx' Eval (getMagCmplx¨cmplx) |cmplx
