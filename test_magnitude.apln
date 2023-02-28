@@ -1,5 +1,33 @@
 :Namespace test_magnitude
-    assert←#.unittest.Assert
+    Assert←#.unittest.Assert
+    
+    ⍝ evaluate each test with normal, empty and multiple shaped data
+    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt
+        (exR p)←exp
+        (tID tCmt)←tData
+        tRes←⍬
+
+        ⍝ normal
+        acR←|p ⍝ actual result
+        res←exR≡acR
+        tRes,←tData Assert res
+
+        ⍝ ⍝ empty
+        ⍝ acRE←left∊(0⍴⊂right) ⍝ generating empty array from right
+        ⍝ res←(0×exR)≡acRE ⍝ all 0s in exR is the new expected result
+        ⍝ tRes,←('Empty',tID) tCmt Assert res
+
+        ⍝ ⍝ different shapes
+        ⍝ ⍝ for ANY array leftshape, and for any rightshape where (≢right)≤×/rightshape
+        ⍝ ⍝ the condition guarantees that (rightshape⍴right) will create an array
+        ⍝ ⍝ which contains ALL the elements of right, possibly more than once
+        ⍝ leftshape←?⍳?7
+        ⍝ ⍝ randomized shape which has ≤7 elements and each elements is ≤12 and satisfies above condition
+        ⍝ rightshape←{(×/(x←(?7)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
+        ⍝ res←(leftshape⍴exR) ≡ (leftshape⍴left)∊(rightshape⍴right)
+        ⍝ tRes,←('Multiple',tID) tCmt Assert res
+    ∇
+
     ∇ r←Test_Magnitude_General ;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;Hdbl;Hfl;getMagGen;d;data;type
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,-⍵}+⍳120                                ⍝ 83: 8 bits signed integer
@@ -34,12 +62,12 @@
                 data←⍎case
                 desc←testDesc⍬
                 :If 11≠type←⎕DR data
-                    r,←'t1' desc assert (({⍵,⍵}{((≢⍵)÷2)↑⍵}data)≡|data)
+                    r,←'t1' desc Eval ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data
                     d←data[?≢data]
-                    r,←'t2' desc assert ((getMagGen d)≡|d) 
+                    r,←'t2' desc Eval (getMagGen d) d
                 :Else
-                    r,←'tb1' desc assert (0 1≡|bool) 
-                    r,← 'tb2' desc assert (0≡|⊃bool)
+                    r,←'tb1' desc Eval (0 1) bool
+                    r,← 'tb2' desc Eval 0 (⊃bool)
                 :EndIf
             :EndFor
         :EndFor
@@ -52,8 +80,8 @@
         getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
         r←⍬
         :For c :In cmplx, Hcmplx
-            r,←'tc1' ('for' c) assert ((getMagCmplx c)≡|c) 
+            r,←'tc1' ('for' c) Eval (getMagCmplx c) c
         :EndFor
-        r,←'tc2' 'for cmplx' assert ((getMagCmplx¨cmplx)≡|cmplx) 
+        ⍝ r,←'tc2' 'for cmplx' Eval (getMagCmplx¨cmplx) |cmplx
     ∇
 :EndNamespace
