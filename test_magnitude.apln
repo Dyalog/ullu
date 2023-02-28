@@ -45,7 +45,7 @@
 
         r←⍬
         getMagGen←{⍵<0:-1×⍵⋄⍵}
-        testDesc←{'for ',case,' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
+        testDesc←{'for ',case, '& ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
             ⎕FR←fr⊃fr_dbl fr_decf
@@ -70,9 +70,18 @@
         
         getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
         r←⍬
-        :For c :In cmplx⍝, Hcmplx
-            r,←'Tc1' ('for' c) Eval (getMagCmplx c) c
+        testDesc←{'for ',case, ' & ⎕FR:', ⎕FR}
+        
+        :For case :In 'cmplx' 'Hcmplx'
+            data←⍎case
+            desc←testDesc⍬
+            r,←'Tc1' desc Eval getMagCmplx¨data data
+            
+            :For d :In data
+                case←d
+                desc←testDesc⍬
+                r,←'Tc2' desc Eval (getMagCmplx d) d
+            :EndFor
         :EndFor
-        ⍝ r,←'tc2' 'for cmplx' Eval (getMagCmplx¨cmplx) |cmplx
     ∇
 :EndNamespace
