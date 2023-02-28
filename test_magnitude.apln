@@ -21,18 +21,25 @@
         ⍝ with region of tolerant equality
         ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
 
+        fr_dbl←645
+        fr_decf←1287
+
         r←⍬
         getMagGen←{⍵<0:-1×⍵⋄⍵}
-        :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
-            data←⍎case
-            :If 11≠type←⎕DR data
-                r,←'t1' ('for'case) assert (({⍵,⍵}{((≢⍵)÷2)↑⍵}data)≡|data)
-                d←data[?≢data]
-                r,←'t2' ('for'case) assert ((getMagGen d)≡|d) 
-            :Else
-                r,←'tb1' ('for'case) assert (0 1≡|bool) 
-                r,← 'tb2'  ('for'case) assert (0≡|⊃bool)
-            :EndIf
+
+        :For fr :In 1 2
+            ⎕FR←fr⊃fr_dbl fr_decf
+            :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
+                data←⍎case
+                :If 11≠type←⎕DR data
+                    r,←'t1' ('for'case) assert (({⍵,⍵}{((≢⍵)÷2)↑⍵}data)≡|data)
+                    d←data[?≢data]
+                    r,←'t2' ('for'case) assert ((getMagGen d)≡|d) 
+                :Else
+                    r,←'tb1' ('for'case) assert (0 1≡|bool) 
+                    r,← 'tb2'  ('for'case) assert (0≡|⊃bool)
+                :EndIf
+            :EndFor
         :EndFor
     ∇
 
