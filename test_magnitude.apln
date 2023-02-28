@@ -26,18 +26,20 @@
 
         r←⍬
         getMagGen←{⍵<0:-1×⍵⋄⍵}
+        testDesc←{'for ',case,' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
             ⎕FR←fr⊃fr_dbl fr_decf
             :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
                 data←⍎case
+                desc←testDesc⍬
                 :If 11≠type←⎕DR data
-                    r,←'t1' ('for'case) assert (({⍵,⍵}{((≢⍵)÷2)↑⍵}data)≡|data)
+                    r,←'t1' desc assert (({⍵,⍵}{((≢⍵)÷2)↑⍵}data)≡|data)
                     d←data[?≢data]
-                    r,←'t2' ('for'case) assert ((getMagGen d)≡|d) 
+                    r,←'t2' desc assert ((getMagGen d)≡|d) 
                 :Else
-                    r,←'tb1' ('for'case) assert (0 1≡|bool) 
-                    r,← 'tb2'  ('for'case) assert (0≡|⊃bool)
+                    r,←'tb1' desc assert (0 1≡|bool) 
+                    r,← 'tb2' desc assert (0≡|⊃bool)
                 :EndIf
             :EndFor
         :EndFor
@@ -46,6 +48,7 @@
     ∇ r←Test_Magnitude_Cmplx ;cmplx;getMagCmplx;c
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
+        
         getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
         r←⍬
         :For c :In cmplx, Hcmplx
