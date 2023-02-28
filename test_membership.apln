@@ -2,7 +2,7 @@
     Assert←#.unittest.Assert
 
     ⍝ evaluate each test with normal, empty and multiple shaped data
-    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt
+    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt;leftshape;rightshape;x
         (exR left right)←exp
         (tID tCmt)←tData
         tRes←⍬
