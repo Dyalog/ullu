@@ -33,6 +33,7 @@
         res←(lshape⍴expectedR) ≡ actualRM
         tRes,←('Shape',tID) tCmt Assert res
 
+        ⍝ different shapes with 0 in shape
         lshapeW0←(0@(?4))lshape
         actualRM←(lshapeW0⍴left)∊(rshape⍴right)
         res←(lshapeW0⍴0) ≡ actualRM

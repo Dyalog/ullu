@@ -2,29 +2,35 @@
     Assert←#.unittest.Assert
     
     ⍝ evaluate each test with normal, empty and multiple shaped data
-    ∇ tRes←tData Eval exp ;acR;acRE;exR;left;right;res;tID;tCmt;p;shape;acRM
-        (exR p)←exp
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;actualRS
+        (expectedR p)←exp
         (tID tCmt)←tData
         tRes←⍬
 
         ⍝ normal
-        acR←|p ⍝ actual result
-        res←exR≡acR
+        actualR←|p ⍝ actual result
+        res←expectedR≡actualR
         tRes,←tData Assert res
 
-        ⍝ ⍝ empty
-        acRE←|(0⍴⊂p) ⍝ generating empty array from right
-        res←(0⍴⊂p)≡acRE ⍝ all 0s in exR is the new expected result
+        ⍝ empty
+        actualRE←|(0⍴⊂p) ⍝ generating empty array from right
+        res←(0⍴⊂p)≡actualRE ⍝ all 0s in expectedR is the new expected result
         tRes,←('Empty',tID) tCmt Assert res
 
         ⍝ different shapes
-        shape←(?⍳?7)
-        acRM←|shape⍴acR
-        res←(shape⍴exR)≡acRM
+        shape←?4/4
+        actualRS←|shape⍴actualR
+        res←(shape⍴expectedR)≡actualRS
         tRes,←('Multiple',tID) tCmt Assert res
+
+        ⍝ different shapes with 0 in shape
+        shapeW0←(0@(?4))shape
+        actualRS←|shapeW0⍴p
+        res←(shapeW0⍴0) ≡ actualRS
+        tRes,←('ShapeW0',tID) tCmt Assert res
     ∇
 
-    ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;getMagGen;case;data;d;testDesc;desc;fr
+    ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;getMagGen;case;data;d;testDesc;desc;fr;⎕FR
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,-⍵}+⍳120                                ⍝ 83: 8 bits signed integer
         i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
@@ -53,12 +59,12 @@
                 data←⍎case
                 desc←testDesc⍬
                 :If case≢'bool'
-                    r,←'T1' desc Eval ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data
+                    r,←'T1' desc RunVariations ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data
                     d←data[?≢data]
-                    r,←'T2' desc Eval (getMagGen d) d
+                    r,←'T2' desc RunVariations (getMagGen d) d
                 :Else
-                    r,←'Tb1' desc Eval (0 1) bool
-                    r,← 'Tb2' desc Eval 0 (⊃bool)
+                    r,←'Tb1' desc RunVariations (0 1) bool
+                    r,← 'Tb2' desc RunVariations 0 (⊃bool)
                 :EndIf
             :EndFor
         :EndFor
@@ -66,7 +72,7 @@
 
     ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;d;case;data;desc
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
-        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)          ⍝ 1289 but higher order to test for CT value
+        Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order to test for CT value
         
         getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
         r←⍬
@@ -75,12 +81,12 @@
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
             desc←testDesc⍬
-            r,←'Tc1' desc Eval getMagCmplx¨data data
+            r,←'Tc1' desc RunVariations (getMagCmplx¨data) data
             
             :For d :In data
                 case←d
                 desc←testDesc⍬
-                r,←'Tc2' desc Eval (getMagCmplx d) d
+                r,←'Tc2' desc RunVariations (getMagCmplx d) d
             :EndFor
         :EndFor
     ∇
