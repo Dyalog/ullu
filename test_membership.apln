@@ -26,12 +26,17 @@
         ⍝ for ANY array lshape, and for any rightshape where (≢right)≤×/rshape
         ⍝ the condition guarantees that (rshape⍴right) will create an array
         ⍝ which contains ALL the elements of right, possibly more than once
-        lshape←?⍳?4
+        lshape←?4/4
         ⍝ randomized shape which has ≤7 elements and each elements is ≤12 and satisfies above condition
         rshape←{(×/(x←(?4)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
         actualRM←(lshape⍴left)∊(rshape⍴right)
         res←(lshape⍴expectedR) ≡ actualRM
         tRes,←('Multiple',tID) tCmt Assert res
+
+        lshapeW0←(0@(?4))lshape
+        actualRM←(lshapeW0⍴left)∊(rshape⍴right)
+        res←(lshapeW0⍴0) ≡ actualRM
+        tRes,←('MultipleW0',tID) tCmt Assert res
     ∇
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
@@ -95,7 +100,7 @@
                     desc←testDesc⍬
 
                     ⍝ same type tests
-                    r,← 'T1' desc RunVariations 1 (data[?≢data]) data                  ⍝ random element is found
+                    r,← 'T1' desc RunVariations 1 (data[?≢data]) data                ⍝ random element is found
                     r,← 'T2' desc RunVariations ((((≢data)-1)⍴0), 1) data (¯1↑data)  ⍝ All elements return 0 except last
                     r,← 'T3' desc RunVariations ((≢data)⍴1) data data                ⍝ all elements return 1
                     r,← 'T4' desc RunVariations 0 5E50 data                          ⍝ huge element outside set is not found
