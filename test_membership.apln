@@ -2,7 +2,7 @@
     Assert←#.unittest.Assert
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;rshape;x;actualRM
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
         (expectedR left right)←exp
         (tID tCmt)←tData
         tRes←⍬
