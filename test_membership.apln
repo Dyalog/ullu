@@ -1,14 +1,52 @@
 :Namespace test_membership
     Assert←#.unittest.Assert
 
+    ⍝ Run Variations of each test with normal, empty and multiple shaped data
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
+        (expectedR left right)←exp
+        (tID tCmt)←tData
+        tRes←⍬
+
+        ⍝ normal
+        actualR←left∊right ⍝ actual result
+        res←expectedR≡actualR
+        tRes,←tData Assert res
+
+        ⍝ empty left
+        actualRE←(0⍴⊂left)∊right ⍝ generating empty array from right
+        res←⍬≡actualRE ⍝ all 0s in expectedR is the new expected result
+        tRes,←('Empty',tID) tCmt Assert res
+
+        ⍝ empty right
+        actualRE←left∊(0⍴⊂right) ⍝ generating empty array from right
+        res←(0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
+        tRes,←('Empty',tID) tCmt Assert res
+
+        ⍝ different shapes
+        ⍝ for ANY array lshape, and for any rightshape where (≢right)≤×/rshape
+        ⍝ the condition guarantees that (rshape⍴right) will create an array
+        ⍝ which contains ALL the elements of right, possibly more than once
+        lshape←?4/4
+        ⍝ randomized shape which has ≤7 elements and each elements is ≤12 and satisfies above condition
+        rshape←{(×/(x←(?4)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
+        actualRM←(lshape⍴left)∊(rshape⍴right)
+        res←(lshape⍴expectedR) ≡ actualRM
+        tRes,←('Shape',tID) tCmt Assert res
+
+        lshapeW0←(0@(?4))lshape
+        actualRM←(lshapeW0⍴left)∊(rshape⍴right)
+        res←(lshapeW0⍴0) ≡ actualRM
+        tRes,←('ShapeW0',tID) tCmt Assert res
+    ∇
+
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;testDesc;desc
+    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
         char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
         char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
-        i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
+        i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
@@ -24,7 +62,7 @@
         ⍝ with region of tolerant equality
         ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
-        
+
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -50,24 +88,24 @@
                         data2←⍎case2
                         desc←testDesc⍬
                         :If (data≡data2)
-                            r,←'tcross0' desc Assert ((≢data)⍴1) ≡ (data∊data2)
+                            r,←'TCross0' desc RunVariations (1⍨¨data) data data2
                             :Continue
                         :EndIf
-                        r,← 'tcross1' desc Assert ((≢data)⍴0) ≡ (data∊data2)                     ⍝ no match, all return 0
-                        r,← 'tcross2' desc Assert ((≢data2)⍴0) ≡ (data2∊data)                    ⍝ no match, all return 0
-                        r,← 'tcross3' desc Assert ((≢data)⍴1) ≡ (data∊data,data2)                ⍝ first data match, returns 1
-                        r,← 'tcross4' desc Assert (((≢data)⍴1),((≢data2)⍴0))≡((data,data2)∊data) ⍝ data match, data2 no match
+                        r,← 'TCross1' desc RunVariations (0⍨¨data) data data2                       ⍝ no match, all return 0
+                        r,← 'TCross2' desc RunVariations (0⍨¨data2) data2 data                      ⍝ no match, all return 0
+                        r,← 'TCross3' desc RunVariations (1⍨¨data) data (data,data2)                  ⍝ first data match, returns 1
+                        r,← 'TCross4' desc RunVariations ((1⍨¨data),(0⍨¨data2)) (data,data2) data ⍝ data match, data2 no match
                     :EndFor
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-
                     ⍝ same type tests
-                    r,← 't1' desc Assert (data[?≢data])∊data                  ⍝ random element is found
-                    r,← 't2' desc Assert ((((≢data)-1)⍴0), 1)≡data∊(¯1↑data)  ⍝ All elements return 0 except last
-                    r,← 't3' desc Assert ((≢data)⍴1)≡data∊data                ⍝ all elements return 1
-                    r,← 't4' desc Assert 0≡5E50∊data                          ⍝ huge element outside set is not found
+                    r,← 'T1' desc RunVariations 1 (data[?≢data]) data                ⍝ random element is found
+                    r,← 'T2' desc RunVariations ((0⍨¨¯1↓data),1) data (¯1↑data)  ⍝ All elements return 0 except last
+                    r,← 'T3' desc RunVariations (1⍨¨data) data data                ⍝ all elements return 1
+                    r,← 'T4' desc RunVariations 0 5E50 data                          ⍝ huge element outside set is not found
 
+                    ⍝ todo: change these to settle with RunVariations when RunVariations matures
                     ⍝ tests with comparision tolerance
                     d←data[?≢data]
                     :If ct ⍝ tolerant
@@ -84,30 +122,29 @@
                     :EndIf
                 :EndFor
 
-                ⍝ Booleans need special tests
+                ⍝ ⍝ Booleans need special tests
                 case←'bool'
                 desc←testDesc⍬
 
-                r,← 'tb1' desc Assert 0∊0
-                r,← 'tb2' desc Assert ~0∊1
-                r,← 'tb3' desc Assert 1 1≡bool∊bool
+                r,← 'TB1' desc RunVariations 1 0 0
+                r,← 'TB2' desc RunVariations 1 (~0) 1
+                r,← 'TB3' desc RunVariations (1 1) bool bool
                 
                 ⍝ Boolean cross type tests
                 :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
                     data2←⍎case2
                     desc←testDesc⍬
                     :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
-                        r,← 'tcrossBool1' desc Assert ((≢bool)⍴0) ≡ (bool∊data2)      ⍝ All elements return 0
-                        r,← 'tcrossBool2' desc Assert ((≢data2)⍴0) ≡ (data2∊bool)     ⍝ All elements return 0
+                        r,← 'TCrossBool1' desc RunVariations (0⍨¨bool) bool data2      ⍝ All elements return 0
+                        r,← 'TCrossBool2' desc RunVariations (0⍨¨data2) data2 bool      ⍝ All elements return 0
                     :Else
-                        r,← 'tcrossBooli1' desc Assert ((≢bool)⍴1) ≡ (bool∊data2)     ⍝ All elements return 1
-                        r,← 'tcrossBooli2' desc Assert ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) ≡ (data2∊bool) ⍝ overlaping 0 1 returns 1
+                        r,← 'TCrossBooli1' desc RunVariations (1⍨¨bool) bool data2     ⍝ All elements return 1
+                        r,← 'TCrossBooli2' desc RunVariations ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) data2 bool ⍝ overlaping 0 1 returns 1
                     :EndIf
                 :EndFor
-                ⍝ disposing case for testDesc
-                case←⍬
                 case2←⍬
             :EndFor
         :EndFor
+
     ∇
 :EndNamespace
