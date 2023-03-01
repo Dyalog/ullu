@@ -88,21 +88,21 @@
                         data2←⍎case2
                         desc←testDesc⍬
                         :If (data≡data2)
-                            r,←'TCross0' desc RunVariations ((≢data)⍴1) data data2
+                            r,←'TCross0' desc RunVariations (1⍨¨data) data data2
                             :Continue
                         :EndIf
-                        r,← 'TCross1' desc RunVariations ((≢data)⍴0) data data2                       ⍝ no match, all return 0
-                        r,← 'TCross2' desc RunVariations ((≢data2)⍴0) data2 data                      ⍝ no match, all return 0
-                        r,← 'TCross3' desc RunVariations ((≢data)⍴1) data (data,data2)                  ⍝ first data match, returns 1
-                        r,← 'TCross4' desc RunVariations (((≢data)⍴1),((≢data2)⍴0)) (data,data2) data ⍝ data match, data2 no match
+                        r,← 'TCross1' desc RunVariations (0⍨¨data) data data2                       ⍝ no match, all return 0
+                        r,← 'TCross2' desc RunVariations (0⍨¨data2) data2 data                      ⍝ no match, all return 0
+                        r,← 'TCross3' desc RunVariations (1⍨¨data) data (data,data2)                  ⍝ first data match, returns 1
+                        r,← 'TCross4' desc RunVariations ((1⍨¨data),(0⍨¨data2)) (data,data2) data ⍝ data match, data2 no match
                     :EndFor
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
                     ⍝ same type tests
                     r,← 'T1' desc RunVariations 1 (data[?≢data]) data                ⍝ random element is found
-                    r,← 'T2' desc RunVariations ((((≢data)-1)⍴0), 1) data (¯1↑data)  ⍝ All elements return 0 except last
-                    r,← 'T3' desc RunVariations ((≢data)⍴1) data data                ⍝ all elements return 1
+                    r,← 'T2' desc RunVariations ((0⍨¨¯1↓data),1) data (¯1↑data)  ⍝ All elements return 0 except last
+                    r,← 'T3' desc RunVariations (1⍨¨data) data data                ⍝ all elements return 1
                     r,← 'T4' desc RunVariations 0 5E50 data                          ⍝ huge element outside set is not found
 
                     ⍝ todo: change these to settle with RunVariations when RunVariations matures
@@ -135,10 +135,10 @@
                     data2←⍎case2
                     desc←testDesc⍬
                     :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
-                        r,← 'TCrossBool1' desc RunVariations ((≢bool)⍴0) bool data2      ⍝ All elements return 0
-                        r,← 'TCrossBool2' desc RunVariations ((≢data2)⍴0) data2 bool      ⍝ All elements return 0
+                        r,← 'TCrossBool1' desc RunVariations (0⍨¨bool) bool data2      ⍝ All elements return 0
+                        r,← 'TCrossBool2' desc RunVariations (0⍨¨data2) data2 bool      ⍝ All elements return 0
                     :Else
-                        r,← 'TCrossBooli1' desc RunVariations ((≢bool)⍴1) bool data2     ⍝ All elements return 1
+                        r,← 'TCrossBooli1' desc RunVariations (1⍨¨bool) bool data2     ⍝ All elements return 1
                         r,← 'TCrossBooli2' desc RunVariations ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) data2 bool ⍝ overlaping 0 1 returns 1
                     :EndIf
                 :EndFor
