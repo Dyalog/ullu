@@ -50,7 +50,7 @@
         fr_decf←1287
 
         r←⍬
-        getMagGen←{⍵<0:-1×⍵⋄⍵}
+        getMagGen←{⍵××⍵}
         testDesc←{'for ',case, '& ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
