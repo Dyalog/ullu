@@ -2,7 +2,7 @@
     Assert←#.unittest.Assert
     
     ⍝ evaluate each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;actualRS
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS
         (expectedR p)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -70,7 +70,7 @@
         :EndFor
     ∇
 
-    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;d;case;data;desc
+    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;d;case;data;testDesc;desc
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order to test for CT value
         
@@ -82,7 +82,7 @@
             data←⍎case
             desc←testDesc⍬
             r,←'Tc1' desc RunVariations (getMagCmplx¨data) data
-            
+
             :For d :In data
                 case←d
                 desc←testDesc⍬
