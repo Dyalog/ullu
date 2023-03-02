@@ -74,7 +74,7 @@
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order to test for CT value
         
-        getMagCmplx←{*∘0.5+/2*⍨(9 11○⊂⍵)}
+        getMagCmplx←{0.5*⍨+.×⍨9 11○⍵}
         r←⍬
         testDesc←{'for ',case, ' & ⎕FR:', ⎕FR}
         
