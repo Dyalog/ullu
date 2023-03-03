@@ -55,7 +55,7 @@
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
 
         r←⍬
-        getMagGen←{⍵××⍵}
+        getMagGen←{⍵>0:⍵⋄¯1×⍵}
         testDesc←{'for ',case, '& ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
