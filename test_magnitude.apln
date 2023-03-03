@@ -2,7 +2,7 @@
 ⍝
 ⍝ Magnitude:
 ⍝ Y may be any numeric array. R is numeric composed of the absolute (unsigned) values of Y.
-⍝ Note that the magnitude of a complex number a+ib is defined to be distance of vector from origin.
+⍝ Note that the magnitude of a complex number a+⍳b is defined to be √(a^2+b^2).
 :Namespace test_magnitude
     Assert←#.unittest.Assert
     
