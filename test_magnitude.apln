@@ -3,7 +3,6 @@
 ⍝ Magnitude:
 ⍝ Y may be any numeric array. R is numeric composed of the absolute (unsigned) values of Y.
 ⍝ Note that the magnitude of a complex number a+ib is defined to be distance of vector from origin.
-
 :Namespace test_magnitude
     Assert←#.unittest.Assert
     
@@ -37,23 +36,27 @@
     ∇
 
     ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;getMagGen;case;data;d;testDesc;desc;fr;⎕FR
+        fr_dbl←645
+        fr_decf←1287
+
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,-⍵}+⍳120                                ⍝ 83: 8 bits signed integer
         i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
-        ⎕FR←1287 ⋄ fl←{⍵,-⍵}1000.5+⍳100 ⋄ ⎕FR←645      ⍝ 1287: 128 bits Decimal
-        ⍝ Hdbl is 645 but higher order to test for CT value
+        ⍝ Hdbl and Sdbl is 645 but higher order and lower order to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
         Hdbl←{⍵,-⍵}1E14+(2×⍳50)
-        ⍝ Hfl is 1287 but higher order to test for CT value
+        Sdbl←{⍵,-⍵}(⍳10)×1E¯40
+        ⍝ Hfl and Sfl is 1287 but higher order and lower order to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
-        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
-
-        fr_dbl←645
-        fr_decf←1287
+        ⎕FR←fr_decf
+        fl←{⍵,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
+        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
+        Sfl←{⍵,-⍵}(⍳10)×1E¯40
+        ⎕FR←fr_dbl
 
         r←⍬
         getMagGen←{⍵××⍵}
@@ -61,7 +64,7 @@
 
         :For fr :In 1 2
             ⎕FR←fr⊃fr_dbl fr_decf
-            :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
+            :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
                 data←⍎case
                 desc←testDesc⍬
                 :If case≢'bool'
