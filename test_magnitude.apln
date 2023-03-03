@@ -44,19 +44,15 @@
         i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
-        ⍝ Hdbl and Sdbl is 645 but higher order and lower order to test for CT value
-        ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
-        ⍝ come under the region of tolerant equality
+        ⍝ Hdbl and Sdbl is 645 but higher order and lower order
         Hdbl←{⍵,-⍵}1E14+(2×⍳50)
         Sdbl←{⍵,-⍵}(⍳10)×1E¯40
-        ⍝ Hfl and Sfl is 1287 but higher order and lower order to test for CT value
-        ⍝ far intervals are chosen for non overlap 
-        ⍝ with region of tolerant equality
-        ⎕FR←fr_decf
+        ⍝ Hfl and Sfl is 1287 but higher order and lower order
+        ⎕FR←fr_decf                                   ⍝ use ⎕FR=1287
         fl←{⍵,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
         Sfl←{⍵,-⍵}(⍳10)×1E¯40
-        ⎕FR←fr_dbl
+        ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
 
         r←⍬
         getMagGen←{⍵××⍵}
@@ -68,9 +64,9 @@
                 data←⍎case
                 desc←testDesc⍬
                 :If case≢'bool'
-                    r,←'T1' desc RunVariations ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data
+                    r,←'T1' desc RunVariations ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
                     d←data[?≢data]
-                    r,←'T2' desc RunVariations (getMagGen d) d
+                    r,←'T2' desc RunVariations (getMagGen d) d ⍝ custom function does the same operation
                 :Else
                     r,←'Tb1' desc RunVariations (0 1) bool
                     r,← 'Tb2' desc RunVariations 0 (⊃bool)
@@ -82,11 +78,13 @@
     ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;d;case;data;testDesc;desc
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order to test for CT value
-
+        ⍝ not testing for decimal values because it is not recommended in documentation
+        
         getMagCmplx←{0.5*⍨+.×⍨9 11○⍵}
         r←⍬
         testDesc←{'for ',case}
 
+        ⍝ not testing for fr values because using fr=1287 is not recommended in docs
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
             desc←testDesc⍬
