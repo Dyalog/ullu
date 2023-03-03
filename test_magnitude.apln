@@ -1,3 +1,9 @@
+⍝ This Namespace includes tests for the function Magnitude which is represented by Monadic stile(|)
+⍝
+⍝ Magnitude:
+⍝ Y may be any numeric array. R is numeric composed of the absolute (unsigned) values of Y.
+⍝ Note that the magnitude of a complex number a+ib is defined to be distance of vector from origin.
+
 :Namespace test_magnitude
     Assert←#.unittest.Assert
     
@@ -73,11 +79,11 @@
     ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;d;case;data;testDesc;desc
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order to test for CT value
-        
+
         getMagCmplx←{0.5*⍨+.×⍨9 11○⍵}
         r←⍬
-        testDesc←{'for ',case, ' & ⎕FR:', ⎕FR}
-        
+        testDesc←{'for ',case}
+
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
             desc←testDesc⍬
