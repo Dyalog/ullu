@@ -35,7 +35,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert res
     ∇
 
-    ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;getMagGen;case;data;d;testDesc;desc;fr;⎕FR
+    ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;magGen;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
         fr_dbl←645
         fr_decf←1287
 
@@ -75,9 +75,9 @@
         :EndFor
     ∇
 
-    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;getMagCmplx;d;case;data;testDesc;desc
+    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;magCmplx;d;case;data;testDesc;desc
         cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
-        Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order to test for CT value
+        Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order
         ⍝ not testing for decimal values because it is not recommended in documentation
         
         magCmplx←{0.5*⍨+.×⍨9 11○⍵}
