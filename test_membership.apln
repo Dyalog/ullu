@@ -8,7 +8,7 @@
         tRes←⍬
 
         ⍝ normal
-        actualR←left∊right ⍝ actual result
+        actualR←left∊right
         res←expectedR≡actualR
         tRes,←tData Assert res
 

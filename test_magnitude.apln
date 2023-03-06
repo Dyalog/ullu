@@ -13,13 +13,13 @@
         tRes←⍬
 
         ⍝ normal
-        actualR←|p ⍝ actual result
+        actualR←|p
         res←expectedR≡actualR
         tRes,←tData Assert res
 
         ⍝ empty
-        actualRE←|(0⍴⊂p) ⍝ generating empty array from right
-        res←(0⍴⊂p)≡actualRE ⍝ all 0s in expectedR is the new expected result
+        actualRE←(0⍴⊂p) ⍝ generating empty array
+        res←(|(0⍴⊂p))≡actualRE
         tRes,←('Empty',tID) tCmt Assert res
 
         ⍝ different shapes
@@ -40,7 +40,7 @@
         fr_decf←1287
 
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←{⍵,-⍵}+⍳120                                ⍝ 83: 8 bits signed integer
+        i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
         i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
