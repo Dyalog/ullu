@@ -55,7 +55,7 @@
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
 
         r←⍬
-        getMagGen←{⍵>0:⍵⋄¯1×⍵}
+        magGen←{⍵>0:⍵⋄¯1×⍵}
         testDesc←{'for ',case, '& ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
@@ -66,7 +66,7 @@
                 :If case≢'bool'
                     r,←'T1' desc RunVariations ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
                     d←data[?≢data]
-                    r,←'T2' desc RunVariations (getMagGen d) d ⍝ custom function does the same operation
+                    r,←'T2' desc RunVariations (magGen d) d ⍝ custom function does the same operation
                 :Else
                     r,←'Tb1' desc RunVariations (0 1) bool
                     r,← 'Tb2' desc RunVariations 0 (⊃bool)
@@ -80,7 +80,7 @@
         Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order to test for CT value
         ⍝ not testing for decimal values because it is not recommended in documentation
         
-        getMagCmplx←{0.5*⍨+.×⍨9 11○⍵}
+        magCmplx←{0.5*⍨+.×⍨9 11○⍵}
         r←⍬
         testDesc←{'for ',case}
 
@@ -88,12 +88,12 @@
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
             desc←testDesc⍬
-            r,←'Tc1' desc RunVariations (getMagCmplx¨data) data
+            r,←'Tc1' desc RunVariations (magCmplx¨data) data
 
             :For d :In data
                 case←d
                 desc←testDesc⍬
-                r,←'Tc2' desc RunVariations (getMagCmplx d) d
+                r,←'Tc2' desc RunVariations (magCmplx d) d
             :EndFor
         :EndFor
     ∇
