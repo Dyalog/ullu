@@ -14,25 +14,21 @@
 
         ⍝ normal
         actualR←|p
-        res←expectedR≡actualR
-        tRes,←tData Assert res
+        tRes,←tData Assert expectedR≡actualR
 
         ⍝ empty
         actualRE←(0⍴⊂p) ⍝ generating empty array
-        res←(|(0⍴⊂p))≡actualRE
-        tRes,←('Empty',tID) tCmt Assert res
+        tRes,←('Empty',tID) tCmt Assert (|(0⍴⊂p))≡actualRE
 
         ⍝ different shapes
         shape←?4/4
         actualRS←|shape⍴actualR
-        res←(shape⍴expectedR)≡actualRS
-        tRes,←('Multiple',tID) tCmt Assert res
+        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
 
         ⍝ different shapes with 0 in shape
         shapeW0←(0@(?4))shape
         actualRS←|shapeW0⍴p
-        res←(shapeW0⍴0) ≡ actualRS
-        tRes,←('ShapeW0',tID) tCmt Assert res
+        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
     ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;magGen;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
