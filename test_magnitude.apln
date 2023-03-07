@@ -72,7 +72,7 @@
     ∇
 
     ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;magCmplx;d;case;data;testDesc;desc
-        cmplx←{⍵,-⍵}(0J1×⍳10)+⌽⍳10            ⍝ 1289: 128 bits Complex
+        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100          ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E13J1E13×⍳20)          ⍝ 1289 but higher order
         ⍝ not testing for decimal values because it is not recommended in documentation
         
