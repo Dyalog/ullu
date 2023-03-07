@@ -51,7 +51,7 @@
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
 
         r←⍬
-        magGen←{⍵>0:⍵⋄¯1×⍵}
+        magGen←{⍵×(¯1@(∊∘0)(⍵>0))}
         testDesc←{'for ',case, '& ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
@@ -61,8 +61,9 @@
                 desc←testDesc⍬
                 :If case≢'bool'
                     r,←'T1' desc RunVariations ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
+                    r,←'T2' desc RunVariations (magGen data) data
                     d←data[?≢data]
-                    r,←'T2' desc RunVariations (magGen d) d ⍝ custom function does the same operation
+                    r,←'T3' desc RunVariations (magGen d) d ⍝ custom function does the same operation
                 :Else
                     r,←'Tb1' desc RunVariations (0 1) bool
                     r,← 'Tb2' desc RunVariations 0 (⊃bool)
