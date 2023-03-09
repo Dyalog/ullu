@@ -8,13 +8,13 @@
         tRes←⍬
 
         ⍝ normal
-        actualR←left∊right ⍝ actual result
+        actualR←left∊right
         res←expectedR≡actualR
         tRes,←tData Assert res
 
         ⍝ empty left
         actualRE←(0⍴⊂left)∊right ⍝ generating empty array from right
-        res←⍬≡actualRE ⍝ all 0s in expectedR is the new expected result
+        res←⍬≡actualRE ⍝ empty array is expectedR
         tRes,←('Empty',tID) tCmt Assert res
 
         ⍝ empty right
@@ -33,6 +33,7 @@
         res←(lshape⍴expectedR) ≡ actualRM
         tRes,←('Shape',tID) tCmt Assert res
 
+        ⍝ different shapes with 0 in shape
         lshapeW0←(0@(?4))lshape
         actualRM←(lshapeW0⍴left)∊(rshape⍴right)
         res←(lshapeW0⍴0) ≡ actualRM
