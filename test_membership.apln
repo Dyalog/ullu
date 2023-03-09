@@ -14,7 +14,7 @@
 
         ⍝ empty left
         actualRE←(0⍴⊂left)∊right ⍝ generating empty array from right
-        res←⍬≡actualRE ⍝ all 0s in expectedR is the new expected result
+        res←⍬≡actualRE ⍝ empty array is expectedR
         tRes,←('Empty',tID) tCmt Assert res
 
         ⍝ empty right
