@@ -60,7 +60,7 @@
                 data←⍎case
                 desc←testDesc⍬
                 :If case≢'bool'
-                    r,←'T1' desc RunVariations ({⍵,⍵}{((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
+                    r,←'T1' desc RunVariations ({(⊣,⊣)((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
                     r,←'T2' desc RunVariations (magGen data) data
                     d←data[?≢data]
                     r,←'T3' desc RunVariations (magGen d) d ⍝ custom function does the same operation
@@ -75,13 +75,13 @@
     ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;magCmplx;d;case;data;testDesc;desc
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100          ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)          ⍝ 1289 but higher order
-        ⍝ not testing for decimal values because it is not recommended in documentation
+        ⍝ Decimal values in cmplx numbers are not recommended to be used by the docs
         
         magCmplx←{0.5*⍨+.×⍨9 11○⍵}
         r←⍬
         testDesc←{'for ',case}
         
-        ⍝ not testing for fr values because using fr=1287 is not recommended in docs
+        ⍝ Todo: test for case with ⎕fr←1287 with expected results, even though it is not recommended for the user
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
             desc←testDesc⍬
