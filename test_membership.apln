@@ -43,6 +43,11 @@
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
     ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+        ct_default←1E¯14
+        dct_default←1E¯28
+        fr_dbl←645
+        fr_decf←1287
+        
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
         char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
@@ -52,7 +57,6 @@
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
-        ⎕FR←1287 ⋄ fl←{⍵,-⍵}i3+0.01 ⋄ ⎕FR←645         ⍝ 1287: 128 bits Decimal
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
         ⍝ Hdbl is 645 but higher order to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
@@ -61,13 +65,11 @@
         ⍝ Hfl is 1287 but higher order to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
-        ⎕FR←1287 ⋄ Hfl←{⍵,-⍵}2E29+(1E16×⍳10) ⋄ ⎕FR←645 
+        ⎕FR←fr_decf
+        fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
+        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
+        ⎕FR←fr_dbl 
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
-
-        ct_default←1E¯14
-        dct_default←1E¯28
-        fr_dbl←645
-        fr_decf←1287
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
