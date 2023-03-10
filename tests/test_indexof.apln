@@ -14,11 +14,11 @@
         tRes,←tData Assert expectedR≡actualR
 
         ⍝ empty left
-        ⍝ actualRE←(0⍴⊂left)∊right ⍝ generating empty array from right
-        ⍝ tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
+        actualRE←(0⍴⊂left)⍳right ⍝ generating empty array from right
+        tRes,←('Empty',tID) tCmt Assert ((1⍨¨expectedR)-~⎕IO)≡actualRE ⍝ empty array is expectedR
 
         ⍝ ⍝ empty right
-        ⍝ actualRE←left∊(0⍴⊂right) ⍝ generating empty array from right
+        ⍝ actualRE←left⍳(0⍴⊂right) ⍝ generating empty array from right
         ⍝ tRes,←('Empty',tID) tCmt Assert (0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
 
         ⍝ ⍝ different shapes
