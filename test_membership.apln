@@ -9,18 +9,15 @@
 
         ⍝ normal
         actualR←left∊right
-        res←expectedR≡actualR
-        tRes,←tData Assert res
+        tRes,←tData Assert expectedR≡actualR
 
         ⍝ empty left
         actualRE←(0⍴⊂left)∊right ⍝ generating empty array from right
-        res←⍬≡actualRE ⍝ empty array is expectedR
-        tRes,←('Empty',tID) tCmt Assert res
+        tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
 
         ⍝ empty right
         actualRE←left∊(0⍴⊂right) ⍝ generating empty array from right
-        res←(0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
-        tRes,←('Empty',tID) tCmt Assert res
+        tRes,←('Empty',tID) tCmt Assert (0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
 
         ⍝ different shapes
         ⍝ for ANY array lshape, and for any rightshape where (≢right)≤×/rshape
@@ -30,14 +27,12 @@
         ⍝ randomized shape which has ≤7 elements and each elements is ≤12 and satisfies above condition
         rshape←{(×/(x←(?4)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
         actualRM←(lshape⍴left)∊(rshape⍴right)
-        res←(lshape⍴expectedR) ≡ actualRM
-        tRes,←('Shape',tID) tCmt Assert res
+        tRes,←('Shape',tID) tCmt Assert (lshape⍴expectedR) ≡ actualRM
 
         ⍝ different shapes with 0 in shape
         lshapeW0←(0@(?4))lshape
         actualRM←(lshapeW0⍴left)∊(rshape⍴right)
-        res←(lshapeW0⍴0) ≡ actualRM
-        tRes,←('ShapeW0',tID) tCmt Assert res
+        tRes,←('ShapeW0',tID) tCmt Assert (lshapeW0⍴0) ≡ actualRM
     ∇
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
