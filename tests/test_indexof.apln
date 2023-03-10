@@ -1,5 +1,39 @@
 :Namespace test_indexof
     Assert←#.unittest.Assert
+
+        ⍝ Run Variations of each test with normal, empty and multiple shaped data
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
+        (expectedR left right)←exp
+        (tID tCmt)←tData
+        tRes←⍬
+
+        ⍝ normal
+        actualR←left⍳right
+        tRes,←tData Assert expectedR≡actualR
+
+        ⍝ empty left
+        ⍝ actualRE←(0⍴⊂left)∊right ⍝ generating empty array from right
+        ⍝ tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
+
+        ⍝ ⍝ empty right
+        ⍝ actualRE←left∊(0⍴⊂right) ⍝ generating empty array from right
+        ⍝ tRes,←('Empty',tID) tCmt Assert (0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
+
+        ⍝ ⍝ different shapes
+        ⍝ ⍝ for ANY array lshape, and for any rightshape where (≢right)≤×/rshape
+        ⍝ ⍝ the condition guarantees that (rshape⍴right) will create an array
+        ⍝ ⍝ which contains ALL the elements of right, possibly more than once
+        ⍝ lshape←?4/4
+        ⍝ ⍝ randomized shape which has ≤7 elements and each elements is ≤12 and satisfies above condition
+        ⍝ rshape←{(×/(x←(?4)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
+        ⍝ actualRM←(lshape⍴left)∊(rshape⍴right)
+        ⍝ tRes,←('Shape',tID) tCmt Assert (lshape⍴expectedR) ≡ actualRM
+
+        ⍝ ⍝ different shapes with 0 in shape
+        ⍝ lshapeW0←(0@(?4))lshape
+        ⍝ actualRM←(lshapeW0⍴left)∊(rshape⍴right)
+        ⍝ tRes,←('ShapeW0',tID) tCmt Assert (lshapeW0⍴0) ≡ actualRM
+    ∇
     
     ∇ r←Test_indexof
         ct_default←1E¯14
@@ -33,6 +67,17 @@
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
-        r,← 'T1' 'desc' Assert 1=1
+        :For ct :In 1 0 
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+
+            :For fr :In 1 2
+                ⎕FR←fr⊃fr_dbl fr_decf
+                case←⍬
+                case2←⍬
+                desc←testDesc⍬
+                r,← 'T1' desc RunVariations (4 1 3 2 6) (2 4 3 1 4) (1 2 3 4 5)
+                case2←⍬
+            :EndFor
+        :EndFor
     ∇
 :EndNamespace
