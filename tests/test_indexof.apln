@@ -18,7 +18,7 @@
         tRes,←('Empty',tID) tCmt Assert ((1⍨¨expectedR)-~⎕IO)≡actualRE ⍝ empty array is expectedR
     ∇
     
-    ∇ r←Test_indexof
+    ∇ r←Test_indexof ;⎕CT;⎕DCT;ct;⎕FR;fr;⎕IO;io;ct_default;dct_default;fr_dbl;fr_decf;io_default;io_0;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;fl;Hfl;cmplx;Hcmplx;case;case2;data;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -66,10 +66,10 @@
                         case←⍬
                         case2←⍬
                         desc←testDesc⍬
-                        r,← 'T0' desc RunVariations ⍬ ⍬ ⍬
+                        r,← 'T0' desc RunVariations ⍬ ⍬ ⍬ ⍝ Niladic gives Niladic
                         
                         :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                            data←∪⍎case
+                            data←∪⍎case ⍝ remove repeating 0s
                             desc←testDesc⍬
                             r,← 'T1' desc RunVariations (⍳≢data) data data ⍝ all elements of data are indexed
                         :EndFor
