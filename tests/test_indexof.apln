@@ -17,10 +17,6 @@
         actualRE←(0⍴⊂left)⍳right ⍝ generating empty array from right
         tRes,←('Empty',tID) tCmt Assert ((1⍨¨expectedR)-~⎕IO)≡actualRE ⍝ empty array is expectedR
 
-        ⍝ ⍝ empty right
-        ⍝ actualRE←left⍳(0⍴⊂right) ⍝ generating empty array from right
-        ⍝ tRes,←('Empty',tID) tCmt Assert (0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
-
         ⍝ ⍝ different shapes
         ⍝ ⍝ for ANY array lshape, and for any rightshape where (≢right)≤×/rshape
         ⍝ ⍝ the condition guarantees that (rshape⍴right) will create an array
@@ -85,6 +81,7 @@
                         case←⍬
                         case2←⍬
                         desc←testDesc⍬
+                        r,← 'T0' desc RunVariations ⍬ ⍬ ⍬
                         r,← 'T1' desc RunVariations (4 1 3 2 6) (2 4 3 1 4) (1 2 3 4 5)
                     :EndFor
                 :EndFor
