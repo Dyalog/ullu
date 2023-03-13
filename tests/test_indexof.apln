@@ -80,7 +80,7 @@
                 :For fr :In fr_dbl fr_decf
                     ⎕FR←fr
 
-                    :For io :In 1 0
+                    :For io :In io_default io_0
                         ⎕IO←io
                         case←⍬
                         case2←⍬
