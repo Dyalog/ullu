@@ -68,7 +68,7 @@
                         desc←testDesc⍬
                         r,← 'T0' desc RunVariations ⍬ ⍬ ⍬
                         
-                        :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                             data←∪⍎case
                             desc←testDesc⍬
                             r,← 'T1' desc RunVariations (⍳≢data) data data ⍝ all elements of data are indexed
