@@ -72,6 +72,9 @@
                             data←∪⍎case ⍝ remove repeating 0s
                             desc←testDesc⍬
                             r,← 'T1' desc RunVariations (⍳≢data) data data ⍝ all elements of data are indexed
+                            r,← 'T2' desc RunVariations (⎕IO+⊃⍴data) data 1E50 ⍝ random huge element is not found
+                            d←data[pos←?≢data] ⍝ element from random position is chosen
+                            r,← 'T3' desc RunVariations pos data d ⍝ element from random position exists
                         :EndFor
                     :EndFor
                 :EndFor
