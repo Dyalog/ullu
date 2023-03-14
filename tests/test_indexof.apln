@@ -27,19 +27,19 @@
         io_0←0
         
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
+        i1←{⍵,-⍵}⍳60                                   ⍝ 83: 8 bits signed integer
         char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
         char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+        dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
         ⍝ Hdbl is 645 but higher order to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
+        Hdbl←{⍵,-⍵}1E15+(2×⍳50)
         ⍝ Hfl is 1287 but higher order to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
@@ -47,7 +47,7 @@
         fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
         ⎕FR←fr_dbl 
-        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
+        Hcmplx←{⍵,-⍵}(1E17J1E17×⍳20)                  ⍝ 1289 but higher order to test for CT value
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕IO:', ⎕IO}
@@ -70,11 +70,30 @@
                         
                         :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                             data←∪⍎case ⍝ remove repeating 0s
+                            :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
+                                :Continue
+                            :EndIf
                             desc←testDesc⍬
                             r,← 'T1' desc RunVariations (⍳≢data) data data ⍝ all elements of data are indexed
                             r,← 'T2' desc RunVariations (⎕IO+⊃⍴data) data 1E50 ⍝ random huge element is not found
                             d←data[pos←?≢data] ⍝ element from random position is chosen
                             r,← 'T3' desc RunVariations pos data d ⍝ element from random position exists
+
+                            d←data[pos←?≢data]
+                            :If ct ⍝ tolerant
+                                ⍝ case for CT default & is skipped for FR=1287
+                                :If (⊂data)∊Hdbl Hfl Hcmplx
+                                    ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                                    r,← 'CTDefault' desc Assert ((pos≡(data⍳(d+1))) ∨ (fr=2 ∧ case≡'Hdbl'))
+                                :EndIf
+                            :Else  ⍝ exact
+                                :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                                    ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                                    dir←{×d≡0:1⋄×d}⍬
+                                    ⍝ todo: fix for some cases
+                                    ⍝ r,← 'CTZero' desc Assert (((pos+dir)≡(data⍳(d+1))) ∨ (fr=1 ∧ case≡'Hfl'))
+                                :EndIf
+                            :EndIf
                         :EndFor
                     :EndFor
                 :EndFor
