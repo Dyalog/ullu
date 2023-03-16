@@ -7,7 +7,7 @@
         (tID tCmt)←tData
         tRes←⍬
 
-        expectedR←expectedR⍝-~⎕IO ⍝ expectedR is defaulted to ⎕IO←1
+        ⍝ expectedR←expectedR⍝-~⎕IO ⍝ expectedR is defaulted to ⎕IO←1
 
         ⍝ normal
         actualR←left⍳right
@@ -63,17 +63,34 @@
 
                     :For io :In io_default io_0
                         ⎕IO←io
-                        case←⍬
+                        case←'zilde'
                         case2←⍬
                         desc←testDesc⍬
                         r,← 'T0' desc RunVariations ⍬ ⍬ ⍬ ⍝ Niladic gives Niladic
                         
-                        :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                             data←∪⍎case ⍝ remove repeating 0s
+                            desc←testDesc⍬
                             :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
                                 :Continue
                             :EndIf
+                            ⍝ Cross type tests
+                            :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                                data2←⍎case2
+                                desc←testDesc⍬
+                                :If (case≡case2)
+                                    ⍝ todo: fix for Hdbl
+                                    ⍝ r,←'TCross0' desc RunVariations (⍳≢data) data data2
+                                    :Continue
+                                :EndIf
+                                r,← 'TCross1' desc RunVariations ((⎕IO+⊃⍴data)⍨¨data2) data data2                       ⍝ no match, all return 0
+                                r,← 'TCross2' desc RunVariations ((⎕IO+⊃⍴data2)⍨¨data) data2 data                      ⍝ no match, all return 0
+                                r,← 'TCross3' desc RunVariations (⍳≢data) (data,data2) data                  ⍝ first data match, returns 1
+                                r,← 'TCross4' desc RunVariations ((⍳≢data),((⎕IO+⊃⍴data)⍨¨data2)) data (data,data2) ⍝ data match, data2 no match
+                            :EndFor
+                            case2←⍬ ⍝ dispose case2
                             desc←testDesc⍬
+                            
                             r,← 'T1' desc RunVariations (⍳≢data) data data ⍝ all elements of data are indexed
                             r,← 'T2' desc RunVariations (⎕IO+⊃⍴data) data 1E50 ⍝ random huge element is not found
                             d←data[pos←?≢data] ⍝ element from random position is chosen
