@@ -111,6 +111,29 @@
                         ⍝     :EndIf
                         ⍝ :EndIf
                     :EndFor
+                    
+
+                    ⍝ Booleans need special tests
+                    case←'bool'
+                    desc←testDesc⍬
+
+                    r,← 'TB1' desc RunVariations (⎕IO) bool 0
+                    r,← 'TB2' desc RunVariations (⎕IO+1) bool 1
+                    r,← 'TB3' desc RunVariations (⍳2) bool bool
+                    
+                    ⍝ ⍝ Boolean cross type tests
+                    ⍝ :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
+                    ⍝     data2←⍎case2
+                    ⍝     desc←testDesc⍬
+                    ⍝     :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
+                    ⍝         r,← 'TCrossBool1' desc RunVariations (0⍨¨bool) bool data2      ⍝ All elements return 0
+                    ⍝         r,← 'TCrossBool2' desc RunVariations (0⍨¨data2) data2 bool      ⍝ All elements return 0
+                    ⍝     :Else
+                    ⍝         r,← 'TCrossBooli1' desc RunVariations (1⍨¨bool) bool data2     ⍝ All elements return 1
+                    ⍝         r,← 'TCrossBooli2' desc RunVariations ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) data2 bool ⍝ overlaping 0 1 returns 1
+                    ⍝     :EndIf
+                    ⍝ :EndFor
+                    case2←⍬
                 :EndFor
             :EndFor
         :EndFor
