@@ -7,8 +7,6 @@
         (tID tCmt)←tData
         tRes←⍬
 
-        ⍝ expectedR←expectedR⍝-~⎕IO ⍝ expectedR is defaulted to ⎕IO←1
-
         ⍝ normal
         actualR←left⍳right
         tRes,←tData Assert expectedR≡actualR
@@ -47,7 +45,7 @@
         fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
         ⎕FR←fr_dbl
-        Hcmplx←{⍵,-⍵}(1E17J1E17×⍳20)                  ⍝ 1289 but higher order to test for CT value
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕IO:', ⎕IO}
@@ -94,22 +92,19 @@
                         d←data[pos←?≢data] ⍝ element from random position is chosen
                         r,← 'T3' desc RunVariations pos data d ⍝ element from random position exists
 
-                        ⍝ fix ct tests
-                        ⍝ d←data[pos←?≢data]
-                        ⍝ :If ct ⍝ tolerant
-                        ⍝     ⍝ case for CT default & is skipped for FR=1287
-                        ⍝     :If (⊂data)∊Hdbl Hfl Hcmplx
-                        ⍝         ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
-                        ⍝         r,← 'CTDefault' desc Assert ((pos≡(data⍳(d+1))) ∨ (fr=2 ∧ case≡'Hdbl'))
-                        ⍝     :EndIf
-                        ⍝ :Else  ⍝ exact
-                        ⍝     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
-                        ⍝         ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                        ⍝         dir←{×d≡0:1⋄×d}⍬
-                        ⍝         ⍝ todo: fix for some cases
-                        ⍝         r,← 'CTZero' desc Assert (((pos+dir)≡(data⍳(d+1))) ∨ (fr=1 ∧ case≡'Hfl'))
-                        ⍝     :EndIf
-                        ⍝ :EndIf
+                        d←data[pos←?≢data]
+                        :If ct ⍝ tolerant
+                            ⍝ case for CT default & is skipped for FR=1287
+                            :If (⊂data)∊Hdbl Hfl Hcmplx
+                                ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                                r,← 'CTDefault' desc Assert ((pos≡(data⍳(d+1))) ∨ (fr=fr_decf ∧ case≡'Hdbl'))
+                            :EndIf
+                        :Else  ⍝ exact
+                            :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                                ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                                r,← 'CTZero' desc Assert ((pos≢(data⍳(d+1))) ∨ (fr=fr_dbl ∧ case≡'Hfl'))
+                            :EndIf
+                        :EndIf
                     :EndFor
                     
 
