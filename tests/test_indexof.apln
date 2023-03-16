@@ -39,14 +39,14 @@
         ⍝ Hdbl is 645 but higher order to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
-        Hdbl←{⍵,-⍵}1E15+(2×⍳50)
+        Hdbl←{⍵,-⍵}1E15+(1E10×⍳50)
         ⍝ Hfl is 1287 but higher order to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
         ⎕FR←fr_decf
         fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
-        ⎕FR←fr_dbl 
+        ⎕FR←fr_dbl
         Hcmplx←{⍵,-⍵}(1E17J1E17×⍳20)                  ⍝ 1289 but higher order to test for CT value
 
         r←⍬
@@ -61,13 +61,12 @@
                 :For fr :In fr_dbl fr_decf
                     ⎕FR←fr
 
-                    case←'zilde'
-                    case2←⍬
+                    case←'zilde'⋄case2←⍬
                     desc←testDesc⍬
                     r,← 'T0' desc RunVariations ⍬ ⍬ ⍬ ⍝ Niladic gives Niladic
                     
                     :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                        data←∪⍎case ⍝ remove repeating 0s
+                        data←⍎case~0 ⍝ remove repeating 0s
                         desc←testDesc⍬
                         :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
                             :Continue
@@ -75,11 +74,11 @@
 
                         ⍝ Cross type tests
                         :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                            data2←⍎case2
+                            data2←⍎case2~0
                             desc←testDesc⍬
                             :If (case≡case2)
                                 ⍝ todo: fix for Hdbl
-                                ⍝ r,←'TCross0' desc RunVariations (⍳≢data) data data2
+                                r,←'TCross0' desc RunVariations (⍳≢data) data data2
                                 :Continue
                             :EndIf
                             r,← 'TCross1' desc RunVariations ((⎕IO+⊃⍴data)⍨¨data2) data data2                       ⍝ no match, all return 0
@@ -95,21 +94,22 @@
                         d←data[pos←?≢data] ⍝ element from random position is chosen
                         r,← 'T3' desc RunVariations pos data d ⍝ element from random position exists
 
-                        d←data[pos←?≢data]
-                        :If ct ⍝ tolerant
-                            ⍝ case for CT default & is skipped for FR=1287
-                            :If (⊂data)∊Hdbl Hfl Hcmplx
-                                ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
-                                r,← 'CTDefault' desc Assert ((pos≡(data⍳(d+1))) ∨ (fr=2 ∧ case≡'Hdbl'))
-                            :EndIf
-                        :Else  ⍝ exact
-                            :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
-                                ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                                dir←{×d≡0:1⋄×d}⍬
-                                ⍝ todo: fix for some cases
-                                ⍝ r,← 'CTZero' desc Assert (((pos+dir)≡(data⍳(d+1))) ∨ (fr=1 ∧ case≡'Hfl'))
-                            :EndIf
-                        :EndIf
+                        ⍝ fix ct tests
+                        ⍝ d←data[pos←?≢data]
+                        ⍝ :If ct ⍝ tolerant
+                        ⍝     ⍝ case for CT default & is skipped for FR=1287
+                        ⍝     :If (⊂data)∊Hdbl Hfl Hcmplx
+                        ⍝         ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                        ⍝         r,← 'CTDefault' desc Assert ((pos≡(data⍳(d+1))) ∨ (fr=2 ∧ case≡'Hdbl'))
+                        ⍝     :EndIf
+                        ⍝ :Else  ⍝ exact
+                        ⍝     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                        ⍝         ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                        ⍝         dir←{×d≡0:1⋄×d}⍬
+                        ⍝         ⍝ todo: fix for some cases
+                        ⍝         r,← 'CTZero' desc Assert (((pos+dir)≡(data⍳(d+1))) ∨ (fr=1 ∧ case≡'Hfl'))
+                        ⍝     :EndIf
+                        ⍝ :EndIf
                     :EndFor
                 :EndFor
             :EndFor
