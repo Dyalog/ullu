@@ -1,7 +1,7 @@
 :Namespace test_indexof
     Assert←#.unittest.Assert
 
-        ⍝ Run Variations of each test with normal, empty and multiple shaped data
+    ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
         (expectedR left right)←exp
         (tID tCmt)←tData
@@ -75,7 +75,6 @@
                             data2←⍎case2~0
                             desc←testDesc⍬
                             :If (case≡case2)
-                                ⍝ todo: fix for Hdbl
                                 r,←'TCross0' desc RunVariations (⍳≢data) data data2
                                 :Continue
                             :EndIf
