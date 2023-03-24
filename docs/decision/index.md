@@ -3,9 +3,9 @@
 # unittest.apln
 
 Unit tests file is the main file of the program that runs the tests. It is structured with 3 main functions:
-- RunTests
-- Assert
-- GetTests
+- `RunTests`
+- `Assert`
+- `GetTests`
 
 ### RunTests
 Base function, parses all input parameters, fetches and executes tests.
@@ -34,9 +34,5 @@ The tests are categorised into the type of function/operator they are.
 ## Test Files
 
 The test files are structed with two functions:
-- Test_Functionname
-- RunVariations
-
-### Test_Functionname
-
-### RunVariations
+- `Test_Functionname`: General testcases including variations of ⎕IO. ⎕FR, ⎕CT, ⎕DCT and datatypes for each testcase.
+- `RunVariations`: Each test is run with variations of normal, empty, and differently shaped.
