@@ -1,0 +1,3 @@
+# Scalar Monadic Functions
+
+## Magnitude
