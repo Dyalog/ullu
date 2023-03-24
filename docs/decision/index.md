@@ -24,6 +24,19 @@ It is a dyadic function of the format `r←tData Assert r`. `tData` being test I
 ### GetTests
 Fetches tests for RunTests to execute them. Fetches a namespace containing functions called test_*.
 
+# The tests
 The tests are categorised into the type of function/operator they are.
 - Primitive functions
+    - Non Scalar Selector functions
+    - Scalar Monadic Functions
 - Primitive operators
+
+## Test Files
+
+The test files are structed with two functions:
+- Test_Functionname
+- RunVariations
+
+### Test_Functionname
+
+### RunVariations

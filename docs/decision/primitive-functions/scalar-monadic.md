@@ -1,3 +1,3 @@
 # Scalar Monadic Functions
 
-## Magnitude
+## Magnitude (`R←|Y`)([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Magnitude.htm))

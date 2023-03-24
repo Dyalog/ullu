@@ -1,6 +1,8 @@
 # Non Scalar Selector functions
 
-## Index of
+## Index of (`R←X⍳Y`)([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Index%20Of.htm))
 
+tbd
 
-## Membership
+## Membership (`R←X∊Y`) ([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Membership.htm))
+
