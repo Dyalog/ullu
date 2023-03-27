@@ -31,13 +31,12 @@
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
             'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(''?'' for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳4)↓11
-            ⍝ having 0 default for RL so tests are predictable, tests can be done with ⍬ for random seed values
+            ⍝ having 0 default for RL so tests are predictable, rl of '?' is used for random seed values
             (testNS verbose stop randLink)←4↑args,0 0 0 0
 
             'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
             'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11       
 
-            ⍝ ⎕RL←rl←{(≢⍵)≡0:(?(¯2+2*31))⋄⍵} randLink
             ⎕RL←rl←{⍵≡'?':(?(¯2+2*31))⋄⍵} randLink
             ⎕←'Options:'
             ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl

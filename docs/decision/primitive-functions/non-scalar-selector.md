@@ -11,7 +11,7 @@ The tests include:
 - Cross-datatype tests: tests for found/not-found across datatypes, concatenating expressions and results to find any errors
 - Tests based on Comparision tolerance(`⎕CT` & `⎕DCT`): tests to check if `d=d+1` on larger values of double, floating and complex numbers based on comparision tolerance values(default or 0).
 - Tests based on Floating point representation(`⎕FR`): All the tests run with values of `⎕FR` as 645 and 1287.
-- Separate tests for boolean values: 
+- Separate tests for boolean values: Booleans need special tests because they only have 2 elements and since `i1` and `bool` have overlapping values.
 
 Variations include:
 - Normal: general test case with left, right and expected result.

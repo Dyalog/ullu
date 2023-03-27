@@ -87,9 +87,9 @@
                                 r,←'TCross0' desc RunVariations (⍳≢data) data data2
                                 :Continue
                             :EndIf
-                            r,← 'TCross1' desc RunVariations ((⎕IO+⊃⍴data)⍨¨data2) data data2                   ⍝ no match, all return 0
-                            r,← 'TCross2' desc RunVariations ((⎕IO+⊃⍴data2)⍨¨data) data2 data                   ⍝ no match, all return 0
-                            r,← 'TCross3' desc RunVariations (⍳≢data) (data,data2) data                         ⍝ first data match, returns index for data
+                            r,← 'TCross1' desc RunVariations ((⎕IO+⊃⍴data)⍨¨data2) data data2                   ⍝ no match, all return not found
+                            r,← 'TCross2' desc RunVariations ((⎕IO+⊃⍴data2)⍨¨data) data2 data                   ⍝ no match, all return not found
+                            r,← 'TCross3' desc RunVariations (⍳≢data) (data,data2) data                         ⍝ data match, returns index for data
                             r,← 'TCross4' desc RunVariations ((⍳≢data),((⎕IO+⊃⍴data)⍨¨data2)) data (data,data2) ⍝ data match, data2 no match, returns index and not found
                         :EndFor
                         case2←⍬ ⍝ dispose case2
@@ -128,11 +128,11 @@
                         data2←⍎case2
                         desc←testDesc⍬
                         :If (case2≢'i1') ⍝ bool requires separate cross tests because of overlap with i1
-                            r,← 'TCrossBool1' desc RunVariations ((⎕IO+⊃⍴bool)⍨¨data2) bool data2      ⍝ All elements return 0
-                            r,← 'TCrossBool2' desc RunVariations ((⎕IO+⊃⍴data2)⍨¨bool) data2 bool      ⍝ All elements return 0
+                            r,← 'TCrossBool1' desc RunVariations ((⎕IO+⊃⍴bool)⍨¨data2) bool data2      ⍝ All elements return not found
+                            r,← 'TCrossBool2' desc RunVariations ((⎕IO+⊃⍴data2)⍨¨bool) data2 bool      ⍝ All elements return not found
                         :Else
-                            r,← 'TCrossBooli1' desc RunVariations (((⎕IO+1)@⎕IO)((⎕IO+⊃⍴bool)⍨¨data2)) bool data2 ⍝ All elements return 1
-                            r,← 'TCrossBooli1' desc RunVariations ((⎕IO+⊃⍴data2),⎕IO) data2 bool       ⍝ All elements return 1
+                            r,← 'TCrossBooli1' desc RunVariations (((⎕IO+1)@⎕IO)((⎕IO+⊃⍴bool)⍨¨data2)) bool data2 ⍝ All elements return are not found except 1
+                            r,← 'TCrossBooli1' desc RunVariations ((⎕IO+⊃⍴data2),⎕IO) data2 bool       ⍝ 0 not found, 1 found
                         :EndIf
                     :EndFor
                     case2←⍬
