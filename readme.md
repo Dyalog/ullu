@@ -22,11 +22,11 @@ stop: if set to 1, any test which fails causes the framework to stop and allows 
 
 Example:
 ```
-unittest.RunTests test_membership 1 0 1232
+unittest.RunTests tests.test_membership 1 0 1232
 ```
 or
 ```
-unittest.RunTests test_membership
+unittest.RunTests tests.test_membership
 ```
 
 <!-- ## Configuration

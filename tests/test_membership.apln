@@ -120,7 +120,7 @@
                     :EndIf
                 :EndFor
 
-                ⍝ ⍝ Booleans need special tests
+                ⍝ Booleans need special tests
                 case←'bool'
                 desc←testDesc⍬
 
