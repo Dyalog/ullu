@@ -73,7 +73,7 @@
                     r,← 'T0' desc RunVariations ⍬ ⍬ ⍬ ⍝ Niladic gives Niladic
 
                     :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                        data←⍎case~0 ⍝ remove repeating 0s
+                        data←⍎case
                         desc←testDesc⍬
                         :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
                             :Continue
@@ -81,7 +81,7 @@
 
                         ⍝ Cross type tests
                         :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                            data2←⍎case2~0
+                            data2←⍎case2
                             desc←testDesc⍬
                             :If (case≡case2)
                                 r,←'TCross0' desc RunVariations (⍳≢data) data data2
