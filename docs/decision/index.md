@@ -12,7 +12,7 @@ Base function, parses all input parameters, fetches and executes tests.
 
 Parses verbose, stop and random link(⎕RL) values.
 
-⎕RL value is set to 0 by default, so that similar tests run everytime the suite is executed. It is also easier to reproduce failed tests because the ⎕RL value is reset after each test. `?` can be passed to generate a possible random value for ⎕RL.
+⎕RL value is set to 0 by default, so that non-similar tests run everytime the suite is executed. It logs the random value put into ⎕RL so these tests can be repeated. Any value can be put into ⎕RL.
 
 Final result is displayed with number of tests ran, failed, passed and the time taken to complete the testing.
 
@@ -25,11 +25,10 @@ It is a dyadic function of the format `r←tData Assert r`. `tData` being test I
 Fetches tests for RunTests to execute them. Fetches a namespace containing functions called test_*.
 
 # The tests
-The tests are categorised into the type of function/operator they are.
+The tests are categorised into the type of function/operator they are. (categorised according to the Language Reference by [help.dyalog.com](https://help.dyalog.com/latest/)
 - Primitive functions
     - Non Scalar Selector functions
     - Scalar Monadic Functions
-- Primitive operators
 
 ## Test Files
 
