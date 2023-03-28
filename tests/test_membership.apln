@@ -12,11 +12,11 @@
         tRes,←tData Assert expectedR≡actualR
 
         ⍝ empty left
-        actualRE←(0⍴⊂left)∊right ⍝ generating empty array from right
+        actualRE←(0⍴⊂left)∊right ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
         tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
 
         ⍝ empty right
-        actualRE←left∊(0⍴⊂right) ⍝ generating empty array from right
+        actualRE←left∊(0⍴⊂right) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
         tRes,←('Empty',tID) tCmt Assert (0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
 
         ⍝ different shapes
