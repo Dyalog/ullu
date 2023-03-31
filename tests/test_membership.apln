@@ -1,3 +1,7 @@
+⍝ This Namespace includes tests for the function Membership which is represented by Dyadic Epsilon(∊)
+⍝
+⍝ Membership (R←X∊Y)
+⍝ An element of X is considered identical to an element in Y if X≡Y returns 1 for those elements.
 :Namespace test_membership
     Assert←#.unittest.Assert
 
