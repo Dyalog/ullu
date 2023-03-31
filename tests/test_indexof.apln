@@ -70,7 +70,7 @@
 
                     case←'zilde'⋄case2←⍬
                     desc←testDesc⍬
-                    r,← 'T0' desc RunVariations ⍬ ⍬ ⍬ ⍝ Niladic gives Niladic
+                    r,← 'T0' desc RunVariations ⍬ ⍬ ⍬
 
                     :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                         data←⍎case
