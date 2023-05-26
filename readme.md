@@ -3,6 +3,13 @@
 Testing Dyalog APL Code using a custom test framework.
 
 ## Usage
+
+Run all tests using:
+```
+LOAD='/Path to/bb-test-apl/bbtest.dws' apl 
+```
+<!-- LOAD='/home/aarush/Desktop/wdr/bb-test-apl/bbtest.dws' apl  -->
+
 ### Using RIDE:
 Open ride in the repository
 Link the namespaces:
