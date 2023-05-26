@@ -1,4 +1,12 @@
 :Namespace unittest
+    ⎕LX←'unittest.RunAll ⍬'
+
+    RunAll←{
+        t←#.test_magnitude #.test_membership #.test_indexof
+        ⎕←'Testing for:',t
+        RunTests¨t        
+    }
+
     GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
         tests←'Test_.+'⎕S'&'⍵.⎕NL ¯3
         tests←('.', ⍨⍕⍵)∘, ¨tests
