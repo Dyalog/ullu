@@ -56,6 +56,12 @@
 
         :For fr :In 1 2
             ⎕FR←fr⊃fr_dbl fr_decf
+            data←'tp'
+            case←'test'
+            desc←testDesc⍬
+            r,←'ti1' desc RunVariations (,2147483648) (,¯2147483648)
+            r,←'ti2' desc RunVariations (,2147483647) (,2147483647)
+
             :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
                 data←⍎case
                 desc←testDesc⍬
@@ -76,11 +82,14 @@
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but higher order
         ⍝ Decimal values in cmplx numbers are not recommended to be used by the docs
-        
+        fr_dbl←645
+        fr_decf←1287
+
         magCmplx←{0.5*⍨+.×⍨9 11○⍵}
         r←⍬
         testDesc←{'for ',case}
-        
+
+
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
             desc←testDesc⍬
@@ -91,6 +100,15 @@
                 desc←testDesc⍬
                 r,←'Tc2' desc RunVariations (magCmplx d) d
             :EndFor
+        :EndFor
+
+        :For fr :In 2 1
+            ⎕FR←fr⊃fr_dbl fr_decf
+            ⎕CT←0
+            data←,3J4
+            case←'independant with ⎕fr', ⎕fr
+            desc←testDesc⍬
+            r,←'Ti1' desc RunVariations (,5) data
         :EndFor
     ∇
 :EndNamespace
