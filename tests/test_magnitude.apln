@@ -56,11 +56,6 @@
 
         :For fr :In 1 2
             ⎕FR←fr⊃fr_dbl fr_decf
-            data←'tp'
-            case←'test'
-            desc←testDesc⍬
-            r,←'ti1' desc RunVariations (,2147483648) (,¯2147483648)
-            r,←'ti2' desc RunVariations (,2147483647) (,2147483647)
 
             :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
                 data←⍎case
@@ -75,13 +70,23 @@
                     r,← 'Tb2' desc RunVariations 0 (⊃bool)
                 :EndIf
             :EndFor
+
+            case←'for limits of i4' ⍝ 32-bit int range [¯2147483648, 2147483647]. Therefore, |¯2147483648 is stored as float.
+            desc←testDesc⍬
+            r,←'tLim1' desc RunVariations (,2147483648) (,¯2147483648)
+            r,←'tLim2' desc RunVariations (,2147483648, magGen i1) (¯2147483648,i1) ⍝ Rarg to | will have the same type, and similarly the elements in the result will do as well.
+
+            case←'for singleton scalar boolean' ⍝ edge case for when a singleton scalar boolean is passed as rarg to magnitude. 
+            desc←testDesc⍬
+            r,←'tb3' desc RunVariations (∧/1 0 1 0) (|∧/1 0 1 0) ⍝ | is applied here becuase of type conversion when argument is passed to RunVariations
         :EndFor
     ∇
 
     ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;magCmplx;d;case;data;testDesc;desc
+        i1←{⍵}⍳120                                    ⍝ 83: 8 bits signed integer
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but higher order
-        ⍝ Decimal values in cmplx numbers are not recommended to be used by the docs
+        ⍝ DECF in cmplx numbers are not recommended to be used by the docs
         fr_dbl←645
         fr_decf←1287
 
@@ -89,6 +94,12 @@
         r←⍬
         testDesc←{'for ',case}
 
+        :For fr :In 2 1
+            ⎕FR←fr⊃fr_dbl fr_decf
+            case←'cmplx with non-cmplx nums with ⎕fr', ⎕fr  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
+            desc←testDesc⍬
+            r,←'Ti1' desc RunVariations (,5,i1) (,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
+        :EndFor
 
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
@@ -100,15 +111,6 @@
                 desc←testDesc⍬
                 r,←'Tc2' desc RunVariations (magCmplx d) d
             :EndFor
-        :EndFor
-
-        :For fr :In 2 1
-            ⎕FR←fr⊃fr_dbl fr_decf
-            ⎕CT←0
-            data←,3J4
-            case←'independant with ⎕fr', ⎕fr
-            desc←testDesc⍬
-            r,←'Ti1' desc RunVariations (,5) data
         :EndFor
     ∇
 :EndNamespace

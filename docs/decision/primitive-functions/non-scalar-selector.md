@@ -16,6 +16,8 @@ Variations include:
 - Different shapes: TBD.
 - Different shapes with 0 in shape: TBD.
 
+Code Coverage report: NA
+
 ## Membership (`R←X∊Y`) ([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Membership.htm))
 
 The tests include:
@@ -31,3 +33,5 @@ Variations include:
 - Empty right: an empty array generated from the right argument of the testcase is used for the test.
 - Different shapes: shapes are randomly generated with a certain rule. That is, for ANY array lshape, and for any rightshape where `(≢right)≤×/rshape` the condition guarantees that `rshape⍴right` will create an array which contains ALL the elements of right, possibly more than once.
 - Different shapes with 0 in shape: A 0 is randomly inserted into the shape of the left array to generate this case.
+
+Code Coverage report: NA
