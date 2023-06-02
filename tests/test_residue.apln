@@ -1,0 +1,37 @@
+⍝ This Namespace includes tests for the function Residue which is represented by Dyadic stile(|)
+⍝
+⍝ Residue (R←X|Y)
+⍝ Residue is a dyadic scalar function which gives the remainder of division between two real numbers. It takes the divisor as the left argument, and the dividend as the right argument.
+:Namespace test_residue
+    Assert←#.unittest.Assert
+
+    ⍝ Run Variations of each test with normal, empty and multiple shaped data
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;larg;rarg;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
+        (expectedR larg rarg)←exp
+        (tID tCmt)←tData
+        tRes←⍬
+
+        ⍝ normal
+        actualR←larg|rarg
+        tRes,←tData Assert expectedR≡actualR
+    ∇
+
+    ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
+    ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
+    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+        ct_default←1E¯14
+        dct_default←1E¯28
+        fr_dbl←645
+        fr_decf←1287
+
+        r←⍬
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
+
+        genResidue←{⍵-⍺×⌊⍵÷⍺+0=⍺}
+        case←⍬
+        case2←⍬
+        desc←testDesc⍬
+        r,← 'TB1' desc RunVariations (5 genResidue 11) 5 11
+    ∇
+
+:EndNamespace
