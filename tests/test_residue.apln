@@ -38,6 +38,9 @@
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
         Sfl←{⍵,-⍵}(⍳10)×1E¯40
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
+        cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
+        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but higher order
+
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
@@ -52,13 +55,10 @@
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
 
-                :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
+                :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl' 'cmplx' 'Hcmplx' 
                     data←⍎case
-                    :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
-                        :Continue
-                    :EndIf
                     ⍝ Cross type tests
-                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
+                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl' 'cmplx' 'Hcmplx'
                         data2←⍎case2
                         desc←testDesc⍬
                         :If (data≡data2)
