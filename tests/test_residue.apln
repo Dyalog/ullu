@@ -53,6 +53,17 @@
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
 
+                case←'independant'
+                case2←⍬
+                desc←testDesc⍬
+                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11
+                r,← 'Ti2' desc RunVariations (-1 genResidue 11) (-1) 11
+                r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1
+                ⍝ r,← 'Ti4' desc RunVariations ((,0.0) genResidue 11) (,0.0) (11)
+                r,← 'Ti5' desc RunVariations (1J1 genResidue 11) (1J1) (11)
+                r,←'Ti6' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
+                r,←'Ti7' desc Assert (2/0)≡(2|2/1E40)
+
                 :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl' 'cmplx' 'Hcmplx' 
                     data←⍎case
                     ⍝ Cross type tests
@@ -75,25 +86,22 @@
                     d1←data[?≢data]
                     d2←data[?≢data]
                     r,←'T3' desc RunVariations (d1 genResidue d2) d1 d2 ⍝ custom func finds results on single element
+
                     ⍝ tests with comparision tolerance
-                    :If ct ⍝ tolerant
-                        :If (⊂data)∊Hdbl Hfl Hcmplx
-                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
-                            r,← 'CTDefault' desc Assert ((1≡(d1∊d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl') ∨ (case≡'Hcmplx')))
-                        :EndIf
-                    :Else  ⍝ exact
-                        :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
-                            ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                            r,← 'CTZero' desc Assert ((0≡(d1∊d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))
-                        :EndIf
-                    :EndIf
+                    ⍝ :If ct ⍝ tolerant
+                    ⍝     :If (⊂data)∊Hdbl Hfl Hcmplx
+                    ⍝         ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
+                    ⍝         r,← 'CTDefault' desc Assert ((1≡(d1|d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl') ∨ (case≡'Hcmplx')))
+                    ⍝     :EndIf
+                    ⍝ :Else  ⍝ exact
+                    ⍝     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                    ⍝         ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                    ⍝         r,← 'CTZero' desc Assert ((0≡(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))
+                    ⍝     :EndIf
+                    ⍝ :EndIf
                 :EndFor
             :EndFor
         :EndFor
-        case←⍬
-        case2←⍬
-        desc←testDesc⍬
-        r,← 'TB1' desc RunVariations (5 genResidue 11) 5 11
     ∇
 
 :EndNamespace
