@@ -6,7 +6,7 @@
     Assert←#.unittest.Assert
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;larg;rarg;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;larg;rarg;res;tID;tCmt;shape;actualRS;shapeW0;actualRSW0
         (expectedR larg rarg)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -18,6 +18,16 @@
         ⍝ empty
         actualRE←(0⍴larg)|(0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
         tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
+    
+        ⍝ different shapes
+        shape←?(?4)/4
+        actualRS←(shape⍴larg)|(shape⍴rarg)
+        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
+
+        ⍝ different shapes with 0 in shape
+        shapeW0←(0@(?(≢shape)))shape
+        actualRSW0←(shapeW0⍴larg)|(shapeW0⍴rarg)
+        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
     ∇
 
     ∇ r←Test_Residue ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
@@ -42,7 +52,6 @@
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but higher order
-
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
