@@ -70,7 +70,7 @@
                 case2←⍬
                 desc←testDesc⍬
                 r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11
-                r,← 'Ti2' desc RunVariations (-1 genResidue 11) (-1) 11
+                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) (¯1) 11
                 r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1
                 ⍝ r,← 'Ti4' desc RunVariations ((,0.0) genResidue 11) (,0.0) (11)
                 r,← 'Ti5' desc RunVariations (1J1 genResidue 11) (1J1) (11)
