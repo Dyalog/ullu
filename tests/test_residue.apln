@@ -14,6 +14,10 @@
         ⍝ normal
         actualR←larg|rarg
         tRes,←tData Assert expectedR≡actualR
+        
+        ⍝ empty
+        actualRE←(0⍴larg)|(0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
     ∇
 
     ∇ r←Test_Residue ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
