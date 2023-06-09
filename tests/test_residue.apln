@@ -67,11 +67,10 @@
                 case←'independant'
                 case2←⍬
                 desc←testDesc⍬
-                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11                 ⍝ Separate case for larg=0
-                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) (¯1) 11             ⍝ Separate case for larg=¯1
-                r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1         ⍝ Separate case for larg=0J0
-                
-                ⍝ r,← 'Ti4' desc RunVariations ((,0.0) genResidue 11) (,0.0) (11)
+                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11                     ⍝ Separate case for larg=0
+                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) (¯1) 11                 ⍝ Separate case for larg=¯1
+                r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1             ⍝ Separate case for larg=0J0
+                r,← 'Ti4' desc RunVariations ((,0, 1E10) genResidue 10) (,0 1E10) (10)  ⍝ Separate case for larg=0.0
 
                 ⍝ simple, non-simple so scalar and vector arguments with fewer than 8 elements (RSLT.bound < 8 )
                 r,←'Ti5' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
