@@ -75,10 +75,6 @@
                 ⍝ simple, non-simple so scalar and vector arguments with fewer than 8 elements (RSLT.bound < 8 )
                 r,←'Ti5' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
                 r,←'Ti6' desc Assert (2/0)≡(2|2/1E40)
-                
-                ⍝ r,←'Ti8' desc Assert (⍬)≡(⍬|11)
-                ⍝ r,←'Ti9' desc Assert (,⍬)≡,(''|11)
-                ⍝ r,←'tb3' desc Assert (1)≡((∧/1 0 1 0)|(∧/1 1 1 1))
 
                 :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 
                     data←⍎case
@@ -105,6 +101,7 @@
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
                     r,←'T2' desc RunVariations (d1 genResidue d2) d1 d2 ⍝ custom func finds results on single element
+                    r,←'T3' desc RunVariations ((0,1↓data) genResidue data) (0,1↓data) (data) 
 
                     ⍝ tests with comparision tolerance
                     :If ct ⍝ tolerant
