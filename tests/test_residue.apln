@@ -54,7 +54,7 @@
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
-        genResidue←{⍵-⍺×⌊⍵÷⍺+0=⍺}
+        genResidue←{⍵-⍺×⌊⍵÷⍺+⍺=0}
         
         case←⍬
         case2←⍬
@@ -81,15 +81,19 @@
                 :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 
                     data←⍎case
                     ⍝ Cross type tests
-                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx'
+                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl'
                         data2←⍎case2
+                        :If (⊂data)∊cmplx Hdbl Hfl Hcmplx
+                            :Continue
+                        :EndIf
                         desc←testDesc⍬
                         :If (data≡data2)
                             r,←'TCross0' desc RunVariations (0⍨¨data) data data2
                             :Continue
                         :EndIf
-                        ⍝ r,← 'TCross1' desc RunVariations (data genResidue data2) data data2                    ⍝ no match, all return 0
-                        ⍝ r,← 'TCross2' desc RunVariations (data2 genResidue data) data2 data                    ⍝ no match, all return 0
+                        data2←(≢data)↑data2 ⍝ strip data2 to be equal length to data
+                        r,← 'TCross1' desc RunVariations (data genResidue data2) data data2
+                        r,← 'TCross2' desc RunVariations (data2 genResidue data) data2 data
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
