@@ -72,9 +72,9 @@
                 r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1             ⍝ Separate case for larg=0J0
                 r,← 'Ti4' desc RunVariations ((,0, 1E10) genResidue 10) (,0 1E10) (10)  ⍝ Separate case for larg=0.0
 
-                ⍝ simple, non-simple so scalar and vector arguments with fewer than 8 elements (RSLT.bound < 8 )
-                r,←'Ti5' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
-                r,←'Ti6' desc Assert (2/0)≡(2|2/1E40)
+                ⍝ Using scan to target specific cases
+                r,← 'Ti5' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
+                r,← 'Ti6' desc Assert (2/0)≡(2|2/1E40)
 
                 :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 
                     data←⍎case
@@ -97,11 +97,11 @@
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,←'T1' desc RunVariations (data genResidue ⌽data) data (⌽data) ⍝ custom func finds results on array
+                    r,← 'T1' desc RunVariations (data genResidue ⌽data) data (⌽data) ⍝ custom func finds results on array
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
-                    r,←'T2' desc RunVariations (d1 genResidue d2) d1 d2 ⍝ custom func finds results on single element
-                    r,←'T3' desc RunVariations ((0,1↓data) genResidue data) (0,1↓data) (data) 
+                    r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2 ⍝ custom func finds results on single element
+                    r,← 'T3' desc RunVariations ((0,1↓data) genResidue data) (0,1↓data) (data) 
 
                     ⍝ tests with comparision tolerance
                     :If ct ⍝ tolerant
