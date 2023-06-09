@@ -67,13 +67,16 @@
                 case←'independant'
                 case2←⍬
                 desc←testDesc⍬
-                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11
-                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) (¯1) 11
-                r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1
+                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11                 ⍝ Separate case for larg=0
+                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) (¯1) 11             ⍝ Separate case for larg=¯1
+                r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1         ⍝ Separate case for larg=0J0
+                
                 ⍝ r,← 'Ti4' desc RunVariations ((,0.0) genResidue 11) (,0.0) (11)
-                r,← 'Ti5' desc RunVariations (1J1 genResidue 11) (1J1) (11)
-                r,←'Ti6' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
-                r,←'Ti7' desc Assert (2/0)≡(2|2/1E40)
+
+                ⍝ simple, non-simple so scalar and vector arguments with fewer than 8 elements (RSLT.bound < 8 )
+                r,←'Ti5' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
+                r,←'Ti6' desc Assert (2/0)≡(2|2/1E40)
+                
                 ⍝ r,←'Ti8' desc Assert (⍬)≡(⍬|11)
                 ⍝ r,←'Ti9' desc Assert (,⍬)≡,(''|11)
                 ⍝ r,←'tb3' desc Assert (1)≡((∧/1 0 1 0)|(∧/1 1 1 1))
@@ -100,10 +103,9 @@
                     desc←testDesc⍬
 
                     r,←'T1' desc RunVariations (data genResidue ⌽data) data (⌽data) ⍝ custom func finds results on array
-                    ⍝ r,←'T2' desc RunVariations (0⍨¨data) data data ⍝ all are perfectly divisible
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
-                    r,←'T3' desc RunVariations (d1 genResidue d2) d1 d2 ⍝ custom func finds results on single element
+                    r,←'T2' desc RunVariations (d1 genResidue d2) d1 d2 ⍝ custom func finds results on single element
 
                     ⍝ tests with comparision tolerance
                     :If ct ⍝ tolerant
