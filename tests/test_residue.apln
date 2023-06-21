@@ -37,18 +37,18 @@
         fr_decf←1287
 
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
-        i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
-        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
+        i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
+        i2←{⍵,0,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
+        i3←{⍵,0,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        dbl←{⍵,0,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
         ⍝ Hdbl is 645 but higher order
         Hdbl←{⍵,-⍵}1E14+(2×⍳50)
         ⍝ Hfl is 1287 but higher order
         ⎕FR←fr_decf                                   ⍝ use ⎕FR=1287
-        fl←{⍵,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
+        fl←{⍵,0,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
-        cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
+        cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)     ⍝ 1289 but higher order
 
         r←⍬
@@ -63,14 +63,13 @@
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
-
+                
+                ⍝ Tests added to achieve complete code coverage
                 case←'independant'
                 case2←⍬
                 desc←testDesc⍬
-                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11                     ⍝ Separate case for larg=0
-                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) (¯1) 11                 ⍝ Separate case for larg=¯1
-                r,← 'Ti3' desc RunVariations (0J0 genResidue 1J1) (0J0) 1J1             ⍝ Separate case for larg=0J0
-                r,← 'Ti4' desc RunVariations ((,0, 1E10) genResidue 10) (,0 1E10) (10)  ⍝ Separate case for larg=0.0
+                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11        ⍝ Special optimization for scalar 0 from iresidue at apl/allos/src/scalarscalar.cpp#L518
+                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) ¯1 11      ⍝ Special optimization for scalar ¯1 from iresidue at apl/allos/src/scalarscalar.cpp#L518
 
                 ⍝ Using scan to target specific cases
                 r,← 'Ti5' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)
@@ -102,6 +101,17 @@
                     d2←data[?≢(data~d1)]
                     r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2 ⍝ custom func finds results on single element
                     r,← 'T3' desc RunVariations ((0,1↓data) genResidue data) (0,1↓data) (data) 
+
+                    ⍝ :If (⎕DR data)∊83 163 323
+                    ⍝     halfLen←(≢data)÷2
+                    ⍝     r,← 'TSeq1' desc RunVariations ({⍵,(1↓⌽⍵),0}halfLen⍴1 2 3 0) 4 data ⍝ Sequences to test functionality of residue
+                    ⍝     r,← 'TSeq2' desc RunVariations ({⍵,(1↓⌽⍵),0}halfLen⍴(⍳9),0) 10 data ⍝ Sequences to test functionality of residue
+                    ⍝ :EndIf
+
+                    ⍝ :If (⎕DR data)∊645
+                    ⍝ halfLen←(≢data)÷2
+                    ⍝     ⍝ r,← 'TSeq1' desc RunVariations ({⍵,(1↓⌽⍵),0}halfLen⍴1.5 2.5 3.5 0.5) 4 data ⍝ Sequences to test functionality of residue
+                    ⍝ :EndIf
 
                     ⍝ tests with comparision tolerance
                     :If ct ⍝ tolerant
