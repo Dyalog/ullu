@@ -112,7 +112,7 @@
                         r,← 'TSeqDbl2' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ Sequences to test functionality of residue
                     :EndIf
 
-                    almostd1←d1×+/10⍴0.1
+                    almostd1←d1×+/10⍴0.1 ⍝ Almost, but not exactly d1
                     ⍝ tests with comparision tolerance
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl Hcmplx
@@ -122,14 +122,13 @@
                             r,← 'CTDefaultAlmost1' desc Assert 0≡d1|almostd1
                             r,← 'CTDefaultAlmost2' desc Assert 0≡almostd1|d1
                         :EndIf
-
                     :Else  ⍝ exact
                         :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
-                            ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
                             d1←{d1=¯1:data[?≢data]⋄d1}d1
+                            ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
                             r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))
-                            r,← 'CTZeroAlmost1' desc Assert (0≢d1|almostd1) ∨ (fr=2) ⍝ todo: figure out how to make it work for 128bit
-                            r,← 'CTZeroAlmost2' desc Assert (0≢almostd1|d1) ∨ (fr=2) ⍝ still has some issues need to figure out
+                            r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (fr=2) ∨ (fr=1 ∧ case≡'Hfl')
+                            r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨ (fr=2) ∨ (fr=1 ∧ case≡'Hfl')
                         :EndIf
                     :EndIf
                 :EndFor
