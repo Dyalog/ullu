@@ -106,10 +106,10 @@
                         r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data              ⍝ Sequences to test functionality of residue
                     :EndIf
 
-                    :If (⎕DR data)∊645
+                    :If case≡'dbl'
                         halfLen←(¯1+≢data)÷2
-                        ⍝ todo: for some reason does not work(domain error) the first time i run it but works everytime after
-                        r,← 'TSeqDbl1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(1.5 2.5 3.5 0.5)) 4 data    ⍝ Sequences to test functionality of residue
+                        r,← 'TSeqDbl1' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,3.5}halfLen⍴(1.5 2.5 3.5 0.5)) 4 data    ⍝ Sequences to test functionality of residue
+                        r,← 'TSeqDbl2' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ Sequences to test functionality of residue
                     :EndIf
 
                     almostd1←d1×+/10⍴0.1
@@ -129,7 +129,7 @@
                             d1←{d1=¯1:data[?≢data]⋄d1}d1
                             r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))
                             r,← 'CTZeroAlmost1' desc Assert (0≢d1|almostd1) ∨ (fr=2) ⍝ todo: figure out how to make it work for 128bit
-                            r,← 'CTZeroAlmost2' desc Assert (0≢almostd1|d1) ∨ (fr=2)
+                            r,← 'CTZeroAlmost2' desc Assert (0≢almostd1|d1) ∨ (fr=2) ⍝ still has some issues need to figure out
                         :EndIf
                     :EndIf
                 :EndFor
