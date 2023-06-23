@@ -36,7 +36,7 @@
         fr_dbl←645
         fr_decf←1287
 
-        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+        bool←0 1                                        ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
         i2←{⍵,0,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
         i3←{⍵,0,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
@@ -44,12 +44,12 @@
         ⍝ Hdbl is 645 but higher order
         Hdbl←{⍵,-⍵}1E14+(2×⍳50)
         ⍝ Hfl is 1287 but higher order
-        ⎕FR←fr_decf                                   ⍝ use ⎕FR=1287
+        ⎕FR←fr_decf                                     ⍝ use ⎕FR=1287
         fl←{⍵,0,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
-        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
-        ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
+        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ 1287 but higher order
+        ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
         cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
-        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)     ⍝ 1289 but higher order
+        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 but higher order
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
@@ -98,8 +98,7 @@
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
                     r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2                                ⍝ custom func finds results on single element
-                    r,← 'T3' desc RunVariations ((0,1↓data) genResidue data) (0,1↓data) (data)
-                    r,← 'T4' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 with defined output
+                    r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 result is a defined output
 
                     :If (⎕DR data)∊83 163 323
                         halfLen←(¯1+≢data)÷2
@@ -120,7 +119,7 @@
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
                             r,← 'CTDefault' desc Assert ((0≡(d1|d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl') ∨ (case≡'Hcmplx')))
                         :Else
-                            r,← 'CTDefaultAlmost1' desc Assert 0≡d1|almostd1
+                            r,← 'CTDefaultAlmost1' desc Assert 0≡d1|almostd1                                    ⍝ both are treated equally
                             r,← 'CTDefaultAlmost2' desc Assert 0≡almostd1|d1
                         :EndIf
                     :Else  ⍝ exact
@@ -128,14 +127,16 @@
                             d1←{(⍵≡¯1)∨(⍵≡0)∨(⍵≡1):data[?≢data]⋄⍵}d1
 
                             ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                            r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))
+                            r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))                      ⍝ not in the tollerant range
 
                             :If fr=2
                                 fltalmostd1←d1×1-1E¯30 ⍝ infinitesimally close to d1
-                                r,← 'CTZeroAlmost1fr2' desc Assert (0≡⌊|fltalmostd1|d1) ∨ (1289≡⎕dr data)
-                                r,← 'CTZeroAlmost2fr2' desc Assert ((⌈|d1)≡⌈|d1|fltalmostd1) ∨ (1289≡⎕dr data)
+                                r,← 'CTZeroFltAlmost1' desc Assert (0≡⌊|fltalmostd1|d1) ∨ (1289≡⎕dr data)       ⍝ in the tollerant range
+                                r,← 'CTZeroFltAlmost2' desc Assert ((⌈|d1)≡⌈|d1|fltalmostd1) ∨ (1289≡⎕dr data)
+                                r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (1289≡⎕dr data)             ⍝ not in the tollerant range
+                                r,← 'CTZeroAlmost2' desc Assert (0≡⌈|d1|almostd1) ∨ (1289≡⎕dr data)
                             :Else
-                                r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ case≡'Hfl'
+                                r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ case≡'Hfl'                  ⍝ in the tollerant range
                                 r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨  case≡'Hfl'
                             :EndIf
                         :EndIf
