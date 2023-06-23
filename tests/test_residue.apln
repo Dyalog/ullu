@@ -98,7 +98,8 @@
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
                     r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2                                ⍝ custom func finds results on single element
-                    r,← 'T3' desc RunVariations ((0,1↓data) genResidue data) (0,1↓data) (data) 
+                    r,← 'T3' desc RunVariations ((0,1↓data) genResidue data) (0,1↓data) (data)
+                    r,← 'T4' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 with defined output
 
                     :If (⎕DR data)∊83 163 323
                         halfLen←(¯1+≢data)÷2
@@ -124,7 +125,7 @@
                         :EndIf
                     :Else  ⍝ exact
                         :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
-                            d1←{d1=¯1:data[?≢data]⋄d1}d1
+                            d1←{(⍵≡¯1)∨(⍵≡0)∨(⍵≡1):data[?≢data]⋄⍵}d1
                             ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
                             r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))
                             r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (fr=2) ∨ (fr=1 ∧ case≡'Hfl')
