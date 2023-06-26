@@ -113,7 +113,7 @@
                     :EndIf
 
                     ⍝ tests with comparision tolerance
-                    almostd1←{fr=1:⍵×+/10⍴0.1⋄⍵×1-1E¯30}d1 ⍝ Almost, but not exactly d1
+                    almostd1←d1×1-fr⊃1E¯16 1E¯30
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl Hcmplx
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
