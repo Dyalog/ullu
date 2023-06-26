@@ -63,7 +63,7 @@
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
-                
+
                 ⍝ Tests added to achieve complete code coverage
                 case←'independant'
                 case2←⍬
@@ -113,7 +113,7 @@
                     :EndIf
 
                     ⍝ tests with comparision tolerance
-                    almostd1←d1×1-fr⊃1E¯16 1E¯30
+                    almostd1←d1×1-fr⊃1E¯2×ct_default dct_default
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl Hcmplx
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
