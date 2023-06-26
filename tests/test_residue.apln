@@ -113,7 +113,7 @@
                     :EndIf
 
                     ⍝ tests with comparision tolerance
-                    almostd1←d1×+/10⍴0.1 ⍝ Almost, but not exactly d1
+                    almostd1←{fr=1:⍵×+/10⍴0.1⋄⍵×1-1E¯30}d1 ⍝ Almost, but not exactly d1
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl Hcmplx
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
@@ -127,18 +127,10 @@
                             d1←{(⍵≡¯1)∨(⍵≡0)∨(⍵≡1):data[?≢data]⋄⍵}d1
 
                             ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                            r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))                      ⍝ not in the tollerant range
+                            r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))                                          ⍝ not in the tollerant range
 
-                            :If fr=2
-                                fltalmostd1←d1×1-1E¯30 ⍝ infinitesimally close to d1
-                                r,← 'CTZeroFltAlmost1' desc Assert (0≡⌊|fltalmostd1|d1) ∨ (1289≡⎕dr data)       ⍝ in the tollerant range
-                                r,← 'CTZeroFltAlmost2' desc Assert ((⌈|d1)≡⌈|d1|fltalmostd1) ∨ (1289≡⎕dr data)
-                                r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (1289≡⎕dr data)             ⍝ not in the tollerant range
-                                r,← 'CTZeroAlmost2' desc Assert (0≡⌈|d1|almostd1) ∨ (1289≡⎕dr data)
-                            :Else
-                                r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ case≡'Hfl'                  ⍝ in the tollerant range
-                                r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨  case≡'Hfl'
-                            :EndIf
+                            r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨  (fr=1 ∧ case≡'Hfl')                                ⍝ in the tollerant range
+                            r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨  (fr=1 ∧ case≡'Hfl') ∨ (fr=2 ∧ 1289≡⎕dr data)
                         :EndIf
                     :EndIf
                 :EndFor
