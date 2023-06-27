@@ -54,10 +54,7 @@
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
-        genResidue←{⍵-⍺×⌊⍵÷⍺+⍺=0}
-        
-        case←⍬
-        case2←⍬
+        genResidue←{⍵-⍺×⌊⍵÷⍺+⍺=0} ⍝ Generator function for residue
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
@@ -94,44 +91,42 @@
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (data genResidue ⌽data) data (⌽data)                    ⍝ custom func finds results on array
+                    r,← 'T1' desc RunVariations (data genResidue ⌽data) data (⌽data)                    ⍝ generator func finds results on array
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
-                    r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2                                ⍝ custom func finds results on single element
+                    r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2                                ⍝ generator func finds results on single element
                     r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 result is a defined output
 
-                    :If (⎕DR data)∊83 163 323
+                    :If (⊂data)∊i1 i2 i3
                         halfLen←(¯1+≢data)÷2
-                        r,← 'TSeq1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data               ⍝ Sequences to test functionality of residue
-                        r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data              ⍝ Sequences to test functionality of residue
+                        r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data              ⍝ sequences to test functionality of residue
+                        r,← 'TSeq1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data               ⍝ remainder sequence is ⍳(N-1), 0
                     :EndIf
 
                     :If case≡'dbl'
                         halfLen←(¯1+≢data)÷2
-                        r,← 'TSeqDbl1' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,3.5}halfLen⍴(1.5 2.5 3.5 0.5)) 4 data    ⍝ Sequences to test functionality of residue
-                        r,← 'TSeqDbl2' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ Sequences to test functionality of residue
+                        r,← 'TSeqDbl1' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,3.5}halfLen⍴(1.5 2.5 3.5 0.5)) 4 data    ⍝ sequences to test functionality of residue
+                        r,← 'TSeqDbl2' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ sequences to test functionality of residue
                     :EndIf
 
                     ⍝ tests with comparision tolerance
-                    almostd1←d1×1-fr⊃1E¯2×ct_default dct_default
+                    almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                     :If ct ⍝ tolerant
-                        :If (⊂data)∊Hdbl Hfl Hcmplx
+                        :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
                             r,← 'CTDefault' desc Assert ((0≡(d1|d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl') ∨ (case≡'Hcmplx')))
-                        :Else
-                            r,← 'CTDefaultAlmost1' desc Assert 0≡d1|almostd1                                    ⍝ both are treated equally
-                            r,← 'CTDefaultAlmost2' desc Assert 0≡almostd1|d1
+                        :Else ⍝ other than bigger numbers
+                            r,← 'CTDefaultAlmost1' desc Assert 0≡d1|almostd1 ⍝ No difference because tolerantly equal
+                            r,← 'CTDefaultAlmost2' desc Assert 0≡almostd1|d1 ⍝ Same as above but flipped
                         :EndIf
-                    :Else  ⍝ exact
-                        :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
-                            d1←{(⍵≡¯1)∨(⍵≡0)∨(⍵≡1):data[?≢data]⋄⍵}d1
+                    :Else ⍝ exact
+                        ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
+                        ⍝ if cmplx then generator function elseif negative then ⍵+1 else 1 because of 0 tolerance
+                        r,← 'CTZero' desc Assert (({⊢≠+⍵:d1 genResidue d1+1⋄1+0≤⍵⊃⍵+1 1}d1)≡d1|d1+1) ∨ (fr=1 ∧ case≡'Hfl')
 
-                            ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                            r,← 'CTZero' desc Assert ((0≢(d1|d1+1)) ∨ (fr=1 ∧ case≡'Hfl'))                                          ⍝ not in the tollerant range
-
-                            r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨  (fr=1 ∧ case≡'Hfl')                                ⍝ in the tollerant range
-                            r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨  (fr=1 ∧ case≡'Hfl') ∨ (fr=2 ∧ 1289≡⎕dr data)
-                        :EndIf
+                        ⍝ |, ⌈ and ⌊ are added to it for getting a fixed result
+                        r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (fr=1 ∧ case≡'Hfl')
+                        r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨ (fr=1 ∧ case≡'Hfl') ∨ (fr=2 ∧ 1289≡⎕dr data)
                     :EndIf
                 :EndFor
             :EndFor
