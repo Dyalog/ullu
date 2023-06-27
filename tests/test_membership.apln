@@ -57,12 +57,12 @@
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
-        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but higher order to test for CT value
-        ⍝ Hdbl is 645 but higher order to test for CT value
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+        ⍝ Hdbl is 645 but larger numbers to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
         Hdbl←{⍵,-⍵}1E14+(2×⍳50)
-        ⍝ Hfl is 1287 but higher order to test for CT value
+        ⍝ Hfl is 1287 but larger numbers to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
         ⎕FR←fr_decf
