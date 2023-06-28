@@ -2,7 +2,7 @@
 ⍝
 ⍝ Membership (R←X∊Y)
 ⍝ An element of X is considered identical to an element in Y if X≡Y returns 1 for those elements.
-:Namespace test_membership
+:Namespace membership
     Assert←#.unittest.Assert
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
@@ -41,7 +41,7 @@
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ r←Test_Membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645

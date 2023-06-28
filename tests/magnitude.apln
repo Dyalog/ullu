@@ -3,7 +3,7 @@
 ⍝ Magnitude:
 ⍝ Y may be any numeric array. R is numeric composed of the absolute (unsigned) values of Y.
 ⍝ Note that the magnitude of a complex number a+⍳b is defined to be √(a^2+b^2).
-:Namespace test_magnitude
+:Namespace magnitude
     Assert←#.unittest.Assert
     
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
@@ -31,7 +31,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
-    ∇ r←Test_Magnitude_General ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;magGen;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
+    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;magGen;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
         fr_dbl←645
         fr_decf←1287
 
