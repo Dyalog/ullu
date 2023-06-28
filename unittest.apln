@@ -2,9 +2,9 @@
     ⎕LX←'unittest.RunAll ⍬'
 
     RunAll←{
-        t←#.test_magnitude #.test_membership #.test_indexof
+        t←#.test_magnitude #.test_membership #.test_indexof #.test_residue
         ⎕←'Testing for:',t
-        RunTests¨t        
+        RunTests¨t
     }
 
     GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
