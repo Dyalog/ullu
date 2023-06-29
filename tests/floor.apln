@@ -40,7 +40,46 @@
         case2←⍬
         desc←testDesc⍬
 
-        r,← 'Ti1' desc RunVariations 1 ⌊1
+
+        :For ct :In 0 1
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+            :For fr :In 2 1
+                ⎕FR←fr⊃fr_dbl fr_decf
+                :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 
+                    data←⍎case
+                    ⍝ Cross type tests
+                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl'
+                        data2←⍎case2
+                        :If (⊂data)∊cmplx Hdbl Hfl Hcmplx
+                            :Continue
+                        :EndIf
+                        desc←testDesc⍬
+                        :If (data≡data2)
+                            :Continue
+                        :EndIf
+                        ⍝ r,← 'TCross1' desc RunVariations (data,data2) (data,data2)
+                    :EndFor
+
+                    case2←⍬ ⍝ disposing case2 for testDesc
+                    desc←testDesc⍬
+
+                    ⍝ r,← 'T1' desc RunVariations (data genResidue ⌽data) data (⌽data)           ⍝ generator func finds results on array
+                    ⍝ d1←data[?≢data]
+                    ⍝ d2←data[?≢(data~d1)]
+                    ⍝ r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2                       ⍝ generator func finds results on single element
+
+                    :If (⊂data)∊i1 i2 i3
+                        r,← 'TInt' desc RunVariations data data                                  ⍝ floor of integers will always be floor
+                    :EndIf
+
+                    :If case≡'dbl'
+                        halfLen←(¯1+≢data)÷2
+                        r,← 'TDbl' desc RunVariations ({(⍵-0.5),0,-0.5+⍵}(halfLen↑data)) data    ⍝ floor of dbl is removing the 0.5 from the number
+                    :EndIf
+                :EndFor
+
+            :EndFor
+        :EndFor
     ∇
     
 :EndNamespace
