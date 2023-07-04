@@ -35,17 +35,23 @@
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
-    
-        case←⍬
-        case2←⍬
-        desc←testDesc⍬
 
+        ⍝ Using strings to calculate floor of a number
+        ⍝ Other approaches included using {⍵-(1|⍵)} but residue uses floor in its derivation so can be conflicting
+        ⍝ Approach 2 was using binary conversion and stripping decimals similar to the string approach, but the sources use something similar
+        ⍝ The string approach is good because it deals with floor in a very non-co-related way so it can never be clashing
+        genFloor←{
+            dotPos←{⍸,'.'⍷(⍕⍵)}⍵    ⍝ convert num to string and get position of the decimal point
+            int←⍎(⍕⍵)↑⍨¯1+dotPos    ⍝ strip integer based on the decimal point
+            int-(⍵<0)∧(~0∊⍴dotPos)  ⍝ Subtract 1 only when negative+non int component exists. eg: ¯123.32→¯124
+        }
+        ⍝ genFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
-                :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 
+                :For case :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl'  'Hfl' ⍝'cmplx' 'Hcmplx' 
                     data←⍎case
                     ⍝ Cross type tests
                     :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl'
@@ -57,19 +63,18 @@
                         :If (data≡data2)
                             :Continue
                         :EndIf
-                        ⍝ r,← 'TCross1' desc RunVariations (data,data2) (data,data2)
+                        r,← 'TCross1' desc RunVariations (genFloor¨ data,data2) (data,data2)
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    ⍝ r,← 'T1' desc RunVariations (data genResidue ⌽data) data (⌽data)           ⍝ generator func finds results on array
-                    ⍝ d1←data[?≢data]
-                    ⍝ d2←data[?≢(data~d1)]
-                    ⍝ r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2                       ⍝ generator func finds results on single element
+                    r,← 'T1' desc RunVariations (genFloor¨data) data                    ⍝ generator func finds results on array
+                    d1←data[?≢data]
+                    r,← 'T2' desc RunVariations (genFloor d1) d1                        ⍝ generator func finds results on single element
 
                     :If (⊂data)∊i1 i2 i3
-                        r,← 'TInt' desc RunVariations data data                                  ⍝ floor of integers will always be floor
+                        r,← 'TInt' desc RunVariations data data                         ⍝ floor of integers will always be floor
                     :EndIf
 
                     :If case≡'dbl'
@@ -77,7 +82,6 @@
                         r,← 'TDbl' desc RunVariations ({(⍵-0.5),0,-0.5+⍵}(halfLen↑data)) data    ⍝ floor of dbl is removing the 0.5 from the number
                     :EndIf
                 :EndFor
-
             :EndFor
         :EndFor
     ∇
