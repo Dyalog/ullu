@@ -71,11 +71,16 @@
                     desc←testDesc⍬
 
                     r,← 'T1' desc RunVariations (genFloor¨data) data                    ⍝ generator func finds results on array
+
                     d1←data[?≢data]
                     r,← 'T2' desc RunVariations (genFloor d1) d1                        ⍝ generator func finds results on single element
 
+                    dataplus←data+?0                                                           ⍝ adding a number between (0,1) to data
+                    r,← 'T3' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl') ⍝ genFloor fails for Hfl with ⎕fr=645 
+
                     :If (⊂data)∊i1 i2 i3
-                        r,← 'TInt' desc RunVariations data data                         ⍝ floor of integers will always be floor
+                        r,← 'TInt1' desc RunVariations data data                         ⍝ floor of integers will always be floor
+                        r,← 'TInt2' desc RunVariations data dataplus                     ⍝ floor of integers will always be floor
                     :EndIf
 
                     :If case≡'dbl'
