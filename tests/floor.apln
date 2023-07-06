@@ -1,6 +1,18 @@
 :Namespace floor
     Assert←#.unittest.Assert
 
+    ⍝ Using strings to calculate floor of a number
+    ⍝ Other approaches included using {⍵-(1|⍵)} but residue uses floor in its derivation so can be conflicting
+    ⍝ Approach 2 was using binary conversion and stripping decimals similar to the string approach, but the sources use something similar
+    ⍝ The string approach is good because it deals with floor in a very non-co-related way so it can never be clashing
+    genFloor←{
+        ⎕pp←34                  ⍝ set to max as we are using strings, the execute and format primitives round the number to the ⎕pp value
+        dotPos←⍸,'.'⍷⍕⍵         ⍝ convert num to string and get position of the decimal point
+        int←⍎(⍕⍵)↑⍨¯1+dotPos    ⍝ strip integer based on the decimal point
+        int-(⍵<0)∧(~0∊⍴dotPos)  ⍝ Subtract 1 only when negative+non int component exists. eg: ¯123.32→¯124
+    }
+    ⍝ genFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
+    
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS
         (expectedR p)←exp
@@ -26,7 +38,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
-    ∇ r←test_floor ;genFloor;r;data;dataplus;case;data2;case2;type;bool;i1;i2;i3;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;bool;i1;i2;i3;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -49,18 +61,6 @@
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
-
-        ⍝ Using strings to calculate floor of a number
-        ⍝ Other approaches included using {⍵-(1|⍵)} but residue uses floor in its derivation so can be conflicting
-        ⍝ Approach 2 was using binary conversion and stripping decimals similar to the string approach, but the sources use something similar
-        ⍝ The string approach is good because it deals with floor in a very non-co-related way so it can never be clashing
-        genFloor←{
-            ⎕pp←34                  ⍝ set to max as we are using strings, the execute and format primitives round the number to the ⎕pp value
-            dotPos←⍸,'.'⍷⍕⍵         ⍝ convert num to string and get position of the decimal point
-            int←⍎(⍕⍵)↑⍨¯1+dotPos    ⍝ strip integer based on the decimal point
-            int-(⍵<0)∧(~0∊⍴dotPos)  ⍝ Subtract 1 only when negative+non int component exists. eg: ¯123.32→¯124
-        }
-        ⍝ genFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
@@ -105,5 +105,27 @@
             :EndFor
         :EndFor
     ∇
-    
+
+    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;magCmplx;d1;case;data;testDesc;desc;ct_default;dct_default;fr_dbl;fr_decf
+        ct_default←1E¯14
+        dct_default←1E¯28
+        fr_dbl←645
+        fr_decf←1287
+
+        cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
+        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 but larger numbers
+
+        r←⍬
+        testDesc←{'for ',case}
+
+        :For case :In 'cmplx' 'Hcmplx'
+            data←⍎case
+            desc←testDesc⍬
+            r,←'Tc1' desc RunVariations data data
+
+            d1←data[?≢data]
+            r,←'Tc2' desc RunVariations d1 d1
+        :EndFor
+    ∇
+
 :EndNamespace
