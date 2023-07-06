@@ -56,7 +56,7 @@
         ⍝ The string approach is good because it deals with floor in a very non-co-related way so it can never be clashing
         genFloor←{
             ⎕pp←34                  ⍝ set to max as we are using strings, the execute and format primitives round the number to the ⎕pp value
-            dotPos←{⍸,'.'⍷(⍕⍵)}⍵    ⍝ convert num to string and get position of the decimal point
+            dotPos←⍸,'.'⍷⍕⍵         ⍝ convert num to string and get position of the decimal point
             int←⍎(⍕⍵)↑⍨¯1+dotPos    ⍝ strip integer based on the decimal point
             int-(⍵<0)∧(~0∊⍴dotPos)  ⍝ Subtract 1 only when negative+non int component exists. eg: ¯123.32→¯124
         }
