@@ -10,6 +10,20 @@
         ⍝ normal
         actualR←⌊p
         tRes,←tData Assert expectedR≡actualR
+
+        ⍝ empty
+        actualRE←⌊(0⍴p) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+        tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE
+
+        ⍝ different shapes
+        shape←?(?4)/4
+        actualRS←⌊(shape⍴actualR)
+        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
+
+        ⍝ ⍝ different shapes with 0 in shape
+        shapeW0←(0@(?(≢shape)))shape
+        actualRS←⌊(shapeW0⍴p)
+        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
     ∇ r←test_floor ;r;data;case;data2;case2;type;bool;i1;i2;i3;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;fltalmostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
