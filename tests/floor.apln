@@ -127,7 +127,7 @@
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 but larger numbers
 
         r←⍬
-        testDesc←{'for ',case}
+        testDesc←{'for ',case,' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
@@ -141,9 +141,8 @@
                     d1←data[?≢data]
                     r,←'T2' desc RunVariations d1 d1
 
-                    dataplus←data+?(≢data)/0       ⍝ adding a number between (0,1) to data
-                    ⍝ todo: add ?0 to imaginary component also
-                    r,←'T3' desc RunVariations (genCmplxFloor¨dataplus) dataplus
+                    dataplus←data+(?(≢data)/0)+¯11○(?(≢data)/0)       ⍝ adding a number between (0,1) to data
+                    r,←'T3' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ (fr=2 ∧ case≡'Hcmplx')
                 :EndFor
             :EndFor
         :EndFor
