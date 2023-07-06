@@ -141,7 +141,7 @@
                     d1←data[?≢data]
                     r,←'T2' desc RunVariations d1 d1
 
-                    dataplus←data+(?(≢data)/0)+¯11○(?(≢data)/0)       ⍝ adding a number between (0,1) to data
+                    dataplus←{data+1⊃⍵,data+2⊃⍵,data+3⊃⍵}{⍵ (?(≢⍵)/0) (¯11○(?(≢⍵)/0))}data       ⍝ adding a number between (0,1) to data
                     r,←'T3' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ (fr=2 ∧ case≡'Hcmplx')
                 :EndFor
             :EndFor
