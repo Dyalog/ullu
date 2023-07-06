@@ -12,6 +12,17 @@
         int-(⍵<0)∧(~0∊⍴dotPos)  ⍝ Subtract 1 only when negative+non int component exists. eg: ¯123.32→¯124
     }
     ⍝ genFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
+
+    genCmplxFloor←{
+        r←9○⍵
+        i←11○⍵
+        b←(genFloor r)+0j1×genFloor i
+        x←r-genFloor r
+        y←i-genFloor i
+        1>x+y: b
+        x≥y: b+1
+        b+0j1
+    }
     
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS
@@ -66,7 +77,7 @@
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
-                :For case :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl'  'Hfl' ⍝'cmplx' 'Hcmplx' 
+                :For case :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl'  'Hfl'
                     data←⍎case
                     ⍝ Cross type tests
                     :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl'
@@ -89,7 +100,7 @@
                     d1←data[?≢data]
                     r,← 'T2' desc RunVariations (genFloor d1) d1                        ⍝ generator func finds results on single element
 
-                    dataplus←data+?0                                                           ⍝ adding a number between (0,1) to data
+                    dataplus←data+?(≢data)/0                                                           ⍝ adding a number between (0,1) to data
                     r,← 'T3' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl') ⍝ genFloor fails for Hfl with ⎕fr=645 
 
                     :If (⊂data)∊i1 i2 i3
@@ -118,13 +129,23 @@
         r←⍬
         testDesc←{'for ',case}
 
-        :For case :In 'cmplx' 'Hcmplx'
-            data←⍎case
-            desc←testDesc⍬
-            r,←'Tc1' desc RunVariations data data
+        :For ct :In 0 1
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+            :For fr :In 2 1
+                ⎕FR←fr⊃fr_dbl fr_decf
+                :For case :In 'cmplx' 'Hcmplx'
+                    data←⍎case
+                    desc←testDesc⍬
+                    r,←'T1' desc RunVariations data data
 
-            d1←data[?≢data]
-            r,←'Tc2' desc RunVariations d1 d1
+                    d1←data[?≢data]
+                    r,←'T2' desc RunVariations d1 d1
+
+                    dataplus←data+?(≢data)/0       ⍝ adding a number between (0,1) to data
+                    ⍝ todo: add ?0 to imaginary component also
+                    r,←'T3' desc RunVariations (genCmplxFloor¨dataplus) dataplus
+                :EndFor
+            :EndFor
         :EndFor
     ∇
 
