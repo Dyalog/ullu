@@ -100,7 +100,7 @@
                     d1←data[?≢data]
                     r,← 'T2' desc RunVariations (genFloor d1) d1                        ⍝ generator func finds results on single element
 
-                    dataplus←data+?(≢data)/0                                                           ⍝ adding a number between (0,1) to data
+                    dataplus←data+?0⍨¨data                                                           ⍝ adding a number between (0,1) to data
                     r,← 'T3' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl') ⍝ genFloor fails for Hfl with ⎕fr=645 
 
                     :If (⊂data)∊i1 i2 i3
@@ -111,6 +111,22 @@
                     :If case≡'dbl'
                         halfLen←(¯1+≢data)÷2
                         r,← 'TDbl' desc RunVariations ({(⍵-0.5),0,-0.5+⍵}(halfLen↑data)) data    ⍝ floor of dbl is removing the 0.5 from the number
+                    :EndIf
+                
+                    ⍝ tests with comparision tolerance
+                    almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                    :If ct ⍝ tolerant
+                        :If (⊂data)∊Hdbl Hfl ⍝ bigger numbers
+                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
+                            r,← 'CTDefault' desc Assert (((⌊d1)≡⌊(d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl')))
+                        :Else ⍝ other than bigger numbers
+                            r,← 'CTDefaultAlmost1' desc Assert (⌊d1)≡⌊almostd1 ⍝ No difference because tolerantly equal
+                        :EndIf
+                    :Else ⍝ exact
+                        ⍝ d≠d+1 for all numeric types
+                        r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
+
+                        r,← 'CTDefaultAlmost1' desc Assert ((d1≤0)-⌊d1)≢⌊almostd1 ⍝ todo: can be changed to a better case
                     :EndIf
                 :EndFor
             :EndFor
