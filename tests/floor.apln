@@ -5,6 +5,12 @@
     ⍝ Other approaches included using {⍵-(1|⍵)} but residue uses floor in its derivation so can be conflicting
     ⍝ Approach 2 was using binary conversion and stripping decimals similar to the string approach, but the sources use something similar
     ⍝ The string approach is good because it deals with floor in a very non-co-related way so it can never be clashing
+    ⍝ All cases:
+    ⍝ neg  int juststrip
+    ⍝ 0     0   1           123.32→123
+    ⍝ 0     1   1           123→123
+    ⍝ 1     0   0           ¯123.32→¯124
+    ⍝ 1     1   1           ¯123→¯123
     genFloor←{
         ⎕pp←34                  ⍝ set to max as we are using strings, the execute and format primitives round the number to the ⎕pp value
         dotPos←⍸,'.'⍷⍕⍵         ⍝ convert num to string and get position of the decimal point
@@ -13,6 +19,7 @@
     }
     ⍝ genFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
 
+    ⍝ Source: https://aplwiki.com/wiki/Complex_floor
     genCmplxFloor←{
         r←9○⍵
         i←11○⍵
@@ -100,7 +107,7 @@
                     d1←data[?≢data]
                     r,← 'T2' desc RunVariations (genFloor d1) d1                        ⍝ generator func finds results on single element
 
-                    dataplus←data+?0⍨¨data                                                           ⍝ adding a number between (0,1) to data
+                    dataplus←data+?0⍨¨data                                              ⍝ adding a number between (0,1) to data
                     r,← 'T3' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl') ⍝ genFloor fails for Hfl with ⎕fr=645 
 
                     :If (⊂data)∊i1 i2 i3
@@ -160,6 +167,24 @@
                     ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type 1J1 ¯1J1 1J¯1 ¯1J¯1
                     dataplus←(data,data+2⊃⊣,data+2⊃⊣,data+(1⊃⊣)+2⊃⊣) (?0⍨¨data) (¯11○(?0⍨¨data))
                     r,←'T3' desc Assert (genCmplxFloor¨dataplus)≡⌊dataplus
+
+                    almostd1←d1×1-fr⊃1E¯3×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                    :If ct ⍝ tolerant
+                        :If (⊂data)∊Hcmplx ⍝ bigger numbers
+                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
+                            r,← 'CTDefault1' desc Assert (⌊d1)≡⌊(d1+1)
+                            r,← 'CTDefault2' desc Assert (⌊d1)≡⌊(d1+0J1)
+                            r,← 'CTDefault3' desc Assert (⌊d1)≡⌊(d1+1J1)
+                        :Else ⍝ other than bigger numbers
+                            r,← 'CTDefaultAlmost1' desc Assert (⌊d1)≡⌊almostd1 ⍝ No difference because tolerantly equal
+                        :EndIf
+                    :Else ⍝ exact
+                        ⍝ d≠d+1 for all numeric types`
+                        r,← 'CTZero1' desc Assert ((1+⌊d1)≡⌊d1+1)
+                        r,← 'CTZero2' desc Assert ((0J1+⌊d1)≡⌊d1+0J1)
+                        r,← 'CTZero3' desc Assert ((1J1+⌊d1)≡⌊d1+1J1)
+                        r,← 'CTZeroAlmost1' desc Assert (⌊d1)≡⌊almostd1
+                    :EndIf
                 :EndFor
             :EndFor
         :EndFor
