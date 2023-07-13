@@ -124,16 +124,17 @@
                     almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl ⍝ bigger numbers
-                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
-                            r,← 'CTDefault' desc Assert (((⌊d1)≡⌊(d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl')))
+                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                            r,← 'CTDefault1' desc Assert (((⌊d1)≡⌊(d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl')))
                         :Else ⍝ other than bigger numbers
-                            r,← 'CTDefaultAlmost1' desc Assert (⌊d1)≡⌊almostd1 ⍝ No difference because tolerantly equal
+                            r,← 'CTDefault2' desc Assert ((⌊d1)≢⌊(d1+1))
+                            r,← 'CTDefaultAlmost' desc Assert ({(⌊=⊢)⍵:⍵⋄⍵-0.5}d1)≡⌊almostd1 ⍝ d1 and almostd1 are tolerantly equal, condition added to get integer
                         :EndIf
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types
                         r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
 
-                        r,← 'CTDefaultAlmost1' desc Assert ((d1≤0)-⌊d1)≢⌊almostd1 ⍝ todo: can be changed to a better case
+                        r,← 'CTZeroAlmost1' desc Assert (((d1-{(⌊=⊢)⍵:⍵≥0⋄0.5}d1)≡⌊almostd1) ∨ (fr=1 ∧ (case≡'Hfl'))) ⍝ Floor is the integer lesser than the number with no tolerance
                     :EndIf
                 :EndFor
             :EndFor
@@ -168,9 +169,11 @@
                     dataplus←(data,data+2⊃⊣,data+2⊃⊣,data+(1⊃⊣)+2⊃⊣) (?0⍨¨data) (¯11○(?0⍨¨data))
                     r,←'T3' desc Assert (genCmplxFloor¨dataplus)≡⌊dataplus
 
-                    almostd1←d1×1-fr⊃1E¯3×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
-                    :If ct ⍝ tolerant
-                        :If (⊂data)∊Hcmplx ⍝ bigger numbers
+                    ⍝ TODO
+                    ⍝ almostd1←d1×1-fr⊃1E¯3×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                    almostd1← d1×1-1E¯15
+                    :If ct ∧ (fr≡1) ⍝ tolerant
+                        :If (case≡'Hcmplx')  ⍝ bigger numbers
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
                             r,← 'CTDefault1' desc Assert (⌊d1)≡⌊(d1+1)
                             r,← 'CTDefault2' desc Assert (⌊d1)≡⌊(d1+0J1)
@@ -183,7 +186,7 @@
                         r,← 'CTZero1' desc Assert ((1+⌊d1)≡⌊d1+1)
                         r,← 'CTZero2' desc Assert ((0J1+⌊d1)≡⌊d1+0J1)
                         r,← 'CTZero3' desc Assert ((1J1+⌊d1)≡⌊d1+1J1)
-                        r,← 'CTZeroAlmost1' desc Assert (⌊d1)≡⌊almostd1
+                        ⍝ r,← 'CTZeroAlmost1' desc Assert (genCmplxFloor d1)≡⌊almostd1
                     :EndIf
                 :EndFor
             :EndFor
