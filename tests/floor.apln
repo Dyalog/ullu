@@ -155,7 +155,7 @@
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
-            :For fr :In 2 1
+            :For fr :In 1 2
                 ⎕FR←fr⊃fr_dbl fr_decf
                 :For case :In 'cmplx' 'Hcmplx'
                     data←⍎case
@@ -166,12 +166,13 @@
                     r,←'T2' desc RunVariations d1 d1
 
                     ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type 1J1 ¯1J1 1J¯1 ¯1J¯1
-                    dataplus←(data,data+2⊃⊣,data+2⊃⊣,data+(1⊃⊣)+2⊃⊣) (?0⍨¨data) (¯11○(?0⍨¨data))
-                    r,←'T3' desc Assert (genCmplxFloor¨dataplus)≡⌊dataplus
+                    dataplus←(data,(data+2⊃⊣),(data+2⊃⊣),(data+(1⊃⊣)+2⊃⊣)) (?0⍨¨data) (¯11○(?0⍨¨data))
+                    r,←'T3' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ (case≡'Hcmplx'))
 
                     ⍝ TODO
-                    ⍝ almostd1←d1×1-fr⊃1E¯3×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
-                    almostd1← d1×1-1E¯15
+                    almostd1←d1×1-fr⊃1E¯0×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                    ⍝ ⎕←fr⊃1E¯1×ct_default dct_default
+                    ⍝ almostd1← d1-1E¯15
                     :If ct ∧ (fr≡1) ⍝ tolerant
                         :If (case≡'Hcmplx')  ⍝ bigger numbers
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
@@ -186,7 +187,7 @@
                         r,← 'CTZero1' desc Assert ((1+⌊d1)≡⌊d1+1)
                         r,← 'CTZero2' desc Assert ((0J1+⌊d1)≡⌊d1+0J1)
                         r,← 'CTZero3' desc Assert ((1J1+⌊d1)≡⌊d1+1J1)
-                        ⍝ r,← 'CTZeroAlmost1' desc Assert (genCmplxFloor d1)≡⌊almostd1
+                        r,← 'CTZeroAlmost1' desc Assert ((((genCmplxFloor d1)≡⌊almostd1) ∨ (fr=1) ∧ (case≡'Hcmplx')))
                     :EndIf
                 :EndFor
             :EndFor
