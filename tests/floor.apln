@@ -56,7 +56,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
-    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;bool;i1;i2;i3;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;bool;i1;i2;i3;dbl;fl;Sfl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -75,9 +75,6 @@
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ Hfl is 1287 closer to the default DCT
         Sfl←{⍵,-⍵}(⍳10)×1E¯1                            ⍝ 1287: 1287 between (-1,1)
         ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
-
-        cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
-        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 closer to the default CT
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
@@ -135,7 +132,7 @@
         :EndFor
     ∇
 
-    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;magCmplx;d1;case;data;testDesc;desc;ct_default;dct_default;fr_dbl;fr_decf
+    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
