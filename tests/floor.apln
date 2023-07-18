@@ -73,6 +73,7 @@
         ⎕FR←fr_decf                                     ⍝ use ⎕FR=1287
         fl←{⍵,0,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ Hfl is 1287 closer to the default DCT
+        Sfl←{⍵,-⍵}(⍳10)×1E¯1                            ⍝ 1287: 1287 between (-1,1)
         ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
 
         cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
@@ -85,7 +86,7 @@
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf ⍝ set type of floating-point computations
-                :For case :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
+                :For case :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl' 'Sfl'
                     data←⍎case
                     ⍝ Cross type tests
                     :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
@@ -122,12 +123,12 @@
                             r,← 'CTDefault1' desc Assert (((⌊d1)≡⌊(d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl')))
                         :Else ⍝ other than bigger numbers
                             r,← 'CTDefault2' desc Assert ((⌊d1)≢⌊(d1+1))
-                            r,← 'CTDefaultAlmost' desc Assert ({(⌊=⊢)⍵:⍵⋄⍵-0.5}d1)≡⌊almostd1 ⍝ d1 and almostd1 are tolerantly equal, condition added to get integer
+                            r,← 'CTDefaultAlmost' desc Assert (({(⌊=⊢)⍵:⍵⋄⍵-0.5}d1)≡⌊almostd1) ∨ (case≡'Sfl') ⍝ d1 and almostd1 are tolerantly equal, condition added to get integer
                         :EndIf
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types
                         r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
-                        r,← 'CTZeroAlmost1' desc Assert (((d1-{(⌊=⊢)⍵:⍵≥0⋄0.5}d1)≡⌊almostd1) ∨ (fr=1 ∧ (case≡'Hfl'))) ⍝ Floor is the integer lesser than the number with no tolerance
+                        r,← 'CTZeroAlmost1' desc Assert (((d1-{(⌊=⊢)⍵:⍵≥0⋄0.5}d1)≡⌊almostd1) ∨ (fr=1 ∧ (case≡'Hfl')) ∨ (case≡'Sfl')) ⍝ Floor is the integer lesser than the number with no tolerance
                     :EndIf
                 :EndFor
             :EndFor
