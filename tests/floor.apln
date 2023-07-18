@@ -6,11 +6,11 @@
     ⍝ Approach 2 was using binary conversion and stripping decimals similar to the string approach, but the sources use something similar
     ⍝ The string approach is good because it deals with floor in a very non-co-related way so it can never be clashing
     ⍝ All cases:
-    ⍝ neg  int juststrip
-    ⍝ 0     0   1           123.32→123
-    ⍝ 0     1   1           123→123
-    ⍝ 1     0   0           ¯123.32→¯124
-    ⍝ 1     1   1           ¯123→¯123
+    ⍝ neg  dotPos juststrip
+    ⍝ 0     1       1           123.32→123
+    ⍝ 0     0       1           123→123
+    ⍝ 1     1       0           ¯123.32→¯124
+    ⍝ 1     0       1           ¯123→¯123
     genFloor←{
         ⎕pp←34                  ⍝ set to max as we are using strings, the execute and format primitives round the number to the ⎕pp value
         dotPos←⍸,'.'⍷⍕⍵         ⍝ convert num to string and get position of the decimal point
@@ -66,16 +66,17 @@
         i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
         i2←{⍵,0,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
         i3←{⍵,0,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+
         dbl←{⍵,0,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
-        ⍝ Hdbl is 645 but larger numbers
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
-        ⍝ Hfl is 1287 but larger numbers
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)                         ⍝ Hdbl is 645 closer to the default CT
+
         ⎕FR←fr_decf                                     ⍝ use ⎕FR=1287
         fl←{⍵,0,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
-        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ 1287 but larger numbers
+        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ Hfl is 1287 closer to the default DCT
         ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
+
         cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
-        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 but larger numbers
+        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 closer to the default CT
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
@@ -83,20 +84,15 @@
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
             :For fr :In 2 1
-                ⎕FR←fr⊃fr_dbl fr_decf
-                :For case :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl'  'Hfl'
+                ⎕FR←fr⊃fr_dbl fr_decf ⍝ set type of floating-point computations
+                :For case :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
                     data←⍎case
                     ⍝ Cross type tests
-                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl'
+                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
                         data2←⍎case2
-                        :If (⊂data)∊cmplx Hdbl Hfl Hcmplx
-                            :Continue
-                        :EndIf
                         desc←testDesc⍬
-                        :If (data≡data2)
-                            :Continue
-                        :EndIf
-                        r,← 'TCross1' desc RunVariations (genFloor¨ data,data2) (data,data2)
+                        r,← 'TCross1' desc RunVariations (genFloor¨ data,data2) (data,data2) ⍝ concat data and data2
+                        r,← 'TCross2' desc RunVariations (genFloor¨ data2,data) (data2,data) ⍝ concat data and data2 reserved
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
@@ -113,9 +109,7 @@
                     :If (⊂data)∊i1 i2 i3
                         r,← 'TInt1' desc RunVariations data data                         ⍝ floor of integers will always be floor
                         r,← 'TInt2' desc RunVariations data dataplus                     ⍝ floor of integers will always be floor
-                    :EndIf
-
-                    :If case≡'dbl'
+                    :ElseIf (⊂data)∊dbl fl
                         halfLen←(¯1+≢data)÷2
                         r,← 'TDbl' desc RunVariations ({(⍵-0.5),0,-0.5+⍵}(halfLen↑data)) data    ⍝ floor of dbl is removing the 0.5 from the number
                     :EndIf
@@ -133,7 +127,6 @@
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types
                         r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
-
                         r,← 'CTZeroAlmost1' desc Assert (((d1-{(⌊=⊢)⍵:⍵≥0⋄0.5}d1)≡⌊almostd1) ∨ (fr=1 ∧ (case≡'Hfl'))) ⍝ Floor is the integer lesser than the number with no tolerance
                     :EndIf
                 :EndFor
@@ -148,7 +141,7 @@
         fr_decf←1287
 
         cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
-        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 but larger numbers
+        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 closer to the default CT
 
         r←⍬
         testDesc←{'for ',case,' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
@@ -167,25 +160,25 @@
 
                     ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type 1J1 ¯1J1 1J¯1 ¯1J¯1
                     dataplus←(data,(data+2⊃⊣),(data+2⊃⊣),(data+(1⊃⊣)+2⊃⊣)) (?0⍨¨data) (¯11○(?0⍨¨data))
-                    r,←'T3' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ (case≡'Hcmplx'))
+                    r,←'T3' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ case≡'Hcmplx')
 
                     almostd1←d1×1-fr⊃ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                     ⍝ almostd1← d1-1E¯15
                     :If ct ∧ (fr≡1) ⍝ tolerant
                         :If (case≡'Hcmplx')  ⍝ bigger numbers
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
-                            r,← 'CTDefault1' desc Assert (⌊d1)≡⌊(d1+1)
-                            r,← 'CTDefault2' desc Assert (⌊d1)≡⌊(d1+0J1)
-                            r,← 'CTDefault3' desc Assert (⌊d1)≡⌊(d1+1J1)
+                            r,← 'CTDefault1' desc Assert (⌊d1)≡⌊d1+1
+                            r,← 'CTDefault2' desc Assert (⌊d1)≡⌊d1+0J1
+                            r,← 'CTDefault3' desc Assert (⌊d1)≡⌊d1+1J1
                         :Else ⍝ other than bigger numbers
                             r,← 'CTDefaultAlmost1' desc Assert (d1)≡⌊almostd1 ⍝ No difference because tolerantly equal
                         :EndIf
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types`
-                        r,← 'CTZero1' desc Assert ((1+⌊d1)≡⌊d1+1)
-                        r,← 'CTZero2' desc Assert ((0J1+⌊d1)≡⌊d1+0J1)
-                        r,← 'CTZero3' desc Assert ((1J1+⌊d1)≡⌊d1+1J1)
-                        r,← 'CTZeroAlmost1' desc Assert ((d1≡⌊almostd1) ∨ fr) ⍝ todo: not fully satisfied, needs more investigation
+                        r,← 'CTZero1' desc Assert (1+⌊d1)≡⌊d1+1
+                        r,← 'CTZero2' desc Assert (0J1+⌊d1)≡⌊d1+0J1
+                        r,← 'CTZero3' desc Assert (1J1+⌊d1)≡⌊d1+1J1
+                        r,← 'CTZeroAlmost1' desc Assert (d1≡⌊almostd1) ∨ (fr=1) ⍝ todo: not fully satisfied, needs more investigation
                     :EndIf
                 :EndFor
             :EndFor
