@@ -127,7 +127,7 @@
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types
                         r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
-                        r,← 'CTZeroAlmost1' desc Assert (((d1-{(⌊=⊢)⍵:⍵>0⋄0.5}d1)≡⌊almostd1) ∨ (fr=1 ∧ (case≡'Hfl'))) ⍝ floor is the integer lesser than the number with no tolerance
+                        r,← 'CTZeroAlmost' desc Assert (((d1-{(⌊=⊢)⍵:⍵>0⋄0.5}d1)≡⌊almostd1) ∨ (fr=1 ∧ (case≡'Hfl'))) ⍝ floor is the integer lesser than the number with no tolerance
                     :EndIf
                 :EndFor
             :EndFor
@@ -170,14 +170,14 @@
                             r,← 'CTDefault2' desc Assert (⌊d1)≡⌊d1+0J1
                             r,← 'CTDefault3' desc Assert (⌊d1)≡⌊d1+1J1
                         :Else ⍝ other than bigger numbers
-                            r,← 'CTDefaultAlmost1' desc Assert d1≡⌊almostd1 ⍝ No difference because tolerantly equal
+                            r,← 'CTDefaultAlmost' desc Assert d1≡⌊almostd1 ⍝ No difference because tolerantly equal
                         :EndIf
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types with cmplx variations
                         r,← 'CTZero1' desc Assert (1+⌊d1)≡⌊d1+1
                         r,← 'CTZero2' desc Assert (0J1+⌊d1)≡⌊d1+0J1
                         r,← 'CTZero3' desc Assert (1J1+⌊d1)≡⌊d1+1J1
-                        r,← 'CTZeroAlmost1' desc Assert (d1≡⌊almostd1) ∨ (fr=1) ⍝ todo: not fully sure if this is the right way
+                        r,← 'CTZeroAlmost' desc Assert (d1≡⌊almostd1) ∨ (fr=1) ⍝ todo: not fully sure if this is the right way
                     :EndIf
                 :EndFor
             :EndFor
