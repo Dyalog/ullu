@@ -160,7 +160,7 @@
                     desc←testDesc⍬
                     r,←'T1' desc RunVariations data data    ⍝ all of data are whole cmplx numbers
 
-                    ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type 1J1 ¯1J1 1J¯1 ¯1J¯1
+                    ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type xJy ¯xJy xJ¯y ¯xJ¯y
                     dataplus←(data,(data+2⊃⊣),(data+2⊃⊣),(data+(1⊃⊣)+2⊃⊣)) (?0⍨¨data) (¯11○(?0⍨¨data))
                     r,←'T2' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ case≡'Hcmplx') ⍝ DECF Hcmplx is skipped because of rounding off
 
