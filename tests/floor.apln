@@ -107,7 +107,7 @@
 
                     r,← 'T1' desc RunVariations (genFloor¨data) data                            ⍝ generator func finds results on array
 
-                    dataplus←data+?0⍨¨data                                                      ⍝ adding a number between (0,1) to data
+                    dataplus←data+?0⍨¨data                                                      ⍝ data plus a number between (0,1) to data
                     r,← 'T2' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
 
                     :If (⊂data)∊i1 i2 i3
