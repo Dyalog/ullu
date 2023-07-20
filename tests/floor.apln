@@ -43,6 +43,13 @@
         actualR←⌊p
         tRes,←tData Assert expectedR≡actualR
 
+        ⍝ scalar
+        rand←?≢p
+        trimmedp←rand↓p ⍝ so that not always the first is selected
+        shape←⍬         ⍝ scalar shape
+        actualRS←⌊shape⍴trimmedp
+        tRes,←('Scalar',tID) tCmt Assert (shape⍴rand↓expectedR)≡actualRS
+
         ⍝ empty
         actualRE←⌊(0⍴p) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
         tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE
@@ -100,11 +107,8 @@
 
                     r,← 'T1' desc RunVariations (genFloor¨data) data                            ⍝ generator func finds results on array
 
-                    d1←data[?≢data]
-                    r,← 'T2' desc RunVariations (genFloor d1) d1                                ⍝ generator func finds results on single element
-
                     dataplus←data+?0⍨¨data                                                      ⍝ adding a number between (0,1) to data
-                    r,← 'T3' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
+                    r,← 'T2' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
 
                     :If (⊂data)∊i1 i2 i3
                         r,← 'TInt1' desc RunVariations data data                                ⍝ floor of integers will always be floor
@@ -115,6 +119,7 @@
                     :EndIf
                 
                     ⍝ tests with comparision tolerance
+                    d1←data[?≢data]
                     almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl ⍝ bigger numbers
@@ -153,16 +158,14 @@
                 :For case :In 'cmplx' 'Hcmplx'
                     data←⍎case
                     desc←testDesc⍬
-                    r,←'T1' desc RunVariations data data
-
-                    d1←data[?≢data]
-                    r,←'T2' desc RunVariations d1 d1
+                    r,←'T1' desc RunVariations data data    ⍝ all of data are whole cmplx numbers
 
                     ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type 1J1 ¯1J1 1J¯1 ¯1J¯1
                     dataplus←(data,(data+2⊃⊣),(data+2⊃⊣),(data+(1⊃⊣)+2⊃⊣)) (?0⍨¨data) (¯11○(?0⍨¨data))
-                    r,←'T3' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ case≡'Hcmplx') ⍝ DECF Hcmplx is skipped because of rounding off
+                    r,←'T2' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ case≡'Hcmplx') ⍝ DECF Hcmplx is skipped because of rounding off
 
-                    almostd1←d1×1-fr⊃ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                    d1←data[?≢data]
+                    almostd1←d1×1-fr⊃1E¯2× ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                     :If ct ∧ (fr≡1) ⍝ tolerant
                         :If (case≡'Hcmplx')  ⍝ bigger numbers
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
