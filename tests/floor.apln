@@ -124,7 +124,7 @@
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl ⍝ bigger numbers
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
-                            r,← 'CTDefault1' desc Assert (((⌊d1)≡⌊(d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl')))
+                            r,← 'CTDefault1' desc Assert (((⌊d1)≡⌊(d1+1)) ∨ ((fr=2) ∧ case≡'Hdbl'))
                         :Else ⍝ other than bigger numbers
                             r,← 'CTDefault2' desc Assert ((⌊d1)≢⌊(d1+1))                        ⍝ not tolerantly equal for other numbers
                             r,← 'CTDefaultAlmost' desc Assert (({(⌊=⊢)⍵:⍵⋄⍵-0.5}d1)≡⌊almostd1)  ⍝ d1 and almostd1 are tolerantly equal, condition added to get integer
@@ -132,7 +132,7 @@
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types
                         r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
-                        r,← 'CTZeroAlmost' desc Assert (((d1-{(⌊=⊢)⍵:⍵>0⋄0.5}d1)≡⌊almostd1) ∨ (fr=1 ∧ (case≡'Hfl'))) ⍝ floor is the integer lesser than the number with no tolerance
+                        r,← 'CTZeroAlmost' desc Assert (((d1-{(⌊=⊢)⍵:⍵>0⋄0.5}d1)≡⌊almostd1) ∨ ((fr=1) ∧ case≡'Hfl')) ⍝ floor is the integer lesser than the number with no tolerance
                     :EndIf
                 :EndFor
             :EndFor
