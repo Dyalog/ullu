@@ -59,7 +59,7 @@
         actualRS←⌊shape⍴p ⍝ change shape and then evaluate
         tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
 
-        ⍝ randomize shapes with 0 a random position of shape shape
+        ⍝ randomize shapes with 0 a random position of shape
         shapeW0←(0@(?(≢shape)))shape
         actualRS←⌊shapeW0⍴p
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
@@ -85,6 +85,12 @@
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ Hfl is 1287 closer to the default DCT
         ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
 
+        char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
+        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
+        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
+        ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+
+
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
@@ -108,7 +114,7 @@
                     r,← 'T1' desc RunVariations (genFloor¨data) data                            ⍝ generator func finds results on array
 
                     dataplus←data+?0⍨¨data                                                      ⍝ data plus a number between (0,1) to data
-                    r,← 'T2' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ (fr=1 ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
+                    r,← 'T2' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ ((fr=1) ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
 
                     :If (⊂data)∊i1 i2 i3
                         r,← 'TInt1' desc RunVariations data data                                ⍝ floor of integers will always be floor
@@ -134,6 +140,22 @@
                         r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
                         r,← 'CTZeroAlmost' desc Assert (((d1-{(⌊=⊢)⍵:⍵>0⋄0.5}d1)≡⌊almostd1) ∨ ((fr=1) ∧ case≡'Hfl')) ⍝ floor is the integer lesser than the number with no tolerance
                     :EndIf
+                    
+                    ⍝ tests for known errors
+                    :For case2 :In 'char1' 'char2' 'char3' 'ptr'
+                        data←⍎case2
+                        desc←testDesc⍬
+                        c1←data[?≢data]
+
+                        f←0 ⍝ flag
+                        :Trap 11 ⍝ 11: Domain error
+                            ⌊c1
+                        :Else
+                            f←1
+                        :EndTrap
+                        r,← 'TDomainE1' desc Assert f
+                    :EndFor
+                    case2←⍬ ⍝ disposing case2 for testDesc
                 :EndFor
             :EndFor
         :EndFor
