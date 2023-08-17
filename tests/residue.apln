@@ -30,7 +30,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
     ∇
 
-    ∇ r←test_residue ;genResidue;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;fltalmostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_residue ;genResidue;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645

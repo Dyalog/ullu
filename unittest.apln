@@ -44,7 +44,7 @@
             'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11
 
             ⍝ 0 is used to generate a random seed value and the random value is the noted in the logs
-            ⎕RL←rl←{⍵≡0:(?(¯2+2*31))⋄⍵} randLink
+            ⎕RL←rl←{⍵≡0:?¯2+2*31⋄⍵} randLink
             ⎕←'Options:'
             ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl
             :If verbose
