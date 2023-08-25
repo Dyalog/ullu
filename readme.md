@@ -4,9 +4,9 @@ Testing Dyalog APL Code using a custom test framework.
 
 ## Usage
 
-Run all tests using:
+Run tests using:
 ```
-LOAD='/Path to/bb-test-apl/bbtest.dws' apl 
+dyalogscript run.apls
 ```
 <!-- LOAD='/home/aarush/Desktop/wdr/bb-test-apl/bbtest.dws' apl  -->
 

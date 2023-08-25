@@ -1,0 +1,37 @@
+#!/usr/local/bin/dyalogscript
+
+⍝ Full session start-up
+DYALOG ← 2 ⎕NQ #'GetEnvironment' 'DYALOG'
+⎕←DYALOG
+⍎⊃2⎕FIX 'file://',DYALOG,'/startup.dyalog'
+
+⎕SE.Link.Import # '/Users/rush/wdr/projects/bb-test-apl'
+
+⍝ list of available tests
+ts←⊂'floor'
+ts,←⊂'indexof'
+ts,←⊂'magnitude'
+ts,←⊂'membership'
+ts,←⊂'residue'
+
+⎕←''
+⎕←'Hi, Choose supported tests:'
+⎕←'all', ts
+
+⎕←''
+⎕←'Enter TestName:'
+tName←¯1∘⎕C ⍞ ⍝ stdin to lowercase
+⎕←''
+
+t←{
+    3::'Test not found, please select from the list'⎕SIGNAL 11
+    tIndex ←ts⍳⊂tName
+    tName≡'all':(⊂'tests.'),¨ts
+    'tests.',⊃ts[tIndex]
+}⍬
+
+run←{
+    tName≡'all' : unittest.RunTests ¨⍎¨t
+    unittest.RunTests ⍎t
+}
+run⍬
