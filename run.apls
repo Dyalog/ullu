@@ -2,7 +2,6 @@
 
 ⍝ Full session start-up
 DYALOG ← 2 ⎕NQ #'GetEnvironment' 'DYALOG'
-⎕←DYALOG
 ⍎⊃2⎕FIX 'file://',DYALOG,'/startup.dyalog'
 
 ⎕SE.Link.Import # '/Users/rush/wdr/projects/bb-test-apl'
@@ -17,7 +16,6 @@ ts,←⊂'residue'
 ⎕←''
 ⎕←'Hi, Choose supported tests:'
 ⎕←'all', ts
-
 ⎕←''
 ⎕←'Enter TestName:'
 tName←¯1∘⎕C ⍞ ⍝ stdin to lowercase
