@@ -23,6 +23,14 @@ ts,←⊂'residue'
 tName←¯1∘⎕C ⍞ ⍝ stdin to lowercase
 ⎕←''
 
+⎕←''
+⎕←'Test options: (not supported with all, stop has limited functionality)'
+⎕←'verbose stop randLink'
+opts←⍎⍞
+⎕←opts
+(verbose stop randLink)←3↑opts,0 0 0
+⎕←''
+
 t←{
     3::'Test not found, please select from the list'⎕SIGNAL 11
     tIndex ←ts⍳⊂tName
@@ -31,7 +39,8 @@ t←{
 }⍬
 
 run←{
-    tName≡'all' : unittest.RunTests ¨⍎¨t
-    unittest.RunTests ⍎t
+    tName≡'all' : unittest.RunTests ¨(⍎¨t)
+    unittest.RunTests (⍎t) verbose stop randLink
 }
+
 run⍬
