@@ -21,7 +21,8 @@
 
         ⍝ ⍝ empty
         actualRE←∪0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
+        expectedRE←{(⎕DR ⍵)∊80 160 320 326:''⋄⍬}expectedR
+        tRes,←('Empty',tID) tCmt Assert expectedRE≡actualRE ⍝ empty array is expectedR
 
         ⍝ ⍝ different shapes
         shape←?(?4)/4
@@ -47,7 +48,7 @@
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        ptr←⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
@@ -76,9 +77,18 @@
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
                 desc←testDesc⍬
-                r,← 'T1' desc RunVariations (22 10 21 5) (22 10 22 22 21 10 5 10)
-                r,← 'T2' desc RunVariations (genUnique (22 10 22 22 21 10 5 10)) (22 10 22 22 21 10 5 10)
+                r,← 'Tx1' desc RunVariations (22 10 21 5) (22 10 22 22 21 10 5 10)
+                r,← 'Tx2' desc RunVariations (genUnique (22 10 22 22 21 10 5 10)) (22 10 22 22 21 10 5 10)
+
+                :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                    data←⍎case
+                    desc←testDesc⍬
+                    r,← 'T1' desc RunVariations data data      ⍝ all elements of data are indexed
+                    r,← 'T2' desc RunVariations data 2/data    ⍝ all elements of data are repeated sequentially
+
+                :EndFor
             :EndFor
         :EndFor
     ∇
+
 :EndNamespace
