@@ -2,6 +2,8 @@
     Assert←#.unittest.Assert
 
     genUnique←{⊃∪⍨/⌽⍵}⍝{⌽1/↑↑⌽∪/⌽⊂∘⊂⍤¯1⊢⍵}
+    shuffle←{⊂⍤?⍨∘≢⌷⍵}
+    intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}
 
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;larg;rarg;res;tID;tCmt;shape;actualRS;shapeW0;actualRSW0
         (expectedR rarg)←exp
@@ -13,11 +15,13 @@
         tRes,←tData Assert expectedR≡actualR
 
         ⍝ scalar
-        rand←(?≢rarg)-1
-        trimmedrarg←rand↓rarg ⍝ so that not always the first is selected
-        shape←⍬               ⍝ scalar shape
-        actualRS←∪shape⍴trimmedrarg
-        tRes,←('Scalar',tID) tCmt Assert (∪(1+rand)⊃rarg)≡actualRS
+        ⍝ rand←(?≢rarg)-1
+        ⍝ trimmedrarg←rand↓rarg ⍝ so that not always the first is selected
+        ⍝ shape←⍬               ⍝ scalar shape
+        ⍝ actualRS←∪shape⍴trimmedrarg
+        ele←(?∘≢⊃⊢)rarg
+        actualRS←∪ele
+        tRes,←('Scalar',tID) tCmt Assert (,ele)≡actualRS
 
         ⍝ ⍝ empty
         actualRE←∪0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
@@ -91,16 +95,22 @@
                                  :Continue
                             :EndIf
                         r,← 'TCross1' desc RunVariations (data,data2) (data,data2) ⍝ all elements are concatenated
-                        r,← 'TCross1' desc RunVariations (data{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}data2) ((2/data){(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}(2/data2)) ⍝ all elements are doubled & perfectly intertwined
+                        r,← 'TCross1' desc RunVariations (data intertwine data2) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined
                     :EndFor
 
                     case2←⍬ ⍝ dispose case2
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations data data                           ⍝ all elements of data are indexed
-                    r,← 'T2' desc RunVariations data (2/data)                       ⍝ all elements of data are repeated sequentially
-                    r,← 'T3' desc RunVariations data (data{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}data)   ⍝ all elements are perfectly intertwined
-
+                    r,← 'T1' desc RunVariations data data                               ⍝ all elements of data are indexed
+                    r,← 'T2' desc RunVariations data (2/data)                           ⍝ all elements of data are repeated sequentially
+                    r,← 'T3' desc RunVariations data (data intertwine data)             ⍝ all elements are perfectly intertwined
+                    
+                    shuffledData←↑shuffle data
+                    r,← 'T4' desc RunVariations (genUnique shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
+                    
+                    repetitions←?6
+                    shuffledRepeatedData←↑shuffle repetitions/data
+                    r,← 'T5' desc RunVariations (genUnique shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
                 :EndFor
             :EndFor
         :EndFor
