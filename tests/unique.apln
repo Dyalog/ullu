@@ -21,7 +21,7 @@
 
         ⍝ ⍝ empty
         actualRE←∪0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        expectedRE←{(⎕DR ⍵)∊80 160 320 326:''⋄⍬}expectedR
+        expectedRE←{(⎕DR ⍵)∊80 160 320:''⋄⍬}1⊃expectedR
         tRes,←('Empty',tID) tCmt Assert expectedRE≡actualRE ⍝ empty array is expectedR
 
         ⍝ ⍝ different shapes
@@ -43,7 +43,7 @@
 
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
-        char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
+        char1←⎕UCS (100+⍳100)                               ⍝ 80: 8 bits character
         char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
@@ -83,8 +83,23 @@
                 :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                     data←⍎case
                     desc←testDesc⍬
-                    r,← 'T1' desc RunVariations data data      ⍝ all elements of data are indexed
-                    r,← 'T2' desc RunVariations data 2/data    ⍝ all elements of data are repeated sequentially
+
+                    :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        data2←⍎case2
+                        desc←testDesc⍬
+                            :If (case≡case2)
+                                 :Continue
+                            :EndIf
+                        r,← 'TCross1' desc RunVariations (data,data2) (data,data2) ⍝ all elements are concatenated
+                        r,← 'TCross1' desc RunVariations (data{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}data2) ((2/data){(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}(2/data2)) ⍝ all elements are doubled & perfectly intertwined
+                    :EndFor
+
+                    case2←⍬ ⍝ dispose case2
+                    desc←testDesc⍬
+
+                    r,← 'T1' desc RunVariations data data                           ⍝ all elements of data are indexed
+                    r,← 'T2' desc RunVariations data (2/data)                       ⍝ all elements of data are repeated sequentially
+                    r,← 'T3' desc RunVariations data (data{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}data)   ⍝ all elements are perfectly intertwined
 
                 :EndFor
             :EndFor
