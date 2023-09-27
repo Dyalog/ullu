@@ -1,7 +1,8 @@
 :Namespace unique
     Assert←#.unittest.Assert
 
-    genUnique←{⊃∪⍨/⌽⍵}              ⍝ model function for unique
+    ⍝ genUnique←{⊃∪⍨/⌽⍵}              ⍝ model function for unique
+    genUnique←{⌽1/↑↑⌽∪/⌽⊂∘⊂⍤¯1⊢⍵}
 
     ⍝ util functions
     shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
@@ -28,13 +29,14 @@
 
         ⍝ ⍝ different shapes
         shape←?(?4)/4
-        ⍝ actualRS←∪(shape⍴rarg)
-        ⍝ tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
+        actualRS←∪(shape⍴rarg)
+        expectedRS←genUnique shape⍴rarg ⍝ TODO: generator function does not work
+        tRes,←('Multiple',tID) tCmt Assert expectedRS≡actualRS
 
         ⍝ ⍝ different shapes with 0 in shape
         ⍝ shapeW0←(0@(?(≢shape)))shape
         ⍝ actualRSW0←∪(shapeW0⍴rarg)
-        ⍝ tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
+        ⍝ tRes,←('ShapeW0',tID) tCmt Assert (genUnique shapeW0⍴0) ≡ actualRSW0
     ∇
 
     ∇ r←test_unique ;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;cmplx;Hcmplx;Hdbl;⎕FR;⎕CT;⎕DCT;fl;Hfl;testDesc;case;case2;desc;ct;fr;data;data2;shuffledData;repetitions;shuffledRepeatedData
@@ -108,6 +110,25 @@
                     repetitions←?6
                     shuffledRepeatedData←↑shuffle repetitions/data
                     r,← 'T5' desc RunVariations (genUnique shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
+                
+                    ⍝ tests with comparision tolerance
+                    :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
+                        d1←data[?≢data]
+                        almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                        :If ct ⍝ tolerant
+                            ⍝ :If (⊂data)∊Hdbl Hfl ⍝ bigger numbers
+                            ⍝     ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                            ⍝     r,← 'CTDefault1' desc Assert (((⌊d1)≡⌊(d1+1)) ∨ ((fr=2) ∧ case≡'Hdbl'))
+                            ⍝ :Else ⍝ other than bigger numbers
+                            ⍝     r,← 'CTDefault2' desc Assert ((⌊d1)≢⌊(d1+1))                        ⍝ not tolerantly equal for other numbers
+                            ⍝     r,← 'CTDefaultAlmost' desc Assert (({(⌊=⊢)⍵:⍵⋄⍵-0.5}d1)≡⌊almostd1)  ⍝ d1 and almostd1 are tolerantly equal, condition added to get integer
+                            ⍝ :EndIf
+                        :Else ⍝ exact
+                            ⍝ ⍝ d≠d+1 for all numeric types
+                            ⍝ r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
+                            ⍝ r,← 'CTZeroAlmost' desc Assert (((d1-{(⌊=⊢)⍵:⍵>0⋄0.5}d1)≡⌊almostd1) ∨ ((fr=1) ∧ case≡'Hfl')) ⍝ floor is the integer lesser than the number with no tolerance
+                        :EndIf
+                    :EndIf
                 :EndFor
             :EndFor
         :EndFor
