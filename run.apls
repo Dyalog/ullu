@@ -12,6 +12,7 @@ ts,←⊂'indexof'
 ts,←⊂'magnitude'
 ts,←⊂'membership'
 ts,←⊂'residue'
+ts,←⊂'unique'
 
 ⎕←''
 ⎕←'Hi, Choose supported tests:'
