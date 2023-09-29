@@ -126,7 +126,7 @@
                         :Else ⍝ exact
                             ⍝ ⍝ d≠d+1 for all numeric types
                             r,← 'CTZero' desc Assert (((d1,d1+1)≡∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
-                            r,← 'CTZeroAlmost' desc Assert ((d1,almostd1)≡∪d1,almostd1) ⍝ Does not work with cmplx, takes d1 and almostd1 as equal with ⎕fr←1287
+                            r,← 'CTZeroAlmost' desc Assert (((d1,almostd1)≡∪d1,almostd1) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
                         :EndIf
                     :EndIf
                 :EndFor
