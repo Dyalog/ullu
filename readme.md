@@ -1,6 +1,6 @@
 ![ullu Banner](assets/ullu-cover.png)
 
-[![GitHub License](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
+[![GitHub Licence](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
 
 # ullu
 
@@ -75,10 +75,10 @@ unittest.RunTests tests.membership
 
 <!-- ### 🔗 References -->
 
-<!-- ## ⚖ Licence
+## ⚖ Licence
 
-Copyright 2021 Dyalog?
+Copyright 2023 Dyalog
 
 Licensed under MIT License : https://opensource.org/licenses/MIT
 
-<p align="center">Made with ❤ at Dyalog</p> -->
+<!-- <p align="center">Made with ❤ at Dyalog</p> -->
