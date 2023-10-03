@@ -75,7 +75,7 @@ unittest.RunTests tests.membership
 
 <!-- ### 🔗 References -->
 
-<!-- ## ⚖ License
+<!-- ## ⚖ Licence
 
 Copyright 2021 Dyalog?
 
