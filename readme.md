@@ -75,10 +75,10 @@ unittest.RunTests tests.membership
 
 <!-- ### 🔗 References -->
 
-<!-- ## ⚖ Licence
+## ⚖ Licence
 
-Copyright 2021 Dyalog?
+Copyright 2023 Dyalog
 
 Licensed under MIT License : https://opensource.org/licenses/MIT
 
-<p align="center">Made with ❤ at Dyalog</p> -->
+<!-- <p align="center">Made with ❤ at Dyalog</p> -->
