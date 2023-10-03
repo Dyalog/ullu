@@ -1,4 +1,4 @@
-![ullu Banner](assets/banner.png)
+![ullu Banner](assets/ullu-cover.png)
 
 [![GitHub License](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
 
@@ -25,7 +25,7 @@ Ullu is a QA for DyalogAPL (can be used to test any APL) which tests specificall
 
 ## ✍ The name
 
-Pronounced as /ˈulːluː/, The name comes from the hindi word for owl.
+Pronounced as `/ˈulːluː/`, The name comes from the hindi word for owl.
 
 Just as the owl represents both wisdom and foolishness the QA also has a dual nature of being wise and dumb at the same time.
 
