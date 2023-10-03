@@ -1,26 +1,63 @@
-# Dtests
+![ullu Banner](assets/banner.png)
 
-Testing Dyalog APL Code using a custom test framework.
+[![GitHub License](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
 
-## Usage
+# ullu
 
-Run tests using:
+> A test suite to test APL Primitives.
+
+## 🤔 What is ullu?
+
+Ullu is a QA for DyalogAPL (can be used to test any APL) which tests specifically the functionality of primitives.
+
+## 🎿 Coverage
+
+### 💪  Available Tests
+- floor (monadic ⌊)
+- index of (dyadic ⍳)
+- magnitude (monadic |)
+- membership (dyadic ∊)
+- residue (dyadic |)
+
+### 🧱 Under progress
+- unique (monadic ∪)
+- unique mask (monadic ≠)
+
+## ✍ The name
+
+Pronounced as /ˈulːluː/, The name comes from the hindi word for owl.
+
+Just as the owl represents both wisdom and foolishness the QA also has a dual nature of being wise and dumb at the same time.
+
+## ⬇ Usage
+
+### Quick Run
+
+Run tests using dyalogscript:
 ```
 dyalogscript run.apls
 ```
-<!-- LOAD='/home/aarush/Desktop/wdr/bb-test-apl/bbtest.dws' apl  -->
 
-### Using RIDE:
-Open ride in the repository
-Link the namespaces:
+After this you will be prompted with options to choose from
+
+### Detailed Run
+
+Using Dyalog Interpreter (prefered):
+
+- Load the namespaces:
 
 ```
-]LINK.Create # .
+]LINK.Create # <path to repository>
 ```
-Run the test cases
+
+- Run the test cases
+
 ```
-unittest.RunTests [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(''?'' for random)] (0 default)
+unittest.RunTests tests.[test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(''?'' for random)] (0 default)
 ```
+
+Options:
+
 verbose: if set to 0, only output failing tests and a single summary line.
 
 stop: if set to 1, any test which fails causes the framework to stop and allows the developer to inspect the failing test.
@@ -29,38 +66,19 @@ stop: if set to 1, any test which fails causes the framework to stop and allows 
 
 Example:
 ```
-unittest.RunTests tests.test_membership 1 0 1232
+unittest.RunTests tests.membership 1 0 1232
 ```
 or
 ```
-unittest.RunTests tests.test_membership
+unittest.RunTests tests.membership
 ```
 
-<!-- ## Configuration
+<!-- ### 🔗 References -->
 
-#### APL information:
+<!-- ## ⚖ License
 
-- Jupyter kernel: https://github.com/Dyalog/dyalog-jupyter-kernel using commit: 421dd512207daaf3aa62589839fac0edd9365c54
-- Dyalog version: Dyalog APL/S-64 Version 18.2.45405
+Copyright 2021 Dyalog?
 
-#### System information:
-```
-❯ neofetch
-██████████████████  ████████   rush@rush 
-██████████████████  ████████   --------- 
-██████████████████  ████████   OS: Manjaro Linux x86_64 
-██████████████████  ████████   Host: TUF Gaming FX505DT_FX505DT 1.0 
-████████            ████████   Kernel: 5.15.85-1-MANJARO 
-████████  ████████  ████████   Uptime: 3 days, 14 mins 
-████████  ████████  ████████   Packages: 1684 (pacman), 101 (nix-user), 43 (nix-default) 
-████████  ████████  ████████   Shell: zsh 5.9 
-████████  ████████  ████████   Resolution: 1920x1080 
-████████  ████████  ████████   WM: i3 
-████████  ████████  ████████   Theme: Breeze [GTK2/3] 
-████████  ████████  ████████   Icons: breeze [GTK2/3] 
-████████  ████████  ████████   Terminal: konsole 
-████████  ████████  ████████   CPU: AMD Ryzen 7 3750H with Radeon Vega Mobile Gfx (8) @ 2.300GHz 
-                               GPU: NVIDIA GeForce GTX 1650 Mobile / Max-Q 
-                               GPU: AMD ATI Radeon Vega Series / Radeon Vega Mobile Series 
-                               Memory: 5497MiB / 15807MiB                        
-``` -->
+Licensed under MIT License : https://opensource.org/licenses/MIT
+
+<p align="center">Made with ❤ at Dyalog</p> -->
