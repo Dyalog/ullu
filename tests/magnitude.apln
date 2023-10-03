@@ -82,7 +82,7 @@
         :EndFor
     ∇
 
-    ∇ r←Test_Magnitude_Cmplx ;cmplx;Hcmplx;magCmplx;d;case;data;testDesc;desc
+    ∇ r←test_magnitude_cmplx ;cmplx;Hcmplx;magCmplx;d;case;data;testDesc;desc
         i1←{⍵}⍳120                                    ⍝ 83: 8 bits signed integer
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but larger numbers
