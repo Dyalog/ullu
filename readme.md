@@ -1,6 +1,6 @@
 ![ullu Banner](assets/ullu-cover.png)
 
-[![GitHub License](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
+[![GitHub Licence](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
 
 # ullu
 
