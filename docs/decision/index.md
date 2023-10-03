@@ -33,5 +33,5 @@ The tests are categorised into the type of function/operator they are categorise
 ## Test Files
 
 The test files are structed with two functions:
-- `Test_Functionname`: General testcases including variations of ⎕IO, ⎕FR, ⎕CT, ⎕DCT(implicit arguments of the function) and datatypes for each testcase.
+- `test_functionname`: General testcases including variations of ⎕IO, ⎕FR, ⎕CT, ⎕DCT(implicit arguments of the function) and datatypes for each testcase.
 - `RunVariations`: Each test is run with variations of normal, empty, and differently shaped.
