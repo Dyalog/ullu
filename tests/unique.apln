@@ -83,14 +83,14 @@
                 ⎕FR←fr⊃fr_dbl fr_decf
                 desc←testDesc⍬
 
-                :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                     data←⍎case
                     desc←testDesc⍬
 
                     :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                         data2←⍎case2
                         desc←testDesc⍬
-                            :If (case≡case2)
+                            :If (case≡case2) ∨ (case≡'bool') ⍝ skipping bool because of overlap with i1
                                  :Continue
                             :EndIf
                         r,← 'TCross1' desc RunVariations (data,data2) (data,data2) ⍝ all elements are concatenated
@@ -113,7 +113,7 @@
                 
                     ⍝ tests with comparision tolerance
                     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
-                        d1←data[?≢data]
+                        d1←{case≡'bool':bool[2]⋄data[?≢data]}⍬
                         almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                         :If ct ⍝ tolerant
                             :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
