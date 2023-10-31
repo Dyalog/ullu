@@ -130,6 +130,16 @@
                         :EndIf
                     :EndIf
                 :EndFor
+
+                ⍝ Independant tests
+                case←'intependant'
+                case2←⍬
+                desc←testDesc⍬
+
+                ⍝ Generating singleton scalar boolean using ∧/1 0 1 0 and ∧/1 1 1 1
+                ⍝ 2/ to generate a bool vector that gives one result element when ∪ is applied
+                r,←'TboolI1' desc Assert (,0)≡∪2/∧/1 0 1 0
+                r,←'TboolI2' desc Assert (,1)≡∪2/∧/1 1 1 1
             :EndFor
         :EndFor
     ∇
