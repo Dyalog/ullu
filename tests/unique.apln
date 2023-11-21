@@ -115,25 +115,28 @@
                     ⍝ tests with comparision tolerance
                     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
                         d1←{case≡'bool':bool[2]⋄data[?≢data]}⍬
-                        almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                        almostd1S←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                        almostd1B←d1×1+fr⊃1E¯1×ct_default dct_default ⍝ infinitesimally close to d1 but bigger
                         :If ct ⍝ tolerant
                             :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
                                 ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
                                 r,← 'CTDefault1' desc Assert (((,d1)≡∪d1,d1+1) ∨ ((fr=2) ∧ case≡'Hdbl'))
                             :Else ⍝ other than bigger numbers
-                                r,← 'CTDefault2' desc Assert ((d1,d1+1)≡∪d1,d1+1)           ⍝ not tolerantly equal for other numbers
-                                r,← 'CTDefaultAlmost' desc Assert ((,d1)≡∪d1,almostd1)      ⍝ d1 and almostd1 are tolerantly equal
+                                r,← 'CTDefault2' desc Assert ((d1,d1+1)≡∪d1,d1+1)               ⍝ not tolerantly equal for other numbers
+                                r,← 'CTDefaultAlmostS' desc Assert ((,d1)≡∪d1,almostd1S)        ⍝ d1 and almostd1S are tolerantly equal
+                                r,← 'CTDefaultAlmostB' desc Assert ((,d1)≡∪d1,almostd1B)        ⍝ d1 and almostd1B are tolerantly equal
                             :EndIf
                         :Else ⍝ exact
                             ⍝ ⍝ d≠d+1 for all numeric types
                             r,← 'CTZero' desc Assert (((d1,d1+1)≡∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
-                            r,← 'CTZeroAlmost' desc Assert (((d1,almostd1)≡∪d1,almostd1) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
+                            r,← 'CTZeroAlmostS' desc Assert (((d1,almostd1S)≡∪d1,almostd1S) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
+                            r,← 'CTZeroAlmostB' desc Assert (((d1,almostd1B)≡∪d1,almostd1B) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
                         :EndIf
                     :EndIf
                 :EndFor
 
                 ⍝ Independant tests
-                case←'intependant'
+                case←'independant'
                 case2←⍬
                 desc←testDesc⍬
 
