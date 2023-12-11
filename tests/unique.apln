@@ -30,7 +30,7 @@
         ⍝ ⍝ different shapes
         shape←?(?4)/4
         actualRS←∪(shape⍴rarg)
-        expectedRS←genUnique shape⍴rarg ⍝ TODO: generator function does not work
+        expectedRS←genUnique shape⍴rarg
         tRes,←('Multiple',tID) tCmt Assert expectedRS≡actualRS
 
         ⍝ different shapes with 0 in shape
