@@ -1,8 +1,8 @@
 :Namespace unique
     Assert←#.unittest.Assert
 
-    genUnion←{⍺,(∧/⍺≢¨⍵)/⍵} ⍝ model function for union (X∪Y) (used to model unique)
-    genUnique←{⍬≡⍴⍵:,⍵ ⋄ 1≥≢⍵:⍵ ⋄ ↑⊃genUnion⍨/⌽⊂¨⊂⍤¯1⊢1/⍵} ⍝ model function for unique
+    ⍝ genUnion←{⍺,(∧/⍺≢¨⍵)/⍵} ⍝ model function for union (X∪Y) (used to model unique)
+    genUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ model function for unique
 
     ⍝ util functions
     shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
