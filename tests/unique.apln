@@ -33,7 +33,7 @@
         expectedRS←genUnique shape⍴rarg ⍝ TODO: generator function does not work
         tRes,←('Multiple',tID) tCmt Assert expectedRS≡actualRS
 
-        ⍝ ⍝ different shapes with 0 in shape
+        ⍝ different shapes with 0 in shape
         shapeW0←(0@(?(≢shape)))shape
         actualRSW0←∪shapeW0⍴rarg
         expectedRSW0←genUnique shapeW0⍴rarg
@@ -62,6 +62,12 @@
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
         Hdbl←{⍵,-⍵}1E14+(2×⍳50)
+
+        ⍝ This is needed for a case that can be hit if we have a lot of small numbers 
+        ⍝ which produce a hash collision
+        ⍝ Occurrence: same.c.html#L1153
+        Sdbl←{⍵,-⍵}(⍳500)÷1000
+
         ⍝ Hfl is 1287 but larger numbers to test for CT value
         ⍝ far intervals are chosen for non overlap 
         ⍝ with region of tolerant equality
@@ -84,7 +90,7 @@
                 ⎕FR←fr⊃fr_dbl fr_decf
                 desc←testDesc⍬
 
-                :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
                     data←⍎case
                     desc←testDesc⍬
 
@@ -104,17 +110,17 @@
                     r,← 'T1' desc RunVariations data data                               ⍝ all elements of data are indexed
                     r,← 'T2' desc RunVariations data (2/data)                           ⍝ all elements of data are repeated sequentially
                     r,← 'T3' desc RunVariations data (data intertwine data)             ⍝ all elements are perfectly intertwined
-                    
+
                     shuffledData←↑shuffle data
                     r,← 'T4' desc RunVariations (genUnique shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
-                    
+
                     repetitions←?6
                     shuffledRepeatedData←↑shuffle repetitions/data
                     r,← 'T5' desc RunVariations (genUnique shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
-                
+
                     ⍝ tests with comparision tolerance
                     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
-                        d1←{case≡'bool':bool[2]⋄data[?≢data]}⍬
+                        d1←(data~0)[?≢data~0] ⍝ 0 interferes with the calculations of almostd1S and almostd1B hence it is removed
                         almostd1S←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                         almostd1B←d1×1+fr⊃1E¯1×ct_default dct_default ⍝ infinitesimally close to d1 but bigger
                         :If ct ⍝ tolerant
@@ -144,6 +150,12 @@
                 ⍝ 2/ to generate a bool vector that gives one result element when ∪ is applied
                 r,←'TboolI1' desc Assert (,0)≡∪2/∧/1 0 1 0
                 r,←'TboolI2' desc Assert (,1)≡∪2/∧/1 1 1 1
+
+                ⍝ The special case can be hit if we have two 8 bit int numbers in the input: a & b, and a is b×1-⎕CT. 
+                ⍝ That means, that when we get to element b in the loop, we will find element a and hit the case.
+                ⍝ Occurrence: same.c.html#L1152
+                d←i1[?≢i1]
+                r,←'TCTI1' desc Assert (,d-({fr-1:⎕dct⋄⎕ct}⍬))≡(∪ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
             :EndFor
         :EndFor
     ∇
