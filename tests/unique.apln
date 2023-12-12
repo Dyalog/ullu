@@ -95,6 +95,7 @@
                     data←⍎case
                     desc←testDesc⍬
 
+                    ⍝ General tests to test the basic rules of unique
                     r,← 'TGen1' desc Assert (≢data)≥≢∪data                        ⍝ unique cannot return a result that is exceding the number of elements than the input
                     r,← 'TGen2' desc Assert (⎕dr data)≡⎕dr ∪data intertwine data  ⍝ datatype of the data will not change under unique
 
@@ -111,7 +112,7 @@
                         ⍝ 326 stays 326
                         ⍝ char + num becomes 326
                         ⍝ char + char and num + num becomes the greater sized type
-                        r,← 'TGen3' desc Assert ((data){(⎕dr ⍺){326∊(⍺ ⍵):326⋄0∊≠ 0 2∊⍨10|(⍺ ⍵):⍺⌈⍵⋄326}⎕dr ⍵}( data2))≡⎕dr ∪data intertwine data2
+                        r,← 'TGen3' desc Assert ((data){(⎕dr ⍺){326∊(⍺ ⍵):326⋄0∊≠ 0 2∊⍨10|(⍺ ⍵):⍺⌈⍵⋄326}⎕dr ⍵}(data2))≡⎕dr ∪data intertwine data2
                     :EndFor
 
                     case2←⍬ ⍝ dispose case2
