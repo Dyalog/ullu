@@ -25,14 +25,14 @@
 
         ⍝ ⍝ empty
         actualRE←∪0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        expectedRE←{(⎕DR ⍵)∊80 160 320:''⋄⍬}1⊃expectedR
+        expectedRE←0∘⌿expectedR ⍝ empty array along first axis
         tRes,←('Empty',tID) tCmt Assert expectedRE≡actualRE ⍝ empty array is expectedR
 
         ⍝ ⍝ different shapes
         shape←?(?4)/4
         actualRS←∪(shape⍴rarg)
         expectedRS←genUnique shape⍴rarg
-        tRes,←('Multiple',tID) tCmt Assert expectedRS≡actualRS
+        tRes,←('Multiple',tID) tCmt Assert expectedRS ≡ actualRS
 
         ⍝ different shapes with 0 in shape
         shapeW0←(0@(?(≢shape)))shape
@@ -55,7 +55,7 @@
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        ptr←⎕A                                        ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        ptr←(13↑⎕a) (13↓⎕a)                           ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
@@ -95,6 +95,9 @@
                     data←⍎case
                     desc←testDesc⍬
 
+                    r,← 'TGen1' desc Assert (≢data)≥≢∪data                        ⍝ unique cannot return a result that is exceding the number of elements than the input
+                    r,← 'TGen2' desc Assert (⎕dr data)≡⎕dr ∪data intertwine data  ⍝ datatype of the data will not change under unique
+
                     :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                         data2←⍎case2
                         desc←testDesc⍬
@@ -102,7 +105,13 @@
                                  :Continue
                             :EndIf
                         r,← 'TCross1' desc RunVariations (data,data2) (data,data2) ⍝ all elements are concatenated
-                        r,← 'TCross1' desc RunVariations (data intertwine data2) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined
+                        r,← 'TCross2' desc RunVariations (data intertwine data2) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined\
+
+                        ⍝ datatype of the data will not change under unique
+                        ⍝ 326 stays 326
+                        ⍝ char + num becomes 326
+                        ⍝ char + char and num + num becomes the greater sized type
+                        r,← 'TGen3' desc Assert ((data){(⎕dr ⍺){326∊(⍺ ⍵):326⋄0∊≠ 0 2∊⍨10|(⍺ ⍵):⍺⌈⍵⋄326}⎕dr ⍵}( data2))≡⎕dr ∪data intertwine data2
                     :EndFor
 
                     case2←⍬ ⍝ dispose case2
