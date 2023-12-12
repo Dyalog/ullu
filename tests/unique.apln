@@ -7,6 +7,7 @@
     ⍝ util functions
     shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
     intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
+    hashArray←1500⌶
 
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;res;tID;tCmt;shape;actualRS;shapeW0;actualRSW0
         (expectedR rarg)←exp
@@ -110,6 +111,7 @@
                     r,← 'T1' desc RunVariations data data                               ⍝ all elements of data are indexed
                     r,← 'T2' desc RunVariations data (2/data)                           ⍝ all elements of data are repeated sequentially
                     r,← 'T3' desc RunVariations data (data intertwine data)             ⍝ all elements are perfectly intertwined
+                    r,← 'T4' desc RunVariations data (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
 
                     shuffledData←↑shuffle data
                     r,← 'T4' desc RunVariations (genUnique shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
