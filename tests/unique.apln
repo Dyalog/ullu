@@ -9,7 +9,7 @@
     intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
     hashArray←1500⌶
 
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;res;tID;tCmt;shape;actualRS;shapeW0;actualRSW0
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0
         (expectedR rarg)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -41,7 +41,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
     ∇
 
-    ∇ r←test_unique ;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;cmplx;Hcmplx;Hdbl;⎕FR;⎕CT;⎕DCT;fl;Hfl;testDesc;case;case2;desc;ct;fr;data;data2;shuffledData;repetitions;shuffledRepeatedData
+    ∇ r←test_unique ;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;Sdbl;cmplx;Hcmplx;fl;Hfl;⎕FR;⎕CT;⎕DCT;testDesc;case;case2;desc;ct;fr;data;data2;shuffledData;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
