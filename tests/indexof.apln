@@ -5,7 +5,7 @@
 :Namespace indexof
     Assert←#.unittest.Assert
 
-    Model←{(⎕IO+1+≢⍺)-+/∨\1,⍨⍵∘.≡⍺}
+    model←{(⎕IO+1+≢⍺)-+/∨\1,⍨⍵∘.≡⍺}
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;larg;rarg;rindex;r;x;n;expectedRM;actualRM
@@ -30,7 +30,7 @@
         :If left≡⍬ ⍝ All cells will be identical
             expectedRM←(≢⊃rindex)⍴⎕IO
         :ElseIf 11≡⎕DR left
-            expectedRM←((⊂⍤¯1) larg) Model ((⊂⍤¯1) rarg) ⍝ use (slow, hungry) model
+            expectedRM←((⊂⍤¯1) larg) model ((⊂⍤¯1) rarg) ⍝ use (slow, hungry) model
         :Else
             expectedRM←⊃rindex
         :EndIf

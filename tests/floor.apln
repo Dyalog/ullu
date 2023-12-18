@@ -12,22 +12,22 @@
     ⍝ 0     0       1           123→123
     ⍝ 1     1       0           ¯123.32→¯124
     ⍝ 1     0       1           ¯123→¯123
-    genFloor←{
+    modelFloor←{
         ⎕pp←34                  ⍝ set to max as we are using strings, the execute and format primitives round the number to the ⎕pp value
         dotPos←⍸,'.'⍷⍕⍵         ⍝ convert num to string and get position of the decimal point
         int←⍎(⍕⍵)↑⍨¯1+dotPos    ⍝ strip integer based on the decimal point
         int-(⍵<0)∧(~0∊⍴dotPos)  ⍝ Subtract 1 only when negative+non int component exists. eg: ¯123.32→¯124
     }
-    ⍝ genFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
+    ⍝ modelFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
 
     ⍝ Generator function for complex floor
     ⍝ interpreted from: https://aplwiki.com/wiki/Complex_floor
-    genCmplxFloor←{
+    modelCmpxFloor←{
         r←9○⍵
         i←11○⍵
-        b←(genFloor r)+0j1×genFloor i
-        x←r-genFloor r
-        y←i-genFloor i
+        b←(modelFloor r)+0j1×modelFloor i
+        x←r-modelFloor r
+        y←i-modelFloor i
         1>x+y: b
         x≥y: b+1
         b+0j1
@@ -104,17 +104,17 @@
                     :For case2 :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
                         data2←⍎case2
                         desc←testDesc⍬
-                        r,← 'TCross1' desc RunVariations (genFloor¨ data,data2) (data,data2) ⍝ concat data and data2
-                        r,← 'TCross2' desc RunVariations (genFloor¨ data2,data) (data2,data) ⍝ concat data and data2 reversed
+                        r,← 'TCross1' desc RunVariations (modelFloor¨ data,data2) (data,data2) ⍝ concat data and data2
+                        r,← 'TCross2' desc RunVariations (modelFloor¨ data2,data) (data2,data) ⍝ concat data and data2 reversed
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (genFloor¨data) data                            ⍝ generator func finds results on array
+                    r,← 'T1' desc RunVariations (modelFloor¨data) data                            ⍝ generator func finds results on array
 
                     dataplus←data+?0⍨¨data                                                      ⍝ data plus a number between (0,1) to data
-                    r,← 'T2' desc Assert ((genFloor¨dataplus)≡⌊dataplus) ∨ ((fr=1) ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
+                    r,← 'T2' desc Assert ((modelFloor¨dataplus)≡⌊dataplus) ∨ ((fr=1) ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
 
                     :If (⊂data)∊i1 i2 i3
                         r,← 'TInt1' desc RunVariations data data                                ⍝ floor of integers will always be floor
@@ -184,7 +184,7 @@
 
                     ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type xJy ¯xJy xJ¯y ¯xJ¯y
                     dataplus←(data,(data+2⊃⊣),(data+2⊃⊣),(data+(1⊃⊣)+2⊃⊣)) (?0⍨¨data) (¯11○(?0⍨¨data))
-                    r,←'T2' desc Assert ((genCmplxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ case≡'Hcmplx') ⍝ DECF Hcmplx is skipped because of rounding off
+                    r,←'T2' desc Assert ((modelCmpxFloor¨dataplus)≡⌊dataplus) ∨ ((fr=2) ∧ case≡'Hcmplx') ⍝ DECF Hcmplx is skipped because of rounding off
 
                     d1←data[?≢data]
                     almostd1←d1×1-fr⊃1E¯2× ct_default dct_default ⍝ infinitesimally close to d1 but smaller
