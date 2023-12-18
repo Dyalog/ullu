@@ -5,6 +5,8 @@
 :Namespace residue
     Assert←#.unittest.Assert
 
+    model←{⍵-⍺×⌊⍵÷⍺+⍺=0} ⍝ Generator function for residue
+
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;larg;rarg;res;tID;tCmt;shape;actualRS;shapeW0;actualRSW0
         (expectedR larg rarg)←exp
@@ -30,7 +32,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
     ∇
 
-    ∇ r←test_residue ;genResidue;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_residue ;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -54,8 +56,6 @@
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
-        genResidue←{⍵-⍺×⌊⍵÷⍺+⍺=0} ⍝ Generator function for residue
-
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
             :For fr :In 2 1
@@ -65,9 +65,9 @@
                 case←'independant'
                 case2←⍬
                 desc←testDesc⍬
-                r,← 'Ti1' desc RunVariations (0 genResidue 11) 0 11        ⍝ Special optimization for scalar 0 from iresidue at apl/allos/src/scalarscalar.cpp#L518
-                r,← 'Ti2' desc RunVariations (¯1 genResidue 11) ¯1 11      ⍝ Special optimization for scalar ¯1 from iresidue at apl/allos/src/scalarscalar.cpp#L518
-                r,← 'Ti3' desc Assert (2/(2 genResidue 1J1))≡(2|2/1J1)     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
+                r,← 'Ti1' desc RunVariations (0 model 11) 0 11        ⍝ Special optimization for scalar 0 from iresidue at apl/allos/src/scalarscalar.cpp#L518
+                r,← 'Ti2' desc RunVariations (¯1 model 11) ¯1 11      ⍝ Special optimization for scalar ¯1 from iresidue at apl/allos/src/scalarscalar.cpp#L518
+                r,← 'Ti3' desc Assert (2/(2 model 1J1))≡(2|2/1J1)     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
                 r,← 'Ti4' desc Assert (2/0)≡(2|2/1E40)                     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
 
                 :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 
@@ -84,17 +84,17 @@
                             :Continue
                         :EndIf
                         data2←(≢data)↑data2                                                             ⍝ strip data2 to be equal length to data
-                        r,← 'TCross1' desc RunVariations (data genResidue data2) data data2
-                        r,← 'TCross2' desc RunVariations (data2 genResidue data) data2 data
+                        r,← 'TCross1' desc RunVariations (data model data2) data data2
+                        r,← 'TCross2' desc RunVariations (data2 model data) data2 data
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (data genResidue ⌽data) data (⌽data)                    ⍝ generator func finds results on array
+                    r,← 'T1' desc RunVariations (data model ⌽data) data (⌽data)                    ⍝ generator func finds results on array
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
-                    r,← 'T2' desc RunVariations (d1 genResidue d2) d1 d2                                ⍝ generator func finds results on single element
+                    r,← 'T2' desc RunVariations (d1 model d2) d1 d2                                ⍝ generator func finds results on single element
                     r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 result is a defined output
 
                     :If (⊂data)∊i1 i2 i3
@@ -122,7 +122,7 @@
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
                         ⍝ if cmplx then generator function elseif negative then ⍵+1 else 1 because of 0 tolerance
-                        r,← 'CTZero' desc Assert (({⊢≠+⍵:d1 genResidue d1+1⋄1+0≤⍵⊃⍵+1 1}d1)≡d1|d1+1) ∨ (fr=1 ∧ case≡'Hfl')
+                        r,← 'CTZero' desc Assert (({⊢≠+⍵:d1 model d1+1⋄1+0≤⍵⊃⍵+1 1}d1)≡d1|d1+1) ∨ (fr=1 ∧ case≡'Hfl')
 
                         ⍝ |, ⌈ and ⌊ are added to it for getting a fixed result
                         r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (fr=1 ∧ case≡'Hfl')

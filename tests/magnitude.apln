@@ -5,6 +5,8 @@
 ⍝ Note that the magnitude of a complex number a+⍳b is defined to be √(a^2+b^2).
 :Namespace magnitude
     Assert←#.unittest.Assert
+
+    model←{⍵×(¯1@(∊∘0)(⍵>0))}
     
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS
@@ -31,7 +33,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
-    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;magGen;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
+    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
         fr_dbl←645
         fr_decf←1287
 
@@ -51,7 +53,6 @@
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
 
         r←⍬
-        magGen←{⍵×(¯1@(∊∘0)(⍵>0))}
         testDesc←{'for ',case, '& ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
@@ -62,9 +63,9 @@
                 desc←testDesc⍬
                 :If case≢'bool'
                     r,←'T1' desc RunVariations ({(⊣,⊣)((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
-                    r,←'T2' desc RunVariations (magGen data) data ⍝ custom func finds results on array
+                    r,←'T2' desc RunVariations (model data) data ⍝ custom func finds results on array
                     d←data[?≢data]
-                    r,←'T3' desc RunVariations (magGen d) d ⍝ custom func finds results on single element
+                    r,←'T3' desc RunVariations (model d) d ⍝ custom func finds results on single element
                 :Else
                     r,←'Tb1' desc RunVariations (0 1) bool
                     r,← 'Tb2' desc RunVariations 0 (⊃bool)
@@ -74,7 +75,7 @@
             case←'for limits of i4' ⍝ 32-bit int range [¯2147483648, 2147483647]. Therefore, |¯2147483648 is stored as float.
             desc←testDesc⍬
             r,←'tLim1' desc RunVariations (,2147483648) (,¯2147483648)
-            r,←'tLim2' desc RunVariations (,2147483648, magGen i1) (¯2147483648,i1) ⍝ Rarg to | will have the same type, and similarly the elements in the result will do as well.
+            r,←'tLim2' desc RunVariations (,2147483648, model i1) (¯2147483648,i1) ⍝ Rarg to | will have the same type, and similarly the elements in the result will do as well.
 
             case←'for singleton scalar boolean' ⍝ edge case for when a singleton scalar boolean is passed as rarg to magnitude. 
             desc←testDesc⍬

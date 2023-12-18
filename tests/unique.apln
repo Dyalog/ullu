@@ -1,8 +1,8 @@
 :Namespace unique
     Assert←#.unittest.Assert
 
-    ⍝ genUnion←{⍺,(∧/⍺≢¨⍵)/⍵} ⍝ model function for union (X∪Y) (used to model unique)
-    genUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ model function for unique
+    ⍝ modelUnion←{⍺,(∧/⍺≢¨⍵)/⍵} ⍝ model function for union (X∪Y) (used to model unique)
+    model←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ model function for unique
 
     ⍝ util functions
     shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
@@ -31,13 +31,13 @@
         ⍝ ⍝ different shapes
         shape←?(?4)/4
         actualRS←∪(shape⍴rarg)
-        expectedRS←genUnique shape⍴rarg
+        expectedRS←model shape⍴rarg
         tRes,←('Multiple',tID) tCmt Assert expectedRS ≡ actualRS
 
         ⍝ different shapes with 0 in shape
         shapeW0←(0@(?(≢shape)))shape
         actualRSW0←∪shapeW0⍴rarg
-        expectedRSW0←genUnique shapeW0⍴rarg
+        expectedRSW0←model shapeW0⍴rarg
         tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
     ∇
 
@@ -124,11 +124,11 @@
                     r,← 'T4' desc RunVariations data (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
 
                     shuffledData←↑shuffle data
-                    r,← 'T4' desc RunVariations (genUnique shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
+                    r,← 'T4' desc RunVariations (model shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
 
                     repetitions←?6
                     shuffledRepeatedData←↑shuffle repetitions/data
-                    r,← 'T5' desc RunVariations (genUnique shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
+                    r,← 'T5' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
 
                     ⍝ tests with comparision tolerance
                     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
