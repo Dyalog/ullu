@@ -1,7 +1,7 @@
 :Namespace floor
     Assert←#.unittest.Assert
 
-    ⍝ Generator function for floor
+    ⍝ Model function for floor
     ⍝ Using strings to calculate floor of a number
     ⍝ Other approaches included using {⍵-(1|⍵)} but residue uses floor in its derivation so can be conflicting
     ⍝ Approach 2 was using binary conversion and stripping decimals similar to the string approach, but the sources use something similar
@@ -20,7 +20,19 @@
     }
     ⍝ modelFloor←{(⍎(⍕⍵)↑⍨¯1+⍸,'.'⍷(⍕⍵))-(⍵<0)∧(~0∊⍴(⍸,'.'⍷(⍕⍵)))}
 
-    ⍝ Generator function for complex floor
+    ⍝ model of floor using exponents
+    ⍝ has issues with hdbl and hfl values
+    modelFloorNew←{
+        fmt←{⎕FR≡1287:¯33⍕⍵ ⋄ ¯16⍕⍵}⍵
+        (m e)←'E'(≠⊆⊢)fmt
+        en←⍎e
+        diff←-(⍵<0)∧('.'∊⍕⍵)
+        en<0:diff+0
+        m↑⍨←3+(⍵<0)+en
+        diff+⍎m,'E',e
+    }
+
+    ⍝ Model function for complex floor
     ⍝ interpreted from: https://aplwiki.com/wiki/Complex_floor
     modelCmpxFloor←{
         r←9○⍵
@@ -32,9 +44,9 @@
         x≥y: b+1
         b+0j1
     }
-    
+
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS;trimmedp;rand
         (expectedR p)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -65,7 +77,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
     ∇
 
-    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;char1;char2;char3;ptr;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;f
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -161,7 +173,7 @@
         :EndFor
     ∇
 
-    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf
+    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf;⎕CT;⎕DCT;⎕FR
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
