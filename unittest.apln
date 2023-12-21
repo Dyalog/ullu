@@ -24,7 +24,8 @@
         :EndIf
     ∇
 
-    ∇ r←rep ExecuteTests tests ;r;tests;i;expr;t;nPass;nFail
+    ∇ r←rep ExecuteTests tests ;r;tests;i;expr;t;nPass;nFail;time
+        time←⎕AI[2]
         :Section ExecuteTests
             ⎕←'Repetition:',rep, 'with Option:'
             ⍝ 0 is used to generate a random seed value and the random value is the noted in the logs
@@ -42,14 +43,14 @@
 
         :Section EvalRepeatResult            
             nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-            ⎕←''⋄⎕←'Repetition',rep, 'tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes'⋄⎕←''
+            ⎕←''⋄⎕←'Repetition',rep, 'tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
         :EndSection
     ∇
 
     ⍝ This function runs the tests
     ⍝ It takes 1 mandatory and 3 optional arguments [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value] (0 default)
-    ∇ RunTests args ;st;testNS;tests;i;tList;r;nPass;nFail;reps;rep
-        st←⎕AI[2] ⍝ Start time of execution of tests 
+    ∇ RunTests args ;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep
+        time←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
             'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳5)↓11
@@ -79,7 +80,7 @@
         
         :Section EvalResult            
             nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-            ⎕←''⋄⎕←'All tests completed: ', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
+            ⎕←''⋄⎕←'All tests completed: ', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
         :EndSection
     ∇
 
