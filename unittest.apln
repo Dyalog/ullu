@@ -24,21 +24,40 @@
         :EndIf
     ∇
 
+    ∇ r←rep ExecuteTests tests ;r;tests;i;expr;t;nPass;nFail
+        :Section ExecuteTests
+            ⎕←'Repetition:',rep, 'with Option:'
+            ⍝ 0 is used to generate a random seed value and the random value is the noted in the logs
+            ⎕RL←rl←{⍵≡0:?¯2+2*31⋄⍵} randLink
+            ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl
+
+            tList←⍳≢tests
+            r←⍬
+            :For i :In tList
+                ⎕←''⋄tests[i]⋄⎕←''
+                t←i⊃tests
+                r,←⍎expr←t
+            :EndFor
+        :EndSection
+
+        :Section EvalRepeatResult            
+            nPass←(+/,)r ⋄ nFail←(≢r)-nPass
+            ⎕←''⋄⎕←'Repetition',rep, 'tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes'⋄⎕←''
+        :EndSection
+    ∇
+
     ⍝ This function runs the tests
-    ⍝ It takes 4 mandatory arguments [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value] (0 default)
-    ∇ RunTests args ;st;testNS;tests;i;tList;expr;t;r;nPass;nFail;randLink
+    ⍝ It takes 1 mandatory and 3 optional arguments [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value] (0 default)
+    ∇ RunTests args ;st;testNS;tests;i;tList;r;nPass;nFail;reps;rep
         st←⎕AI[2] ⍝ Start time of execution of tests 
         ⎕←''
         :Section parseArguments ⍝ This section parses and verifies input arguments
-            'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳4)↓11
-            (testNS verbose stop randLink)←4↑args,0 0 0 0
+            'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳5)↓11
+            (testNS verbose stop reps randLink)←5↑args,0 0 0 0 0
             'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
             'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11
-
-            ⍝ 0 is used to generate a random seed value and the random value is the noted in the logs
-            ⎕RL←rl←{⍵≡0:?¯2+2*31⋄⍵} randLink
+            reps←{reps<1:1⋄reps}reps
             ⎕←'Options:'
-            ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl
             :If verbose
                 ⎕←(6⍴' '),'verbose:', verbose
                 ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
@@ -52,21 +71,17 @@
             tests←GetTests testNS
             'no tests found'⎕SIGNAL (~(0=≢tests))↓11
         :EndSection
-        
-        :Section ExecuteTests
-            tList←⍳≢tests
-            r←⍬
-            :For i :In tList
-                ⎕←''⋄tests[i]⋄⎕←''
-                t←i⊃tests
-                r,←⍎expr←t
-            :EndFor
-        :EndSection
 
+        r←⍬
+        :For rep :In ⍳reps
+            r,←rep ExecuteTests tests
+        :EndFor
+        
         :Section EvalResult            
             nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-            ⎕←''⋄⎕←'Tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
+            ⎕←''⋄⎕←'All tests completed: ', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
         :EndSection
+
     ∇
 
 :EndNamespace
