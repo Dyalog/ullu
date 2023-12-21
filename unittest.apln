@@ -43,6 +43,9 @@
                 ⎕←(6⍴' '),'verbose:', verbose
                 ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
             :EndIf
+            ⎕←''
+            ⎕←'Version information:'
+            ⎕SE.UCMD 'tools.version'
         :EndSection
         
         :Section FetchTests
