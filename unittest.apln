@@ -81,7 +81,6 @@
             nPass←(+/,)r ⋄ nFail←(≢r)-nPass
             ⎕←''⋄⎕←'All tests completed: ', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-st)÷1000), 's'⋄⎕←''
         :EndSection
-
     ∇
 
 :EndNamespace

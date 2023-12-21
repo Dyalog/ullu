@@ -24,10 +24,10 @@ tName←¯1∘⎕C ⍞ ⍝ stdin to lowercase
 
 ⎕←''
 ⎕←'Test options: (not supported with all, stop has limited functionality)'
-⎕←'verbose stop randLink'
+⎕←'verbose stop repetitions randLink'
 opts←⍎⍞
 ⎕←opts
-(verbose stop randLink)←3↑opts,0 0 0
+(verbose stop reps randLink)←4↑opts,0 0 0 0
 ⎕←''
 
 t←{
@@ -39,7 +39,7 @@ t←{
 
 run←{
     tName≡'all' : unittest.RunTests ¨(⍎¨t)
-    unittest.RunTests (⍎t) verbose stop randLink
+    unittest.RunTests (⍎t) verbose stop reps randLink
 }
 
 run⍬
