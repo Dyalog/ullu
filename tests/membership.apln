@@ -53,7 +53,7 @@
         char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
-        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed integer
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
