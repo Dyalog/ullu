@@ -77,7 +77,7 @@ unittest.RunTests tests.membership
 
 ### 🔗 More documentation
 
-- [Contributing.md](https://github.com/Dyalog/ullu/blob/main/readme.md): Guide on how to contribute to the codebase
+- [Contributing.md](https://github.com/Dyalog/ullu/blob/main/contributing.md): Guide on how to contribute to the codebase
 - [Decision docs](https://github.com/Dyalog/ullu/tree/main/docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
 
 
