@@ -8,20 +8,20 @@
 
 ## 🤔 What is ullu?
 
-Ullu is a QA for DyalogAPL (can be used to test any APL) which tests specifically the functionality of primitives.
+Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests specifically the functionality of primitives one-by-one. The main focus of this test suite is to find bugs, irregularities, edge cases and code coverage.  
 
 ## 🎿 Coverage
 
 ### 💪  Available Tests
 - floor (monadic ⌊)
-- index of (dyadic ⍳)
 - magnitude (monadic |)
-- membership (dyadic ∊)
 - residue (dyadic |)
+- unique (monadic ∪)
 
 ### 🧱 Under progress
-- unique (monadic ∪)
-- unique mask (monadic ≠)
+- index of (dyadic ⍳) (Not tested for coverage)
+- membership (dyadic ∊) (Not tested for coverage)
+- unique mask (monadic ≠) (Next Up with #44)
 
 ## ✍ The name
 
@@ -30,6 +30,8 @@ Pronounced as `/ˈulːluː/`, The name comes from the hindi word for owl.
 Just as the owl represents both wisdom and foolishness the QA also has a dual nature of being wise and dumb at the same time.
 
 ## ⬇ Usage
+
+You can use ullu in a dyalog session on any supported operating system.
 
 ### Quick Run
 
@@ -72,6 +74,12 @@ or
 ```
 unittest.RunTests tests.membership
 ```
+
+### 🔗 More documentation
+
+- [Contributing.md](https://github.com/Dyalog/ullu/blob/main/readme.md): Guide on how to contribute to the codebase
+- [Decision docs](https://github.com/Dyalog/ullu/tree/main/docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
+
 
 <!-- ### 🔗 References -->
 
