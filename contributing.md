@@ -73,12 +73,13 @@ Ullu tests the primitives one-by-one covering all the code written in the source
 <!-- how to initialize the test files -->
 
 <!-- demo for a primitive (blog) -->
-A workflow demonstration blog on how to write tests is upcomming.
+A workflow demonstration blog on how to write tests is upcomming. Progress can be tracked [here](https://github.com/Dyalog/ullu/issues/50)
 
-### Adding a test
+<!-- ### Adding a test -->
 
 <!-- types of test cases -->
 
+## Contributing Docs
 
 ### Decision docs
 
@@ -92,8 +93,6 @@ In the decision docs, you need to mention the types of test cases included in th
 
 <!-- example -->
 Decision docs for the primitive Magnitude are a good example of this. It can be found [here](https://github.com/Dyalog/ullu/blob/docs-revamp/docs/decision/primitive-functions/scalar-monadic.md#magnitude-rydocs)
-
-## Contributing Docs
 
 ---
 
