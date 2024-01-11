@@ -2,7 +2,7 @@
 
 We welcome contributions from anyone, even if you are new to open source. We will help you with any technical issues and help improve your contribution so that it can be merged.
 
-Every small change of refactoring, documentation, code commenting, questions, suggestions, adding a test, adding a primitive make the project better and will help making Dyalog APL bug free. 𓆣
+Every small change of refactoring, documentation, code commenting, questions, suggestions, adding a test, adding a primitive makes the project better and will help making Dyalog APL bug free. 𓆣
 
 ## Basic Setup
 
@@ -66,7 +66,32 @@ Yay you are now all set. ٩(ˊᗜˋ*)و
 
 ### Adding a primitive
 
+A primitive is a built-in function or operator which is a core part of the language. It is represented by a glyph, which it may share with another primitive. More information [here](https://aplwiki.com/wiki/Primitive)
+
+Ullu tests the primitives one-by-one covering all the code written in the sources of Dyalog APL, all possible cases including edge cases and all types of inputs it can receive. 
+
+<!-- how to initialize the test files -->
+
+<!-- demo for a primitive (blog) -->
+A workflow demonstration blog on how to write tests is upcomming.
+
 ### Adding a test
+
+<!-- types of test cases -->
+
+
+### Decision docs
+
+<!-- what it is -->
+Decision Docs are records detailing key decisions, fostering transparency and aiding future collaboration by providing a structured account of the decision-making process. Documentation about why certain decisions were taken in the codebase, it basically explains the mindset of the developer writing the tests and it also documents all the anomalies in the codebase.
+
+It can be found [here](https://github.com/Dyalog/ullu/tree/docs-revamp/docs/decision)
+
+<!-- how to write -->
+In the decision docs, you need to mention the types of test cases included in the tests, description of all the variations of the tests and all the edge cases that were faced/handled. It needs to have all the information that a person in the future would need to expand the same tests or write new related ones. All the decisions taken while writing the tests.
+
+<!-- example -->
+Decision docs for the primitive Magnitude are a good example of this. It can be found [here](https://github.com/Dyalog/ullu/blob/docs-revamp/docs/decision/primitive-functions/scalar-monadic.md#magnitude-rydocs)
 
 ## Contributing Docs
 
