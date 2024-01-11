@@ -81,6 +81,12 @@ unittest.RunTests tests.membership
 - [Decision docs](https://github.com/Dyalog/ullu/tree/main/docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
 
 
+### 🔗 Suggestions/Questions
+
+Feel free to open GitHub issues for any questions, suggestions or features requests
+
+If you want to reach out, please email `aarush[at]dyalog.com`
+
 <!-- ### 🔗 References -->
 
 ## ⚖ Licence

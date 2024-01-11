@@ -70,14 +70,6 @@ Yay you are now all set. ٩(ˊᗜˋ*)و
 
 ## Contributing Docs
 
-<!-- ## Suggestions and Questions
+---
 
-// todo: can be moved to the readme -->
-
-## Reach Out
-
-If you have any questions or need help, please email `aarush[at]dyalog.com`
-
-<!-- TODO: Please note that all participants of this project are expected to follow our Code of Conduct. By participating in this project you agree to abide by its terms. See CODE_OF_CONDUCT.md. -->
-
-By submitting a PR you agree to license your contribution under the ullu’s MIT [license](https://github.com/Dyalog/ullu/blob/main/LICENSE) unless explicitly noted otherwise.
+Note: By submitting a PR you agree to license your contribution under the ullu’s MIT [license](https://github.com/Dyalog/ullu/blob/main/LICENSE) unless explicitly noted otherwise.
