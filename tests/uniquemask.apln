@@ -1,7 +1,7 @@
 :Namespace uniquemask
     Assert←#.unittest.Assert
 
-    model ← {
+    model ← { ⍝ from aplwiki nubsieve page
         ⎕IO←0
         notin ← (⍳=≢⍤⊣)⍨
         x ← 1/⍵                          ⍝ Treat scalar as vector
@@ -40,6 +40,7 @@
         expectedRS←model shape⍴rarg
         tRes,←('Multiple',tID) tCmt Assert expectedRS ≡ actualRS
 
+        ⍝ todo: fix model to work with this
         ⍝ ⍝ different shapes with 0 in shape
         ⍝ shapeW0←(0@(?(≢shape)))shape
         ⍝ actualRSW0←≠shapeW0⍴rarg
@@ -90,8 +91,6 @@
         case2←⍬
         desc←testDesc⍬
 
-        ⍝ todo: remove this test
-        r,← 'test' desc Assert 1
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
 
@@ -106,6 +105,24 @@
                     r,← 'TGen1' desc Assert (≢data)≥≢≠data                        ⍝ unique cannot return a result that is exceding the number of elements than the input
                     r,← 'TGen2' desc Assert (⎕dr data)≡⎕dr ∪data intertwine data  ⍝ datatype of the data will not change under unique
                 
+                    :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        data2←⍎case2
+                        desc←testDesc⍬
+                            :If (case≡case2) ∨ (case≡'bool') ⍝ skipping bool because of overlap with i1
+                                 :Continue
+                            :EndIf
+                        r,← 'TCross1' desc RunVariations (1⍨¨data,data2) (data,data2) ⍝ all elements are concatenated
+
+                        ⍝ todo: needs fixing
+                        ⍝ r,← 'TCross2' desc RunVariations ({2/(⍵/1) intertwine ⍵/0}4÷⍨+/≢¨data data2) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined\
+
+                        ⍝ datatype of the data will not change under unique
+                        ⍝ 326 stays 326
+                        ⍝ char + num becomes 326
+                        ⍝ char + char and num + num becomes the greater sized type
+                        r,← 'TGen3' desc Assert ((data){(⎕dr ⍺){326∊(⍺ ⍵):326⋄0∊≠ 0 2∊⍨10|(⍺ ⍵):⍺⌈⍵⋄326}⎕dr ⍵}(data2))≡⎕dr ∪data intertwine data2
+                    :EndFor
+
                     case2←⍬ ⍝ dispose case2
                     desc←testDesc⍬
 
