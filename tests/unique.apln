@@ -124,11 +124,11 @@
                     r,← 'T4' desc RunVariations data (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
 
                     shuffledData←↑shuffle data
-                    r,← 'T4' desc RunVariations (model shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
+                    r,← 'T5' desc RunVariations (model shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
 
                     repetitions←?6
                     shuffledRepeatedData←↑shuffle repetitions/data
-                    r,← 'T5' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
+                    r,← 'T6' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
 
                     ⍝ tests with comparision tolerance
                     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  

@@ -113,6 +113,14 @@
                     r,← 'T2' desc RunVariations ((1⍨¨data),0⍨¨data) (data,data)                           ⍝ all elements of data are repeated sequentially
                     r,← 'T3' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (data intertwine data)             ⍝ all elements are perfectly intertwined
                     r,← 'T4' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
+                
+                    shuffledData←↑shuffle data
+                    r,← 'T5' desc RunVariations (model shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
+                
+                    repetitions←?6
+                    shuffledRepeatedData←↑shuffle repetitions/data
+                    r,← 'T6' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
+
                 :EndFor
             :EndFor
         :EndFor
