@@ -1,0 +1,103 @@
+:Namespace uniquemask
+    Assert←#.unittest.Assert
+
+    model ← {
+        ⎕IO←0
+        notin ← (⍳=≢⍤⊣)⍨
+        x ← 1/⍵                          ⍝ Treat scalar as vector
+        m ← ⍬                            ⍝ Initial mask
+        m ⊣ {m,←(⍵⌷x) notin m⌿⍵↑x}¨ ⍳≢x
+    }
+
+    ⍝ util functions
+    shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
+    intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
+    hashArray←1500⌶
+
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0
+        (expectedR rarg)←exp
+        (tID tCmt)←tData
+        tRes←⍬
+
+        ⍝ normal
+        actualR←≠rarg
+        tRes,←tData Assert expectedR≡actualR
+
+        ⍝ scalar
+        ele←(?∘≢⊃⊢)rarg
+        actualRS←≠ele
+        tRes,←('Scalar',tID) tCmt Assert (,1⍨¨ele)≡actualRS
+
+    ∇
+
+    ∇ r←test_uniquemask
+        ct_default←1E¯14
+        dct_default←1E¯28
+        fr_dbl←645
+        fr_decf←1287
+
+        ⍝ All data generated is unique
+        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+        i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
+        char1←⎕UCS (100+⍳100)                         ⍝ 80: 8 bits character
+        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
+        i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
+        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
+        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        ptr←(13↑⎕a) (13↓⎕a)                           ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+        ⍝ Hdbl is 645 but larger numbers to test for CT value
+        ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
+        ⍝ come under the region of tolerant equality
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
+
+        ⍝ This is needed for a case that can be hit if we have a lot of small numbers 
+        ⍝ which produce a hash collision
+        ⍝ Occurrence: same.c.html#L1153
+        Sdbl←{⍵,-⍵}(⍳500)÷1000
+
+        ⍝ Hfl is 1287 but larger numbers to test for CT value
+        ⍝ far intervals are chosen for non overlap 
+        ⍝ with region of tolerant equality
+        ⎕FR←fr_decf
+        fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
+        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
+        ⎕FR←fr_dbl
+
+        r←⍬
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
+
+        case←⍬
+        case2←⍬
+        desc←testDesc⍬
+
+        ⍝ todo: remove this test
+        r,← 'test' desc Assert 1
+        :For ct :In 0 1
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+
+            :For fr :In 2 1
+                ⎕FR←fr⊃fr_dbl fr_decf
+
+                :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+                    data←⍎case
+                    desc←testDesc⍬
+
+                    ⍝ General tests to test the basic rules of unique
+                    r,← 'TGen1' desc Assert (≢data)≥≢≠data                        ⍝ unique cannot return a result that is exceding the number of elements than the input
+                    r,← 'TGen2' desc Assert (⎕dr data)≡⎕dr ∪data intertwine data  ⍝ datatype of the data will not change under unique
+                
+                    case2←⍬ ⍝ dispose case2
+                    desc←testDesc⍬
+
+                    r,← 'T1' desc RunVariations (1⍨¨data) data                               ⍝ all elements of data are indexed
+                    r,← 'T2' desc RunVariations ((1⍨¨data),0⍨¨data) (data,data)                           ⍝ all elements of data are repeated sequentially
+                    r,← 'T3' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (data intertwine data)             ⍝ all elements are perfectly intertwined
+                    r,← 'T4' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
+                :EndFor
+            :EndFor
+        :EndFor
+    ∇
+:EndNamespace

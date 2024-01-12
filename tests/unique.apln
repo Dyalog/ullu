@@ -89,7 +89,6 @@
 
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
-                desc←testDesc⍬
 
                 :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
                     data←⍎case
@@ -119,7 +118,7 @@
                     desc←testDesc⍬
 
                     r,← 'T1' desc RunVariations data data                               ⍝ all elements of data are indexed
-                    r,← 'T2' desc RunVariations data (2/data)                           ⍝ all elements of data are repeated sequentially
+                    r,← 'T2' desc RunVariations data (data,data)                           ⍝ all elements of data are repeated sequentially
                     r,← 'T3' desc RunVariations data (data intertwine data)             ⍝ all elements are perfectly intertwined
                     r,← 'T4' desc RunVariations data (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
 
