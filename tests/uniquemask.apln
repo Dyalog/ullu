@@ -33,6 +33,18 @@
         actualRE←≠0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
         expectedRE←0∘⌿expectedR ⍝ empty array along first axis
         tRes,←('Empty',tID) tCmt Assert expectedRE≡actualRE ⍝ empty array is expectedR
+
+        ⍝ different shapes
+        shape←?(?4)/4
+        actualRS←≠(shape⍴rarg)
+        expectedRS←model shape⍴rarg
+        tRes,←('Multiple',tID) tCmt Assert expectedRS ≡ actualRS
+
+        ⍝ ⍝ different shapes with 0 in shape
+        ⍝ shapeW0←(0@(?(≢shape)))shape
+        ⍝ actualRSW0←≠shapeW0⍴rarg
+        ⍝ expectedRSW0←model shapeW0⍴rarg
+        ⍝ tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
     ∇
 
     ∇ r←test_uniquemask
