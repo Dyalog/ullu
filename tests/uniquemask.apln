@@ -25,9 +25,14 @@
 
         ⍝ scalar
         ele←(?∘≢⊃⊢)rarg
-        actualRS←≠ele
-        tRes,←('Scalar',tID) tCmt Assert (,1⍨¨ele)≡actualRS
+        actualRSc←≠ele
+        expectedRSc←(,1⍨¨ele)
+        tRes,←('Scalar',tID) tCmt Assert expectedRSc≡actualRSc
 
+        ⍝ empty
+        actualRE←≠0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+        expectedRE←0∘⌿expectedR ⍝ empty array along first axis
+        tRes,←('Empty',tID) tCmt Assert expectedRE≡actualRE ⍝ empty array is expectedR
     ∇
 
     ∇ r←test_uniquemask
