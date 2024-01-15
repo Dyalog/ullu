@@ -136,6 +136,27 @@
                     shuffledRepeatedData←↑shuffle repetitions/data
                     r,← 'T6' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
 
+                    ⍝ tests with comparision tolerance
+                    :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
+                        d1←(data~0)[?≢data~0] ⍝ 0 interferes with the calculations of almostd1S and almostd1B hence it is removed
+                        almostd1S←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                        almostd1B←d1×1+fr⊃1E¯1×ct_default dct_default ⍝ infinitesimally close to d1 but bigger
+                        :If ct ⍝ tolerant
+                            :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
+                                ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                                r,← 'CTDefault1' desc Assert (((1 0)≡≠d1,d1+1) ∨ ((fr=2) ∧ case≡'Hdbl'))
+                            :Else ⍝ other than bigger numbers
+                                r,← 'CTDefault2' desc Assert ((1 1)≡≠d1,d1+1)               ⍝ not tolerantly equal for other numbers
+                                r,← 'CTDefaultAlmostS' desc Assert ((1 0)≡≠d1,almostd1S)        ⍝ d1 and almostd1S are tolerantly equal
+                                r,← 'CTDefaultAlmostB' desc Assert ((1 0)≡≠d1,almostd1B)        ⍝ d1 and almostd1B are tolerantly equal
+                            :EndIf
+                        :Else ⍝ exact
+                            ⍝ ⍝ d≠d+1 for all numeric types
+                            r,← 'CTZero' desc Assert (((1,1)≡≠d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
+                            r,← 'CTZeroAlmostS' desc Assert (((1,1)≡≠d1,almostd1S) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
+                            r,← 'CTZeroAlmostB' desc Assert (((1,1)≡≠d1,almostd1B) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
+                        :EndIf
+                    :EndIf
                 :EndFor
             :EndFor
         :EndFor
