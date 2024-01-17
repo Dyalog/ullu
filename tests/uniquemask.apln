@@ -158,6 +158,21 @@
                         :EndIf
                     :EndIf
                 :EndFor
+                ⍝ Independant tests
+                case←'independant'
+                case2←⍬
+                desc←testDesc⍬
+
+                ⍝ Generating singleton scalar boolean using ∧/1 0 1 0 and ∧/1 1 1 1
+                ⍝ 2/ to generate a bool vector that gives one result element when ∪ is applied
+                ⍝ r,←'TboolI1' desc Assert (,0)≡∪2/∧/1 0 1 0
+                ⍝ r,←'TboolI2' desc Assert (,1)≡∪2/∧/1 1 1 1
+
+                ⍝ The special case can be hit if we have two 8 bit int numbers in the input: a & b, and a is b-⎕CT. 
+                ⍝ That means, that when we get to element b in the loop, we will find element a and hit the case.
+                ⍝ Occurrence: same.c.html#L1152
+                d←i1[?≢i1]
+                r,←'TCTI1' desc Assert (1 0)≡(≠ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
             :EndFor
         :EndFor
     ∇
