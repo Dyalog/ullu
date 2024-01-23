@@ -2,7 +2,8 @@
 
 ### Make a namespace
 
-Make a namespace titled the test name
+Make a namespace titled the primitive being tested
+
 Eg: uniquemask
 
 ```APL
