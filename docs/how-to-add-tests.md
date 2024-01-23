@@ -13,7 +13,7 @@ Eg: uniquemask
 
 ### Main function
 
-Start with making the main function tittled `test_functionname` like `test_uniquemask`, here `test_` is important because the `ullu/unittest.apln` recognises the main function of the test suite of the primitive with the `test_` keyword.
+Start with making the main function titled `test_functionname` like `test_uniquemask`. Here `test_` is important because the `./unittest.apln` recognises the main function of the test suite of the primitive with the `test_` keyword.
 
 ### Initialise variables
 
@@ -28,7 +28,7 @@ io_default←1
 io_0←0
 ```
 
-Then we need to get some specific data that we can manipulate to give us expected results to some testcases to logically/mathematically check the correct output. This is meant as a very basic fallback to when test with model[todo add link to model section]() functions fail.
+Then we need to get some specific data that we can manipulate to give us expected results to some testcases to logically/mathematically check the correct output. This is meant as a very basic fallback for testing with model[todo add link to model section]() functions fail.
 
 This can look something like this:
 
@@ -67,7 +67,7 @@ Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
 
 ### Initialise test description
 
-Test description gives information about the testID, datatypes being tested on, the [test variaiton](todo: add link to variation section), and the different setting values.
+Test description gives information about the `testID`, datatypes being tested on, the [test variaiton](todo: add link to variation section), and the different setting values.
 
 ```
 testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕IO:', ⎕IO}
@@ -81,22 +81,22 @@ Assert is a function described in `./unittest.apln` that takes in a test express
 
 #### `RunVariations`
 
-RunVariations is a function described in each test file which takes the expressions to be evaluated and evaluates the expression for:
-- the standard form it comes in
-- a scalar of the data it gets
-- an empty array derrived from the input
+RunVariations is a function described in each test file which takes the expressions to be evaluated and does the following:
+- tests using the standard form it comes in
+- tests a scalar element from the data it gets
+- tests an empty array derived from the input
 - applies a different shape to the input and evaluates
-- a case where the different shape now has a 0 in the shape of the input
+- creates a different shape that has a 0 in the shape of the input
 
 ### The tests
 
-All tests should run with all types of ⎕CT/⎕DCT, ⎕FR and ⎕IO values depending on which settings are implicit arguments of the primitive, ie. all of the setting that they depend on.
+All tests should run with all types of ⎕CT/⎕DCT, ⎕FR and ⎕IO values depending on which settings are implicit arguments of the primitive, ie. all of the settings that they depend on.
 ```
 :For io :In io_default io_0
     ⎕IO←io
 
     :For ct :In 1 0 
-        (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+        (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
 
         :For fr :In fr_dbl fr_decf
             ⍝ ...
@@ -111,21 +111,21 @@ The general structure followed with all tests is as follows:
 
 ##### General tests
 
-General tests are tests that test information other than if the primitive gives the correct output. Some examples wrt uniquemask:
+General tests are tests that test information other than if the primitive gives the correct output. Some examples of uniquemask:
 
-- uniquemask cannot return a result that is exceding the number of elements than the input
+- uniquemask cannot return a result that exceeds the number of elements of the input
     ```
     r,← 'TGen1' desc Assert (≢data)≥≢≠data
     ```
 
-- datatype of the result will always be boolean
+- datatype of the result will always be boolean in nature
     ```
     r,← 'TGen2' desc Assert 11≡⎕dr ≠data intertwine data ⍝ intertwine is a util function that intertwines the data like (1 1 1 1) intertwine (0 0 0 0) gives 1 0 1 0 1 0 1 0
     ```
 
 ##### Logical/mathematical tests
 
-These are tests that evaluate the result of the primitive with a very logical straight forward approach and tries to depend on as less primitives as possible to reduce the number of false faliures if dependent primitives fail. Some examples wrt unique mask:
+These are tests that evaluate the result of the primitive with a very logical straightforward approach and try to depend on as few primitives as possible to reduce the number of false failures if the dependent primitives fail. Some examples of unique mask:
 
 - all elements of data are unique so the result would be all 1s
     ```
@@ -143,15 +143,15 @@ Cross data type tests deal with the primitive handling 2 datatypes at a time in 
 
 ##### Comparision tolerance tests
 
-Comparision tolerance tests deal with the primitive getting inputs which are believed to be in the tolerance range of numbers. The inputs are generally numbers slightly bigger and smaller than the original number that are treated to be equal at default ⎕CT and ⎕DCT values and should be treated differently when ⎕CT and ⎕DCT are zero.
+Comparison tolerance tests deal with the primitive getting inputs which are believed to be in the tolerance range of numbers. The inputs are generally numbers slightly bigger and smaller than the original number that is treated to be equal at default ⎕CT and ⎕DCT values and should be treated differently when ⎕CT and ⎕DCT are zero.
 
-More information about comparision tolerance here: https://help.dyalog.com/latest/Content/Language/System%20Functions/ct.htm
+More information about comparison tolerance here: https://help.dyalog.com/latest/Content/Language/System%20Functions/ct.htm
 
 and here: https://www.dyalog.com/uploads/documents/Papers/tolerant_comparison/tolerant_comparison.htm
 
-##### Independant tests
+##### Independent tests
 
-Independant tests are tests for special cases that either have optimisations in the sources or have a special need that cannot be covered in general data types and only work on certain specific values. For example:
+Independent tests are tests for special cases that either have optimisations in the sources or have a special need that cannot be covered in general data types and only work on certain specific values. For example:
 - The special case can be hit if we have two 8 bit int numbers in the input: a & b, and a is b-⎕CT. That means, that when we get to element b in the loop, we will find element a and hit the case.
 Occurrence: same.c.html#L1152
     ```
