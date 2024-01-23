@@ -92,7 +92,7 @@
         desc←testDesc⍬
 
         :For ct :In 0 1
-            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
 
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
@@ -136,7 +136,7 @@
                     shuffledRepeatedData←↑shuffle repetitions/data
                     r,← 'T6' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
 
-                    ⍝ tests with comparision tolerance
+                    ⍝ tests with comparison tolerance
                     :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
                         d1←(data~0)[?≢data~0] ⍝ 0 interferes with the calculations of almostd1S and almostd1B hence it is removed
                         almostd1S←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller

@@ -141,7 +141,7 @@ These are tests that evaluate the result of the primitive with a very logical st
 
 Cross data type tests deal with the primitive handling 2 datatypes at a time in the same input. Each datatype must be tested with every other datatype for a more accurate result.
 
-##### Comparision tolerance tests
+##### comparison tolerance tests
 
 Comparison tolerance tests deal with the primitive getting inputs which are believed to be in the tolerance range of numbers. The inputs are generally numbers slightly bigger and smaller than the original number that is treated to be equal at default ⎕CT and ⎕DCT values and should be treated differently when ⎕CT and ⎕DCT are zero.
 
