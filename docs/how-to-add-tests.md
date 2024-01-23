@@ -5,7 +5,7 @@
 Make a namespace titled the test name
 Eg: uniquemask
 
-```
+```APL
 :Namespace uniquemask
     ⍝...
 :EndNamespace
@@ -19,7 +19,7 @@ Start with making the main function titled `test_functionname` like `test_unique
 
 Primitives depend on ⎕CT/⎕DCT, ⎕FR and ⎕IO, so all default values of these can be initialised:
 
-```
+```APL
 ct_default←1E¯14
 dct_default←1E¯28
 fr_dbl←645
@@ -28,12 +28,13 @@ io_default←1
 io_0←0
 ```
 
-Then we need to get some specific data that we can manipulate to give us expected results to some testcases to logically/mathematically check the correct output. This is meant as a very basic fallback for testing with model[todo add link to model section]() functions fail.
+Then we need to get some specific data that we can manipulate to give us expected results to some testcases to logically/mathematically check the correct output. This is meant as a very basic fallback for testing with model functions fail.
 
 This can look something like this:
 
 This is an example from [unique mask](tests\uniquemask.apln) (≠)
-```
+
+```APL
 ⍝ All data generated is unique
 bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
 i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
@@ -69,7 +70,7 @@ Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
 
 Test description gives information about the `testID`, datatypes being tested on, the [test variaiton](todo: add link to variation section), and the different setting values.
 
-```
+```APL
 testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕IO:', ⎕IO}
 ```
 
@@ -88,10 +89,22 @@ RunVariations is a function described in each test file which takes the expressi
 - applies a different shape to the input and evaluates
 - creates a different shape that has a 0 in the shape of the input
 
+#### Model function
+
+A model function replicates the behavior of an existing function by employing alternative primitives or computational steps. Model functions are used to test outputs of tests that can give not very intuitively computable results. Model functions here try to use primitives that are least related to the primitive being tested(this is mainly related so that it can be easily pin pointed which primitive is failing because shared code can be difficult to deal with). Model functions look like:
+
+```APL
+    modelMagnitude←{⍵×(¯1@(∊∘0)(⍵>0))}
+```
+
+```APL
+    modelUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵}
+```
+
 ### The tests
 
 All tests should run with all types of ⎕CT/⎕DCT, ⎕FR and ⎕IO values depending on which settings are implicit arguments of the primitive, ie. all of the settings that they depend on.
-```
+```APL
 :For io :In io_default io_0
     ⎕IO←io
 
@@ -114,12 +127,12 @@ The general structure followed with all tests is as follows:
 General tests are tests that test information other than if the primitive gives the correct output. Some examples of uniquemask:
 
 - uniquemask cannot return a result that exceeds the number of elements of the input
-    ```
+    ```APL
     r,← 'TGen1' desc Assert (≢data)≥≢≠data
     ```
 
 - datatype of the result will always be boolean in nature
-    ```
+    ```APL
     r,← 'TGen2' desc Assert 11≡⎕dr ≠data intertwine data ⍝ intertwine is a util function that intertwines the data like (1 1 1 1) intertwine (0 0 0 0) gives 1 0 1 0 1 0 1 0
     ```
 
@@ -128,12 +141,12 @@ General tests are tests that test information other than if the primitive gives 
 These are tests that evaluate the result of the primitive with a very logical straightforward approach and try to depend on as few primitives as possible to reduce the number of false failures if the dependent primitives fail. Some examples of unique mask:
 
 - all elements of data are unique so the result would be all 1s
-    ```
+    ```APL
     r,← 'T1' desc RunVariations (1⍨¨data) data
     ```
 
 - all elements are perfectly intertwined so the result would be 1 0 1 0 1 0...
-    ```
+    ```APL
     r,← 'T3' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (data intertwine data)
     ```
 
@@ -154,7 +167,7 @@ and here: https://www.dyalog.com/uploads/documents/Papers/tolerant_comparison/to
 Independent tests are tests for special cases that either have optimisations in the sources or have a special need that cannot be covered in general data types and only work on certain specific values. For example:
 - The special case can be hit if we have two 8 bit int numbers in the input: a & b, and a is b-⎕CT. That means, that when we get to element b in the loop, we will find element a and hit the case.
 Occurrence: same.c.html#L1152
-    ```
+    ```APL
                 d←i1[?≢i1]
                 r,←'TCTI1' desc Assert (1 0)≡(≠ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
     ```
