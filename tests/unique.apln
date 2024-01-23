@@ -118,7 +118,7 @@
                     case2←⍬ ⍝ dispose case2
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations data data                               ⍝ all elements of data are indexed
+                    r,← 'T1' desc RunVariations data data                               ⍝ all elements of data are unique
                     r,← 'T2' desc RunVariations data (data,data)                           ⍝ all elements of data are repeated sequentially
                     r,← 'T3' desc RunVariations data (data intertwine data)             ⍝ all elements are perfectly intertwined
                     r,← 'T4' desc RunVariations data (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data

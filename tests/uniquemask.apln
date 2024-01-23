@@ -101,8 +101,8 @@
                     data←⍎case
                     desc←testDesc⍬
 
-                    ⍝ General tests to test the basic rules of unique
-                    r,← 'TGen1' desc Assert (≢data)≥≢≠data                  ⍝ unique cannot return a result that is exceding the number of elements than the input
+                    ⍝ General tests to test the basic rules of uniquemask
+                    r,← 'TGen1' desc Assert (≢data)≥≢≠data                  ⍝ uniquemask cannot return a result that is exceding the number of elements than the input
                     r,← 'TGen2' desc Assert 11≡⎕dr ≠data intertwine data    ⍝ datatype of the result will always be boolean
                 
                     :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
@@ -124,7 +124,7 @@
                     case2←⍬ ⍝ dispose case2
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (1⍨¨data) data                               ⍝ all elements of data are indexed
+                    r,← 'T1' desc RunVariations (1⍨¨data) data                               ⍝ all elements of data are unique
                     r,← 'T2' desc RunVariations ((1⍨¨data),0⍨¨data) (data,data)                           ⍝ all elements of data are repeated sequentially
                     r,← 'T3' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (data intertwine data)             ⍝ all elements are perfectly intertwined
                     r,← 'T4' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data

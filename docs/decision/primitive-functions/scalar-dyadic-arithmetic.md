@@ -5,7 +5,7 @@
 The tests include:
 - Datatype tests: tests for positive and negative for all the available numeric datatypes
 - Tests based on Floating point representation(`⎕FR`): All the tests run with values of `⎕FR` as 645 and 1287.
-- Tests based on Comparison Tollerance(`⎕CT` and `⎕DCT`): All the tests run with default and zero values.
+- Tests based on Comparison tolerance(`⎕CT` and `⎕DCT`): All the tests run with default and zero values.
 - Edge Cases:
     - Separate cases had to be added for 0, ¯1, 0J0, 0.0
     - Separate cases had to be added to residue propogated using a scan to target certain sections of sources.
