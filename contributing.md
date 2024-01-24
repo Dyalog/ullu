@@ -71,14 +71,8 @@ A primitive is a built-in function or operator which is a core part of the langu
 
 Ullu tests the primitives one by one, covering all the code written in the sources of Dyalog APL, all possible cases, including edge cases, and all types of inputs it can receive. 
 
-<!-- how to initialize the test files -->
-
 <!-- demo for a primitive (blog) -->
-A workflow demonstration blog on how to write tests is upcoming. Progress can be tracked [here](https://github.com/Dyalog/ullu/issues/50)
-
-<!-- ### Adding a test -->
-
-<!-- types of test cases -->
+A workflow demonstration blog on how to write tests is present in [docs/how-to-add-tests.md](https://github.com/Dyalog/ullu/blob/main/docs/how-to-add-tests.md)
 
 ## Contributing Docs
 
