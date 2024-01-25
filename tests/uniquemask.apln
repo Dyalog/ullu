@@ -1,13 +1,15 @@
 :Namespace uniquemask
     Assert←#.unittest.Assert
 
-    model ← { ⍝ from aplwiki nubsieve page
-        ⎕IO←0
-        notin ← (⍳=≢⍤⊣)⍨
-        x ← 1/⍵                          ⍝ Treat scalar as vector
-        m ← ⍬                            ⍝ Initial mask
-        m ⊣ {m,←(⍵⌷x) notin m⌿⍵↑x}¨ ⍳≢x
-    }
+    ⍝ model ← { ⍝ from aplwiki nubsieve page ⍝ does not work if shape has a 0
+    ⍝     ⎕IO←0
+    ⍝     notin ← (⍳=≢⍤⊣)⍨
+    ⍝     x ← 1/⍵                          ⍝ Treat scalar as vector
+    ⍝     m ← ⍬                            ⍝ Initial mask
+    ⍝     m ⊣ {m,←(⍵⌷x) notin m⌿⍵↑x}¨ ⍳≢x
+    ⍝ }
+    modelUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ from tests/unique.apln
+    model←(⍳⍤≢=⍳⍨)⍤(modelUnique⍳1/⊢)
 
     ⍝ util functions
     shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
@@ -40,12 +42,11 @@
         expectedRS←model shape⍴rarg
         tRes,←('Multiple',tID) tCmt Assert expectedRS ≡ actualRS
 
-        ⍝ todo: fix model to work with this
-        ⍝ ⍝ different shapes with 0 in shape
-        ⍝ shapeW0←(0@(?(≢shape)))shape
-        ⍝ actualRSW0←≠shapeW0⍴rarg
-        ⍝ expectedRSW0←model shapeW0⍴rarg
-        ⍝ tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
+        ⍝ different shapes with 0 in shape
+        shapeW0←(0@(?(≢shape)))shape
+        actualRSW0←≠shapeW0⍴rarg
+        expectedRSW0←model shapeW0⍴rarg
+        tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
     ∇
 
     ∇ r←test_uniquemask
