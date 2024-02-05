@@ -1,15 +1,14 @@
 :Namespace unique
     Assert←#.unittest.Assert
+    ⍝ util functions
+    shuffle←#.utils.shuffle
+    intertwine←#.utils.intertwine
+    hashArray←#.utils.hashArray
 
     ⍝ modelUnion←{⍺,(∧/⍺≢¨⍵)/⍵} ⍝ model function for union (X∪Y) (used to model unique)
     model←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ model function for unique
 
-    ⍝ util functions
-    shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
-    intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
-    hashArray←1500⌶
-
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;expectedRSc;actualRSc;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0
         (expectedR rarg)←exp
         (tID tCmt)←tData
         tRes←⍬
