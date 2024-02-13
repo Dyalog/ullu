@@ -1,5 +1,9 @@
 :Namespace uniquemask
     Assert←#.unittest.Assert
+    ⍝ util functions
+    shuffle←#.utils.shuffle
+    intertwine←#.utils.intertwine
+    hashArray←#.utils.hashArray
 
     ⍝ model ← { ⍝ from aplwiki nubsieve page ⍝ does not work if shape has a 0
     ⍝     ⎕IO←0
@@ -10,11 +14,6 @@
     ⍝ }
     modelUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ from tests/unique.apln
     model←(⍳⍤≢=⍳⍨)⍤(modelUnique⍳1/⊢)
-
-    ⍝ util functions
-    shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
-    intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
-    hashArray←1500⌶
 
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0
         (expectedR rarg)←exp
