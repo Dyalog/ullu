@@ -90,6 +90,14 @@
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
 
+                ⍝ Independant
+                :For (u s) :In (2 10) (2 256) (10 10) (10 256) (256 256) (65536 65536)
+                    case←u s
+                    desc←testDesc⍬
+                    x←s 2⍴?u⍴0
+                    r,←'TICC' desc Assert (model x)≡(∪x)
+                :EndFor
+
                 :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
                     data←⍎case
                     desc←testDesc⍬

@@ -101,7 +101,8 @@
                 :For (u s) :In (2 10) (2 256) (10 10) (10 256) (256 256) (65536 65536)
                     case←u s
                     desc←testDesc⍬
-                    r,←'TICC' desc Assert (model s 2⍴?u⍴0)≡(≠s 2⍴?u⍴0)
+                    x←s 2⍴?u⍴0
+                    r,←'TICC' desc Assert (model x)≡(≠x)
                 :EndFor
 
                 :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
