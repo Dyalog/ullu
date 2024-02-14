@@ -75,7 +75,7 @@
             ⎕IO←io
 
             :For ct :In 1 0 
-                (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+                (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
 
                 :For fr :In fr_dbl fr_decf
                     ⎕FR←fr

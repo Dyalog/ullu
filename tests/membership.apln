@@ -74,7 +74,7 @@
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
         :For ct :In 1 0 
-            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
 
             :For fr :In 1 2
                 ⎕FR←fr⊃fr_dbl fr_decf
@@ -107,7 +107,7 @@
                     r,← 'T3' desc RunVariations (1⍨¨data) data data             ⍝ all elements return 1
                     r,← 'T4' desc RunVariations 0 5E50 data                     ⍝ huge element outside set is not found
 
-                    ⍝ tests with comparision tolerance
+                    ⍝ tests with comparison tolerance
                     d←data[?≢data]
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl Hcmplx

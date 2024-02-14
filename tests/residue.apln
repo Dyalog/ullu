@@ -57,7 +57,7 @@
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
         :For ct :In 0 1
-            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparision tolerance
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
 
@@ -109,7 +109,7 @@
                         r,← 'TSeqDbl2' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ sequences to test functionality of residue
                     :EndIf
 
-                    ⍝ tests with comparision tolerance
+                    ⍝ tests with comparison tolerance
                     almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                     :If ct ⍝ tolerant
                         :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
