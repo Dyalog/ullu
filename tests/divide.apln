@@ -103,7 +103,8 @@
                             :If (case≡case2)
                                 :Continue
                             :EndIf
-                            ⍝ r,← 'TGen2' desc Assert (⎕dr data2)≡⎕dr data ÷ data2
+                            r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2)
+
                             r,← 'TCross1' desc RunVariations (data model data2) data data2
                             r,← 'TCross2' desc RunVariations (data2 model data) data2 data
                         :EndFor
