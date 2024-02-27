@@ -27,7 +27,6 @@
         shapeW0←(0@(?(≢shape)))shape
         actualRSW0←(shapeW0⍴larg)÷(shapeW0⍴rarg)
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
-
     ∇
 
     ∇ r←test_divide
@@ -40,7 +39,7 @@
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
+        i1←{⍵,-⍵}⍳120                               ⍝ 83: 8 bits signed integer
         char1←⎕UCS (100+⍳100)                         ⍝ 80: 8 bits character
         char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
@@ -95,6 +94,13 @@
                         r,← 'TGen1' desc Assert (≢data)≡≢data÷data
                         r,← 'TGen2' desc Assert (⎕dr bool)≡⎕dr data ÷ data
 
+                        :If case≢'bool'
+                            r,← 'T1' desc RunVariations (1⍨¨data) data data
+                            d1←data[?≢data]
+                            d2←data[?≢(data~d1)]
+                            r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
+                            r,← 'T3' desc RunVariations data data 1         ⍝ Identity
+                        :EndIf
                         ⍝ Cross type tests
                         :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                             data2←⍎case2
@@ -107,7 +113,12 @@
 
                             r,← 'TCross1' desc RunVariations (data model data2) data data2
                             r,← 'TCross2' desc RunVariations (data2 model data) data2 data
+
+                            d1←data[?≢data]
+                            d2←data2[?≢(data2~d1)]
+                            r,← 'TCross3' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
                         :EndFor
+                        case2←⍬ ⍝ dispose case2
                     :EndFor
                 ⍝ :EndFor
             :EndFor
