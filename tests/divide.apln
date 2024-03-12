@@ -79,48 +79,48 @@
 
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
-                
-                ⍝ :For div :In 2 1
-                    ⍝ ⎕DIV←div⊃div_0 div_1
-                    ⎕DIV←1
-                    case←'Independant'
+                ⎕DIV←div_1
+                case←'Independant'
+                desc←testDesc⍬
+
+                :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+                    data←⍎case
                     desc←testDesc⍬
 
-                    :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
-                        data←⍎case
+                    ⍝ General tests to test the basic rules of unique
+                    r,← 'TGen1' desc Assert (≢data)≡≢data÷data
+                    r,← 'TGen2' desc Assert (⎕dr bool)≡⎕dr data ÷ data
+
+                    :If case≢'bool'
+                        r,← 'T1' desc RunVariations (1⍨¨data) data data
+                        d1←data[?≢data]
+                        d2←data[?≢(data~d1)]
+                        r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
+                        r,← 'T3' desc RunVariations data data 1         ⍝ Identity
+                    :EndIf
+
+                    ⍝ Cross type tests
+                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        data2←⍎case2
+                        data2←(≢data)↑data2
                         desc←testDesc⍬
-
-                        ⍝ General tests to test the basic rules of unique
-                        r,← 'TGen1' desc Assert (≢data)≡≢data÷data
-                        r,← 'TGen2' desc Assert (⎕dr bool)≡⎕dr data ÷ data
-
-                        :If case≢'bool'
-                            r,← 'T1' desc RunVariations (1⍨¨data) data data
-                            d1←data[?≢data]
-                            d2←data[?≢(data~d1)]
-                            r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
-                            r,← 'T3' desc RunVariations data data 1         ⍝ Identity
+                        :If (case≡case2)
+                            :Continue
                         :EndIf
-                        ⍝ Cross type tests
-                        :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                            data2←⍎case2
-                            data2←(≢data)↑data2
-                            desc←testDesc⍬
-                            :If (case≡case2)
-                                :Continue
-                            :EndIf
-                            r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2)
+                        r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2)
 
-                            r,← 'TCross1' desc RunVariations (data model data2) data data2
-                            r,← 'TCross2' desc RunVariations (data2 model data) data2 data
+                        r,← 'TCross1' desc RunVariations (data model data2) data data2
+                        r,← 'TCross2' desc RunVariations (data2 model data) data2 data
 
-                            d1←data[?≢data]
-                            d2←data2[?≢(data2~d1)]
-                            r,← 'TCross3' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
-                        :EndFor
-                        case2←⍬ ⍝ dispose case2
+                        d1←data[?≢data]
+                        d2←data2[?≢(data2~d1)]
+                        r,← 'TCross3' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
                     :EndFor
-                ⍝ :EndFor
+                    case2←⍬ ⍝ dispose case2
+
+                    ⍝ ⎕DIV←0 cases
+                    ⎕DIV
+                :EndFor
             :EndFor
         :EndFor
     ∇
