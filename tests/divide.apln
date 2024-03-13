@@ -166,6 +166,19 @@
                             r,← 'CTZeroAlmostS' desc Assert ((1≢d1÷almostd1S) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
                             r,← 'CTZeroAlmostB' desc Assert ((1≢d1÷almostd1B) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
                         :EndIf
+                        ⍝ infinitesimally close to d1 but smaller and bigger numbers divided by 0
+                        f←1
+                        :Trap 11
+                            _←almostd1B÷0
+                            f←div
+                        :EndTrap
+                        r,←'CTDefaultAlmostBDiv0' desc Assert f
+                        f←1
+                        :Trap 11
+                            _←almostd1S÷0
+                            f←div
+                        :EndTrap
+                        r,←'CTDefaultAlmostBDiv0' desc Assert f
                     :EndFor           
                 :EndFor
             :EndFor
