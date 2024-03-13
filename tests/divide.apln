@@ -80,9 +80,14 @@
 
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
+
                 :For div :In 0 1
                     ⎕DIV←div
+                    case←'independant'
+                    desc←testDesc⍬
 
+                    r,←'TI1' desc Assert (~div)≡0÷0
+                    
                     :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
                         data←⍎case
                         desc←testDesc⍬
@@ -90,6 +95,14 @@
                         ⍝ General tests to test the basic rules of unique
                         r,← 'TGen1' desc Assert (≢data)≡≢data÷data
                         r,← 'TGen2' desc Assert (⎕dr bool)≡⎕dr data ÷ data
+
+                        d1←(data~0)[?≢data~0]
+                        f←1
+                        :Trap 11
+                            _←d1÷0
+                            f←div
+                        :EndTrap
+                        r,←'TI1' desc Assert f
 
                         :If case≢'bool'
                             r,← 'T1' desc RunVariations (1⍨¨data) data data
