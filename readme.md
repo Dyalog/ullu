@@ -8,7 +8,7 @@
 
 ## 🤔 What is ullu?
 
-Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests specifically the functionality of primitives one-by-one. The main focus of this test suite is to find bugs, irregularities, edge cases and code coverage.  
+Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests specifically the functionality of primitives one by one. This test suite's main focus is finding bugs, irregularities, edge cases and code coverage.  
 
 ## 🎿 Coverage
 
@@ -17,15 +17,16 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 - magnitude (monadic |)
 - residue (dyadic |)
 - unique (monadic ∪)
+- unique mask (monadic ≠)
 
 ### 🧱 Under progress
 - index of (dyadic ⍳) (Not tested for coverage)
 - membership (dyadic ∊) (Not tested for coverage)
-- unique mask (monadic ≠) (Next Up with #44)
+- divide (dyadic ÷) (Next Up)
 
 ## ✍ The name
 
-Pronounced as `/ˈulːluː/`, The name comes from the hindi word for owl.
+Pronounced as `/ˈulːluː/`, The name comes from the Hindi word for owl.
 
 Just as the owl represents both wisdom and foolishness the QA also has a dual nature of being wise and dumb at the same time.
 
@@ -40,7 +41,7 @@ Run tests using dyalogscript:
 dyalogscript run.apls
 ```
 
-After this you will be prompted with options to choose from
+After this, you will be prompted with options to choose from
 
 ### Detailed Run
 
@@ -83,7 +84,7 @@ unittest.RunTests tests.membership
 
 ### 🔗 Suggestions/Questions
 
-Feel free to open GitHub issues for any questions, suggestions or features requests
+Feel free to open GitHub issues for any questions, suggestions or feature requests
 
 If you want to reach out, please email `aarush[at]dyalog.com`
 
@@ -93,6 +94,6 @@ If you want to reach out, please email `aarush[at]dyalog.com`
 
 Copyright 2023 Dyalog
 
-Licensed under MIT License : https://opensource.org/licenses/MIT
+Licensed under MIT License: https://opensource.org/licenses/MIT
 
 <!-- <p align="center">Made with ❤ at Dyalog</p> -->
