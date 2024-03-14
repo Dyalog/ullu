@@ -87,7 +87,11 @@
                     desc←testDesc⍬
 
                     r,←'TI1' desc Assert (~div)≡0÷0
-                    
+                    r,←'TNull1' desc Assert ⍬≡''÷0
+                    r,←'TNull2' desc Assert ⍬≡⍬÷0
+                    r,←'TNull3' desc Assert ⍬≡0÷''
+                    r,←'TNull4' desc Assert ⍬≡0÷⍬
+
                     :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
                         data←⍎case
                         desc←testDesc⍬
@@ -143,6 +147,38 @@
                             r,← 'TCross3' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
                         :EndFor
                         case2←⍬ ⍝ dispose case2
+
+                        ⍝ tests for known errors
+                        :For case3 :In 'char1' 'char2' 'char3' 'ptr'
+                            data3←⍎case3
+                            desc←testDesc⍬
+                            c1←data3[?≢data3]
+                            c2←(data3~c1)[?¯1+≢data3]
+
+                            f←0 ⍝ flag
+                            :Trap 11 ⍝ 11: Domain error
+                                c1÷c2 ⍝ N/A type ÷ N/A type
+                            :Else
+                                f←1
+                            :EndTrap
+                            r,← 'TDomainE1' desc Assert f
+                            
+                            f←0 ⍝ flag
+                            :Trap 11 ⍝ 11: Domain error
+                                d1÷c2 ⍝ Number type÷ N/A type
+                            :Else
+                                f←1
+                            :EndTrap
+                            r,← 'TDomainE2' desc Assert f
+                            
+                            f←0 ⍝ flag
+                            :Trap 11 ⍝ 11: Domain error
+                                c1÷d1 ⍝ N/A type ÷ number type
+                            :Else
+                                f←1
+                            :EndTrap
+                            r,← 'TDomainE3' desc Assert f
+                        :EndFor
 
                         ⍝ tests with comparison tolerance
                         :If 1289≡⎕DR data ⍝ skipping ct tests for complex because complex division works in a different way
