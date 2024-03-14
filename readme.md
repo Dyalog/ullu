@@ -17,7 +17,7 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 - magnitude (monadic |)
 - residue (dyadic |)
 - unique (monadic ∪)
-- - unique mask (monadic ≠)
+- unique mask (monadic ≠)
 
 ### 🧱 Under progress
 - index of (dyadic ⍳) (Not tested for coverage)
