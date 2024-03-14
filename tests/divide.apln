@@ -3,7 +3,7 @@
     stripToSameLen←#.utils.stripToSameLen
 
     model←{
-        ⍺÷⍵
+        ⍺⌹¨⍵
     }
     
     ∇ tRes←tData RunVariations exp
