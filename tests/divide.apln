@@ -211,14 +211,17 @@
                     almost0←((?0)×fr⊃⎕CT ⎕DCT)
                     r,←'almost0Div0' desc Assert (~div)≡almost0÷0
 
-                    f←0 ⍝ flag
-                    :Trap 11 ⍝ 11: Domain error
-                        _←1÷{⍵-1:1E¯6144⋄1E¯309}fr ⍝ getting a infinite result with a non 0 number
-                        f←div
-                    :Else
-                        f←1
-                    :EndTrap
-                    r,←'Tborder1' desc Assert f
+                    :If 0≡div
+                        f←0 ⍝ flag
+                        :Trap 11 ⍝ 11: Domain error
+                            _←1÷{⍵-1:1E¯6145⋄1E¯309}fr ⍝ getting a infinite result with a non 0 number
+                        :Else
+                            f←1
+                        :EndTrap
+                        r,←'Tborder1' desc Assert f
+                    :Else    
+                        r,←'Tborder1' desc Assert 0≡1÷{⍵-1:1E¯6145⋄1E¯309}fr
+                    :EndIf
                 :EndFor
             :EndFor
         :EndFor
