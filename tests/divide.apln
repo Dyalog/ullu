@@ -199,28 +199,33 @@
                         :Else ⍝ exact
                             ⍝ ⍝ d≠d+1 for all numeric types
                             r,← 'CTZero' desc Assert ((1≢∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
-                            r,← 'CTZeroAlmostS' desc Assert ((1≢d1÷almostd1S) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
-                            r,← 'CTZeroAlmostB' desc Assert ((1≢d1÷almostd1B) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
+                            r,← 'CTZeroAlmostS' desc Assert (1≢d1÷almostd1S)
+                            r,← 'CTZeroAlmostB' desc Assert (1≢d1÷almostd1B)
                         :EndIf
                     :EndFor
 
-                    ⍝ infinitesimally small divided by 0
-                    :If (div≡0) ∧ (fr≡2) ∧ ct=1
-                        :Continue
-                    :EndIf
-                    almost0←((?0)×fr⊃⎕CT ⎕DCT)
-                    r,←'almost0Div0' desc Assert (~div)≡almost0÷0
-
+⍝todo need to fix
                     :If 0≡div
                         f←0 ⍝ flag
                         :Trap 11 ⍝ 11: Domain error
-                            _←1÷{⍵-1:1E¯6145⋄1E¯309}fr ⍝ getting a infinite result with a non 0 number
+                            :If 1≡fr
+                                _←1÷1E¯309 ⍝ getting a infinite result with a non 0 number
+                            :Else
+                            ⎕←⎕ct,⎕fr
+                                _←1÷1E¯6145
+                            :EndIf
                         :Else
                             f←1
                         :EndTrap
                         r,←'Tborder1' desc Assert f
-                    :Else    
-                        r,←'Tborder1' desc Assert 0≡1÷{⍵-1:1E¯6145⋄1E¯309}fr
+                    :Else
+                        r,←'Tborder2' desc Assert 0≡1÷({⍵-1:1E¯6145⋄1E¯309}fr)
+                    :EndIf
+
+                    ⍝ infinitesimally small divided by 0
+                    :If ~(div≡0) ∧ (fr≡2) ∧ ct≡1 ⍝ we don't want to test for divide by 0 here
+                        almost0←((?0)×fr⊃⎕CT ⎕DCT)
+                        r,←'almost0Div0' desc Assert (~div)≡almost0÷0
                     :EndIf
                 :EndFor
             :EndFor
