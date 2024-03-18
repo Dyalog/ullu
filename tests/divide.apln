@@ -211,7 +211,6 @@
                             :If 1≡fr
                                 _←1÷1E¯309 ⍝ getting a infinite result with a non 0 number
                             :Else
-                            ⎕←⎕ct,⎕fr
                                 _←1÷1E¯6145
                             :EndIf
                         :Else
