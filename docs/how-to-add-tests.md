@@ -172,3 +172,10 @@ Occurrence: same.c.html#L1152
                 d←i1[?≢i1]
                 r,←'TCTI1' desc Assert (1 0)≡(≠ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
     ```
+## Misc useful information
+
+Interesting things:
+- dyalogVersion ← DyalogAPL version from `]version`
+- isDyalog32 ← 0 or 1 for if the interpreter 64-bit ot 32-bit?
+- isDyalogClassic ← 0 or 1 for if the interpreter classic or unicode
+- utils.apln ← This file has some widely used manipulation functions
