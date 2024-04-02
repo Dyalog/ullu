@@ -69,7 +69,7 @@
                 ⎕←'Version information:'
                 ⎕←versionInfo←⎕SE.UCMD 'tools.version'
             :EndIf
-            dyalogVersion isDyalog32 isDyalogClassic←{(⍎4↑⍵) ((1+≢⍵)≡'64-bit'(1⍳⍨⍷)⍵) ((1+≢⍵)≡'Unicode'(1⍳⍨⍷)⍵)}{((1+≢'Dyalog')+'Dyalog'(1⍳⍨⍷)⍵)↓⍵},1↑x
+            dyalogVersion isDyalog32 isDyalogClassic←{(⍎4↑⍵) ((1+≢⍵)≡'64-bit'(1⍳⍨⍷)⍵) ((1+≢⍵)≡'Unicode'(1⍳⍨⍷)⍵)}{((1+≢'Dyalog')+'Dyalog'(1⍳⍨⍷)⍵)↓⍵},1↑versionInfo
             :If verbose
                 ⎕←'Options:'
                 ⎕←(6⍴' '),'verbose:', verbose
