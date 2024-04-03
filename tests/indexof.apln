@@ -38,7 +38,7 @@
         tRes,←('Shape',tID) tCmt Assert expectedRM ≡ actualRM
     ∇
 
-    ∇ r←test_indexof ;⎕CT;⎕DCT;ct;⎕FR;fr;⎕IO;io;ct_default;dct_default;fr_dbl;fr_decf;io_default;io_0;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;fl;Hfl;cmplx;Hcmplx;case;case2;data;d;data2;pos;testDesc;desc
+    ∇ r←test_indexof ;⎕CT;⎕DCT;ct;⎕FR;fr;⎕IO;io;ct_default;dct_default;fr_dbl;fr_decf;io_default;io_0;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;fl;Hfl;cmplx;Hcmplx;case;case2;data;d;data2;pos;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
