@@ -35,7 +35,7 @@
     }
     
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS;trimmedp;rand
         (expectedR p)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -66,7 +66,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
     ∇
 
-    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;ptr;c1;f
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -115,7 +115,7 @@
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (modelFloor¨data) data                            ⍝ generator func finds results on array
+                    r,← 'T1' desc RunVariations (modelFloor¨data) data                          ⍝ generator func finds results on array
 
                     dataplus←data+?0⍨¨data                                                      ⍝ data plus a number between (0,1) to data
                     r,← 'T2' desc Assert ((modelFloor¨dataplus)≡⌊dataplus) ∨ ((fr=1) ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
@@ -168,7 +168,7 @@
         :EndFor
     ∇
 
-    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf
+    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf;⎕CT;⎕DCT;⎕FR
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
