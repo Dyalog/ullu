@@ -1,5 +1,6 @@
 :Namespace unique
     Assert←#.unittest.Assert
+    isDyalogClassic←#.unittest.isDyalogClassic
     ⍝ util functions
     shuffle←#.utils.shuffle
     intertwine←#.utils.intertwine
@@ -50,11 +51,14 @@
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
-        char1←⎕UCS (100+⍳100)                         ⍝ 80: 8 bits character
-        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
-        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        char0←⎕AV                                     ⍝ DyalogAPL classic char set
+        :If ~isDyalogClassic        
+            char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
+        :EndIf
         ptr←(13↑⎕a) (13↓⎕a)                           ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
@@ -98,7 +102,10 @@
                     r,←'TICC1' desc Assert (model x)≡(∪x)
                 :EndFor
 
-                :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+                :For case :In 'bool' 'i1' 'i2' 'i3' 'char0' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+                    :If (isDyalogClassic) ∧ ((case≡'char1') ∨ (case≡'char2') ∨ (case≡'char3'))
+                        :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                    :EndIf
                     data←⍎case
                     desc←testDesc⍬
 
@@ -107,6 +114,9 @@
                     r,← 'TGen2' desc Assert (⎕dr data)≡⎕dr ∪data intertwine data  ⍝ datatype of the data will not change under unique
 
                     :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        :If (case≡'char0') ∨ (isDyalogClassic) ∧ ((case2≡'char1') ∨ (case2≡'char2') ∨ (case2≡'char3'))
+                            :Continue ⍝ char0 has overlapping elements with char1 and Skip tests for unicode character sets in DyalogAPL classic
+                        :EndIf
                         data2←⍎case2
                         desc←testDesc⍬
                             :If (case≡case2) ∨ (case≡'bool') ⍝ skipping bool because of overlap with i1
@@ -138,7 +148,7 @@
                     r,← 'T6' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
 
                     ⍝ tests with comparison tolerance
-                    :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped                  
+                    :If ~(⎕DR data) ∊ 80 82 160 320 326 ⍝ non-numeric are skipped                  
                         d1←(data~0)[?≢data~0] ⍝ 0 interferes with the calculations of almostd1S and almostd1B hence it is removed
                         almostd1S←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
                         almostd1B←d1×1+fr⊃1E¯1×ct_default dct_default ⍝ infinitesimally close to d1 but bigger
@@ -180,5 +190,3 @@
     ∇
 
 :EndNamespace
-
-⍝ TODO: no classic
