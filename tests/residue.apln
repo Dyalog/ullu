@@ -5,7 +5,7 @@
 :Namespace residue
     Assert←#.unittest.Assert
 
-    model←{⍵-⍺×⌊⍵÷⍺+⍺=0} ⍝ Generator function for residue
+    model←{⍵-⍺×⌊⍵÷⍺+⍺=0} ⍝ model for residue
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;larg;rarg;res;tID;tCmt;shape;actualRS;shapeW0;actualRSW0
@@ -91,10 +91,10 @@
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (data model ⌽data) data (⌽data)                    ⍝ generator func finds results on array
+                    r,← 'T1' desc RunVariations (data model ⌽data) data (⌽data)                         ⍝ model finds results on array
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
-                    r,← 'T2' desc RunVariations (d1 model d2) d1 d2                                ⍝ generator func finds results on single element
+                    r,← 'T2' desc RunVariations (d1 model d2) d1 d2                                     ⍝ model finds results on single element
                     r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 result is a defined output
 
                     :If (⊂data)∊i1 i2 i3
@@ -121,7 +121,7 @@
                         :EndIf
                     :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                        ⍝ if cmplx then generator function elseif negative then ⍵+1 else 1 because of 0 tolerance
+                        ⍝ if cmplx then model func elseif negative then ⍵+1 else 1 because of 0 tolerance
                         r,← 'CTZero' desc Assert (({⊢≠+⍵:d1 model d1+1⋄1+0≤⍵⊃⍵+1 1}d1)≡d1|d1+1) ∨ (fr=1 ∧ case≡'Hfl')
 
                         ⍝ |, ⌈ and ⌊ are added to it for getting a fixed result
