@@ -1,6 +1,6 @@
 :Namespace floor
     Assert←#.unittest.Assert
-    isDyalogClassic←#.unittest.isDyalogClassic
+    isDyalogClassic←#.utils.isClassic
 
     ⍝ Generator function for floor
     ⍝ Using strings to calculate floor of a number

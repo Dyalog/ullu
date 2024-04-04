@@ -4,7 +4,7 @@
 ⍝ An element of X is considered identical to an element in Y if X≡Y returns 1 for those elements.
 :Namespace membership
     Assert←#.unittest.Assert
-    isDyalogClassic←#.unittest.isDyalogClassic
+    isDyalogClassic←#.utils.isClassic
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM

@@ -1,6 +1,6 @@
 :Namespace uniquemask
     Assert←#.unittest.Assert
-    isDyalogClassic←#.unittest.isDyalogClassic
+    isDyalogClassic←#.utils.isClassic
     ⍝ util functions
     shuffle←#.utils.shuffle
     intertwine←#.utils.intertwine
