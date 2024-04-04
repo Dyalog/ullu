@@ -103,6 +103,9 @@
 
                 ⍝ Independant code coverage based (more information in decision docs)
                 :For (u s) :In (2 10) (2 256) (10 10) (10 256) (256 256) (65536 65536)
+                    :If (~∨/(⊢2⎕NQ#'GetEnvironment',⊂)'DYALOG_QA_SLOW_TESTS') ∧ (u≡65536)
+                        :Continue ⍝ Skip one case because it takes 4 minutes each when no Slow_QA
+                    :EndIf
                     case←u s
                     desc←testDesc⍬
                     x←s 2⍴?u⍴0
