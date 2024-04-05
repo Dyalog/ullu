@@ -126,7 +126,7 @@
 
                         ⍝ |, ⌈ and ⌊ are added to it for getting a fixed result
                         r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (fr=1 ∧ case≡'Hfl')
-                        r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨ (fr=1 ∧ case≡'Hfl') ∨ (fr=2 ∧ 1289≡⎕dr data)
+                        r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨ (fr=1 ∧ case≡'Hfl') ∨ (1289≡⎕dr data)
                     :EndIf
                 :EndFor
             :EndFor
