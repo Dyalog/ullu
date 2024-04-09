@@ -109,10 +109,10 @@
                         r,←'TI1' desc Assert f
 
                         :If case≢'bool'
-                            r,← 'T1' desc RunVariations (1⍨¨data) data data
+                            r,← 'T1' desc RunVariations (1⍨¨data) data data ⍝ division with the same number gives a 1
                             d1←data[?≢data]
                             d2←data[?≢(data~d1)]
-                            r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
+                            r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ model func finds results on single element
                             r,← 'T3' desc RunVariations data data 1         ⍝ Identity
                         :EndIf
 
@@ -125,7 +125,7 @@
                                 :Continue
                             :EndIf
 
-                            r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2)
+                            r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2) ⍝ data type test
 
                             r,← 'TCross1' desc RunVariations (data model data2) data data2
                             
@@ -204,7 +204,6 @@
                         :EndIf
                     :EndFor
 
-⍝todo need to fix
                     :If 0≡div
                         f←0 ⍝ flag
                         :Trap 11 ⍝ 11: Domain error
