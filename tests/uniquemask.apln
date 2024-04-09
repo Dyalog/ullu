@@ -15,7 +15,7 @@
     modelUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ from tests/unique.apln
     model←(⍳⍤≢=⍳⍨)⍤(modelUnique⍳1/⊢)
 
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0
+    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0;actualRSc;expectedRSc
         (expectedR rarg)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -48,7 +48,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
     ∇
 
-    ∇ r←test_uniquemask
+    ∇ r←test_uniquemask;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;⎕FR;fl;Hfl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;u;s;x;data;data2;shuffledData;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
