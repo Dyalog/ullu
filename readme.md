@@ -13,6 +13,7 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 ## 🎿 Coverage
 
 ### 💪  Available Tests
+- divide (dyadic ÷)
 - floor (monadic ⌊)
 - magnitude (monadic |)
 - residue (dyadic |)
@@ -22,7 +23,6 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 ### 🧱 Under progress
 - index of (dyadic ⍳) (Not tested for coverage)
 - membership (dyadic ∊) (Not tested for coverage)
-- divide (dyadic ÷) (Next Up)
 
 ## ✍ The name
 
