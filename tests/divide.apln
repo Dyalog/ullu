@@ -5,7 +5,7 @@
     model←{
         ⍺⌹¨⍵
     }
-    
+
     ∇ tRes←tData RunVariations exp
         (expectedR larg rarg)←exp
         (tID tCmt)←tData
@@ -53,12 +53,9 @@
         ⍝ Hdbl is 645 but larger numbers to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)                       ⍝ 645: large numbers
 
-        ⍝ This is needed for a case that can be hit if we have a lot of small numbers 
-        ⍝ which produce a hash collision
-        ⍝ Occurrence: same.c.html#L1153
-        Sdbl←{⍵,-⍵}(⍳500)÷1000
+        Sdbl←{⍵,-⍵}(⍳500)÷1000                        ⍝ 645: Small numbers
 
         ⍝ Hfl is 1287 but larger numbers to test for CT value
         ⍝ far intervals are chosen for non overlap 
@@ -96,7 +93,7 @@
                         data←⍎case
                         desc←testDesc⍬
 
-                        ⍝ General tests to test the basic rules of unique
+                        ⍝ General tests to test the basic rules of divide
                         r,← 'TGen1' desc Assert (≢data)≡≢data÷data
                         r,← 'TGen2' desc Assert (⎕dr bool)≡⎕dr data ÷ data
 
