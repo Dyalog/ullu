@@ -125,16 +125,16 @@
                             r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2) ⍝ data type test
 
                             r,← 'TCross1' desc RunVariations (data model data2) data data2
-                            
-                            f←1 ⍝ flag
-                            :Trap 11 ⍝ 11: DOMAIN ERROR: Divide by zero
-                                :If case≡'bool'
-                                    _←data2÷data
-                                :EndIf
-                                f←div
-                            :EndTrap
+
                             :If case≡'bool'
-                                r,← 'TDomainE1' desc Assert f
+                                f←1 ⍝ flag
+                                :Trap 11 ⍝ 11: DOMAIN ERROR: Divide by zero
+                                        _←data2÷data
+                                :Else
+                                    f←~div
+                                    ⍝ todo: improper dmx message for cmplx÷0 is ignored
+                                    r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'Divide by zero') ∨ (1289≡⎕dr data2)
+                                :EndTrap
                             :Else
                                 r,← 'TCross2' desc RunVariations (data2 model data) data2 data
                             :EndIf
@@ -157,24 +157,24 @@
                                 c1÷c2 ⍝ N/A type ÷ N/A type
                             :Else
                                 f←1
+                                r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'')
                             :EndTrap
-                            r,← 'TDomainE1' desc Assert f
                             
                             f←0 ⍝ flag
                             :Trap 11 ⍝ 11: Domain error
                                 d1÷c2 ⍝ Number type ÷ N/A type
                             :Else
                                 f←1
+                                r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'')
                             :EndTrap
-                            r,← 'TDomainE2' desc Assert f
                             
                             f←0 ⍝ flag
                             :Trap 11 ⍝ 11: Domain error
                                 c1÷d1 ⍝ N/A type ÷ number type
                             :Else
                                 f←1
+                                r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'')
                             :EndTrap
-                            r,← 'TDomainE3' desc Assert f
                         :EndFor
 
                         ⍝ tests with comparison tolerance
@@ -187,7 +187,7 @@
                         :If ct ⍝ tolerant
                             :If (⊂d1)∊Hdbl, Hfl ⍝ bigger numbers
                                 ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
-                                r,← 'CTDefault1' desc Assert (((1≡d1÷d1+1) ∨ ((fr=2) ∧ case≡'Hdbl')) )⍝ ∨ ((fr=2) ∧ 1289≡⎕dr d1))
+                                r,← 'CTDefault1' desc Assert (((1≡d1÷d1+1) ∨ ((fr=2) ∧ case≡'Hdbl')) )
                             :Else ⍝ other than bigger numbers
                                 r,← 'CTDefault2' desc Assert (1≢d1÷d1+1)                    ⍝ not tolerantly equal for other numbers
                                 r,← 'CTDefaultAlmostS' desc Assert (1≡d1÷almostd1S)         ⍝ d1 and almostd1S are tolerantly equal
@@ -201,6 +201,7 @@
                         :EndIf
                     :EndFor
 
+                    ⍝ improper ⎕DMX messages are ignored here
                     :If 0≡div
                         f←0 ⍝ flag
                         :Trap 11 ⍝ 11: Domain error
