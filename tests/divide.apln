@@ -132,8 +132,7 @@
                                         _←data2÷data
                                 :Else
                                     f←~div
-                                    ⍝ todo: improper dmx message for cmplx÷0 is ignored
-                                    r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'Divide by zero') ∨ (1289≡⎕dr data2)
+                                    r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'Divide by zero')
                                 :EndTrap
                             :Else
                                 r,← 'TCross2' desc RunVariations (data2 model data) data2 data
