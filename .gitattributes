@@ -1,0 +1,3 @@
+# Normalize line endings
+*	-crlf
+*.apl? linguist-language=APL
