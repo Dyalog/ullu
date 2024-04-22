@@ -96,12 +96,12 @@
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
                     r,← 'T2' desc RunVariations (d1 model d2) d1 d2                                ⍝ generator func finds results on single element
-                    r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 result is a defined output
+                    r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                ⍝ check remainder with 1 result is a defined output
 
                     :If (⊂data)∊i1 i2 i3
                         halfLen←(¯1+≢data)÷2
-                        r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data              ⍝ sequences to test functionality of residue
-                        r,← 'TSeq1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data               ⍝ remainder sequence is ⍳(N-1), 0
+                        r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data         ⍝ sequences to test functionality of residue
+                        r,← 'TSeq1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data          ⍝ remainder sequence is ⍳(N-1), 0
                     :EndIf
 
                     :If case≡'dbl'
