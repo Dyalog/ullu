@@ -1,5 +1,6 @@
 :Namespace floor
     Assert←#.unittest.Assert
+    isDyalogClassic←#.utils.isClassic
 
     ⍝ Generator function for floor
     ⍝ Using strings to calculate floor of a number
@@ -65,7 +66,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
     ∇
 
-    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;ptr;c1;f
+    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;ptr;c1;f
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -85,9 +86,12 @@
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ Hfl is 1287 closer to the default DCT
         ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
 
-        char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
-        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
-        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
+        char0←⎕AV                                       ⍝ DyalogAPL classic char set
+        :If ~isDyalogClassic
+            char1←⎕UCS ⍳255                             ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                      ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                    ⍝ 320: 32 bits character
+        :EndIf
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
 
 
@@ -140,23 +144,26 @@
                         r,← 'CTZero' desc Assert ((1+⌊d1)≡⌊d1+1)
                         r,← 'CTZeroAlmost' desc Assert (((d1-{(⌊=⊢)⍵:⍵>0⋄0.5}d1)≡⌊almostd1) ∨ ((fr=1) ∧ case≡'Hfl')) ⍝ floor is the integer lesser than the number with no tolerance
                     :EndIf
-                    
-                    ⍝ tests for known errors
-                    :For case2 :In 'char1' 'char2' 'char3' 'ptr'
-                        data←⍎case2
-                        desc←testDesc⍬
-                        c1←data[?≢data]
-
-                        f←0 ⍝ flag
-                        :Trap 11 ⍝ 11: Domain error
-                            ⌊c1
-                        :Else
-                            f←1
-                        :EndTrap
-                        r,← 'TDomainE1' desc Assert f
-                    :EndFor
-                    case2←⍬ ⍝ disposing case2 for testDesc
+                    case2←⍬ ⍝ disposing case for testDesc
                 :EndFor
+                ⍝ tests for known errors
+                :For case :In 'char0' 'char1' 'char2' 'char3' 'ptr'
+                    :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'ptr') 
+                        :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                    :EndIf
+                    data←⍎case
+                    desc←testDesc⍬
+                    c1←data[?≢data]
+
+                    f←0 ⍝ flag
+                    :Trap 11 ⍝ 11: Domain error
+                        ⌊c1
+                    :Else
+                        f←1
+                    :EndTrap
+                    r,← 'TDomainE1' desc Assert f
+                :EndFor
+                case←⍬ ⍝ disposing case for testDesc
             :EndFor
         :EndFor
     ∇
