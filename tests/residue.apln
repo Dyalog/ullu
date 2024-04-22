@@ -86,6 +86,7 @@
                         data2←(≢data)↑data2                                                             ⍝ strip data2 to be equal length to data
                         r,← 'TCross1' desc RunVariations (data model data2) data data2
                         r,← 'TCross2' desc RunVariations (data2 model data) data2 data
+                        r,← 'TCross3' desc Assert (((data2 data) model (data data2))≡(data2 data)|(data data2)) ⍝ merge two different arrays creating a pointer array
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
