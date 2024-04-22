@@ -113,6 +113,7 @@
                             r,← 'TCross2' desc RunVariations ((⎕IO+⊃⍴data2)⍨¨data) data2 data                   ⍝ no match, all return not found
                             r,← 'TCross3' desc RunVariations (⍳≢data) (data,data2) data                         ⍝ data match, returns index for data
                             r,← 'TCross4' desc RunVariations ((⍳≢data),((⎕IO+⊃⍴data)⍨¨data2)) data (data,data2) ⍝ data match, data2 no match, returns index and not found
+                            r,← 'TCross5' desc Assert (((data2 data) model (data data2))≡(data2 data)⍳(data data2)) ⍝ merge two different arrays creating a pointer array
                         :EndFor
                         case2←⍬ ⍝ dispose case2
                         desc←testDesc⍬
