@@ -3,4 +3,11 @@
     intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
     hashArray←1500⌶                 ⍝ pre-hash array
     stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array
+
+    ⍝ Interpreter version information
+    isClassic←82=⎕dr''
+    width←{2×⎕SIZE '⍵'}⍬
+    isBigEndian←0=⊃11 ⎕DR 128
+    version←{⍎(2>+\⍵='.')/⍵}⊃1↓'.'⎕wg'APLVersion'
+    doSlowTests←⊃(//)⎕vfi 2 ⎕NQ #'GetEnvironment' 'DYALOG_QA_SLOW_TESTS'
 :EndNamespace

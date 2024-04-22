@@ -4,6 +4,7 @@
 ⍝ An element of X is considered identical to an element in Y if X≡Y returns 1 for those elements.
 :Namespace membership
     Assert←#.unittest.Assert
+    isDyalogClassic←#.utils.isClassic
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
@@ -41,7 +42,7 @@
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ r←test_membership ;w;n;r;data;case;data2;case2;type;bool;i1;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+    ∇ r←test_membership ;w;n;r;data;case;data2;case2;type;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -49,11 +50,14 @@
         
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
-        char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
-        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
-        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        char0←⎕AV                                     ⍝ DyalogAPL classic char set
+        :If ~isDyalogClassic
+            char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
+        :EndIf
         ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
@@ -79,7 +83,10 @@
             :For fr :In 1 2
                 ⎕FR←fr⊃fr_dbl fr_decf
 
-                :For case :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                :For case :In 'i1' 'i2' 'i3' 'char0' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                    :If (isDyalogClassic) ∧ ((case≡'char1') ∨ (case≡'char2') ∨ (case≡'char3'))
+                        :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                    :EndIf
                     data←⍎case
                     :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
                         :Continue
@@ -87,6 +94,9 @@
 
                     ⍝ Cross type tests
                     :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                        :If (case≡'char0') ∨ (isDyalogClassic) ∧ ((case2≡'char1') ∨ (case2≡'char2') ∨ (case2≡'char3'))
+                            :Continue ⍝ char0 has overlapping elements with char1 and Skip tests for unicode character sets in DyalogAPL classic
+                        :EndIf
                         data2←⍎case2
                         desc←testDesc⍬
                         :If (data≡data2)
@@ -115,7 +125,7 @@
                             r,← 'CTDefault' desc Assert ((1≡(d∊d+1)) ∨ (fr=2 ∧ case≡'Hdbl'))
                         :EndIf
                     :Else  ⍝ exact
-                        :If ~(⎕DR data) ∊ 80 160 320 326 ⍝ non-numeric are skipped
+                        :If ~(⎕DR data) ∊ 80 82 160 320 326 ⍝ non-numeric are skipped
                             ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
                             r,← 'CTZero' desc Assert ((0≡(d∊d+1)) ∨ (fr=1 ∧ case≡'Hfl'))
                         :EndIf
@@ -132,6 +142,9 @@
 
                 ⍝ Boolean cross type tests
                 :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
+                    :If (isDyalogClassic) ∧ ((case2≡'char1') ∨ (case2≡'char2') ∨ (case2≡'char3'))
+                        :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                    :EndIf
                     data2←⍎case2
                     desc←testDesc⍬
                     :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
