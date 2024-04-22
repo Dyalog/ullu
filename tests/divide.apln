@@ -1,6 +1,8 @@
 :Namespace divide
     Assert←#.unittest.Assert
     stripToSameLen←#.utils.stripToSameLen
+    isDyalogClassic←#.utils.isClassic
+    dyalogVersion←#.utils.version
 
     model←{
         ⍺⌹¨⍵
@@ -40,13 +42,16 @@
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←{⍵,-⍵}⍳120                               ⍝ 83: 8 bits signed integer
-        char1←⎕UCS (100+⍳100)                         ⍝ 80: 8 bits character
-        char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
+        i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
-        char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        charptr←(13↑⎕a) (13↓⎕a)                           ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
+        :If ~isDyalogClassic        
+            char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
+        :EndIf
+        charptr←(13↑⎕a) (13↓⎕a)                       ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
         cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
         Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
@@ -132,7 +137,7 @@
                                         _←data2÷data
                                 :Else
                                     f←~div
-                                    r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'Divide by zero') ⍝ check DMX message for divide by 0
+                                    r,← 'TDomainE1' desc Assert (((f) ∧ (⎕dmx.Message≡'Divide by zero')) ∨ ((dyalogVersion≤19) ∧ 1289≡⎕DR data2)) ⍝ check DMX message for divide by 0
                                 :EndTrap
                             :Else
                                 r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ reverse of TCross1 without any div by 0 case
@@ -147,7 +152,10 @@
                         case2←⍬ ⍝ dispose case2
 
                         ⍝ tests for known errors
-                        :For case3 :In 'char1' 'char2' 'char3' 'charptr'
+                        :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
+                            :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'ptr') 
+                                :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                            :EndIf
                             data3←⍎case3
                             desc←testDesc⍬
                             c1←data3[?≢data3]
