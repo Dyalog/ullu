@@ -52,7 +52,7 @@
         i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        char0←⎕AV                                     ⍝ DyalogAPL classic char set
+        char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
         :If ~isDyalogClassic
             char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
             char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character

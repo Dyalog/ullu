@@ -2,6 +2,7 @@
     shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
     intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
     hashArray←1500⌶                 ⍝ pre-hash array
+    stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array
 
     ⍝ Interpreter version information
     isClassic←82=⎕dr''
