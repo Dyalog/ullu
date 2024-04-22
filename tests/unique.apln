@@ -127,7 +127,8 @@
                                  :Continue
                             :EndIf
                         r,← 'TCross1' desc RunVariations (data,data2) (data,data2) ⍝ all elements are concatenated
-                        r,← 'TCross2' desc RunVariations (data intertwine data2) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined\
+                        r,← 'TCross2' desc RunVariations (data intertwine data2) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined
+                        r,← 'TCross3' desc Assert (model (data data2))≡∪(data data2) ⍝ TCross1 but with ptr arrays
 
                         ⍝ datatype of the data will not change under unique
                         ⍝ 326 stays 326

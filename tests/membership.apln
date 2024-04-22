@@ -107,6 +107,7 @@
                         r,← 'TCross2' desc RunVariations (0⍨¨data2) data2 data                    ⍝ no match, all return 0
                         r,← 'TCross3' desc RunVariations (1⍨¨data) data (data,data2)              ⍝ first data match, returns 1
                         r,← 'TCross4' desc RunVariations ((1⍨¨data),(0⍨¨data2)) (data,data2) data ⍝ data match, data2 no match
+                        r,← 'TCross5' desc Assert ((1 1)≡(data2 data)∊(data data2)) ⍝ merge two different arrays creating a pointer array
                     :EndFor
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬

@@ -1,7 +1,7 @@
 :Namespace uniquemask
     Assert←#.unittest.Assert
     isDyalogClassic←#.utils.isClassic
-        doSlowTests←#.utils.doSlowTests
+    doSlowTests←#.utils.doSlowTests
     ⍝ util functions
     shuffle←#.utils.shuffle
     intertwine←#.utils.intertwine
@@ -129,15 +129,13 @@
                             :Continue ⍝ char0 has overlapping elements with char1 and Skip tests for unicode character sets in DyalogAPL classic
                         :EndIf
                         data2←⍎case2
-                        ⍝ datatonot←((data{(≢⍺)<≢⍵:⍺⋄⍵}data2))
                         desc←testDesc⍬
-                            :If (case≡case2) ∨ (case≡'bool') ⍝ skipping bool because of overlap with i1
-                                 :Continue
-                            :EndIf
-                        r,← 'TCross1' desc RunVariations (1⍨¨data,data2) (data,data2) ⍝ all elements are concatenated
-
-                        ⍝ todo: needs fixing because of different lengths of data and data2
-                        ⍝ r,← 'TCross2' desc Assert ({2/(⍵/1) intertwine ⍵/0}2÷⍨+/≢¨data data2)≡≠((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined\
+                        :If (case≡case2) ∨ (case≡'bool') ⍝ skipping bool because of overlap with i1
+                             :Continue
+                        :EndIf
+                        r,← 'TCross1' desc RunVariations (1⍨¨data,data2) (data,data2)   ⍝ all elements are concatenated
+                        r,← 'TCross2' desc RunVariations (model (2/data) intertwine (2/data2)) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined
+                        r,← 'TCross3' desc Assert (model (data data2))≡≠(data data2)    ⍝ TCross1 but with ptr arrays
 
                         ⍝ datatype of the result will always be boolean
                         r,← 'TGen3' desc Assert 11≡⎕dr ≠data intertwine data2

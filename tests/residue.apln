@@ -86,6 +86,7 @@
                         data2←(≢data)↑data2                                                             ⍝ strip data2 to be equal length to data
                         r,← 'TCross1' desc RunVariations (data model data2) data data2
                         r,← 'TCross2' desc RunVariations (data2 model data) data2 data
+                        r,← 'TCross3' desc Assert (((data2 data) model (data data2))≡(data2 data)|(data data2)) ⍝ merge two different arrays creating a pointer array
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
@@ -95,12 +96,12 @@
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
                     r,← 'T2' desc RunVariations (d1 model d2) d1 d2                                ⍝ generator func finds results on single element
-                    r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                     ⍝ check remainder with 1 result is a defined output
+                    r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                ⍝ check remainder with 1 result is a defined output
 
                     :If (⊂data)∊i1 i2 i3
                         halfLen←(¯1+≢data)÷2
-                        r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data              ⍝ sequences to test functionality of residue
-                        r,← 'TSeq1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data               ⍝ remainder sequence is ⍳(N-1), 0
+                        r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data         ⍝ sequences to test functionality of residue
+                        r,← 'TSeq1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data          ⍝ remainder sequence is ⍳(N-1), 0
                     :EndIf
 
                     :If case≡'dbl'
