@@ -142,7 +142,7 @@
 
                             d1←data[?≢data]
                             d2←data2[?≢(data2~d1)]
-                            r,← 'TCross5' desc RunVariations (d1 model d2) d1 d2 ⍝ generator func finds results on single element
+                            r,← 'TCross5' desc RunVariations (d1 model d2) d1 d2 ⍝ model finds results on single element
                         :EndFor
                         case2←⍬ ⍝ dispose case2
 
@@ -158,7 +158,7 @@
                                 c1÷c2 ⍝ N/A type ÷ N/A type
                             :Else
                                 f←1
-                                r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'')
+                                r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
                             :EndTrap
                             
                             f←0 ⍝ flag
@@ -166,7 +166,7 @@
                                 d1÷c2 ⍝ Number type ÷ N/A type
                             :Else
                                 f←1
-                                r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'')
+                                r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
                             :EndTrap
                             
                             f←0 ⍝ flag
@@ -174,7 +174,7 @@
                                 c1÷d1 ⍝ N/A type ÷ number type
                             :Else
                                 f←1
-                                r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡'')
+                                r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
                             :EndTrap
                         :EndFor
 
@@ -209,14 +209,14 @@
                             :If 1≡fr
                                 _←1÷1E¯309 ⍝ getting a infinite result with a non 0 number
                             :Else
-                                _←1÷1E¯6145
+                                _←1÷1E¯6145 ⍝ for ⎕fr=1287
                             :EndIf
                         :Else
                             f←1
                         :EndTrap
                         r,←'Tborder1' desc Assert f
                     :Else
-                        r,←'Tborder2' desc Assert 0≡1÷({⍵-1:1E¯6145⋄1E¯309}fr)
+                        r,←'Tborder2' desc Assert 0≡1÷({⍵-1:1E¯6145⋄1E¯309}fr) ⍝ testing for border values
                     :EndIf
 
                     ⍝ infinitesimally small divided by 0
