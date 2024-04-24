@@ -105,11 +105,11 @@
 
                 f←0 ⍝ flag
                 :Trap 11 ⍝ 11: Domain error
-                    ⌊c1
+                    |c1
                 :Else
                     f←1
                 :EndTrap
-                r,← 'TDomainE1' desc Assert f
+                r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'')
             :EndFor
         :EndFor
     ∇

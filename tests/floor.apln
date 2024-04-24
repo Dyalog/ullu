@@ -163,7 +163,7 @@
                     :Else
                         f←1
                     :EndTrap
-                    r,← 'TDomainE1' desc Assert f
+                    r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'')
                 :EndFor
                 case←⍬ ⍝ disposing case for testDesc
             :EndFor
