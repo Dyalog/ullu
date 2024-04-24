@@ -94,7 +94,6 @@
         :EndIf
         charptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
 
-
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
