@@ -66,7 +66,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
     ∇
 
-    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;charptr;c1;f
+    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;charptr;c1;f;Message
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645

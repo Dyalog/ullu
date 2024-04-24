@@ -34,7 +34,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
-    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
+    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl;char0;char1;char2;char3;charptr;c1;f;Message
         fr_dbl←645
         fr_decf←1287
 
@@ -114,7 +114,7 @@
         :EndFor
     ∇
 
-    ∇ r←test_magnitude_cmplx ;cmplx;Hcmplx;model;d;case;data;testDesc;desc
+    ∇ r←test_magnitude_cmplx ;cmplx;Hcmplx;model;d;case;data;testDesc;desc;i1;fr_dbl;fr_decf;fr;⎕FR
         i1←{⍵}⍳120                                    ⍝ 83: 8 bits signed integer
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but larger numbers
@@ -128,7 +128,7 @@
 
         :For fr :In 2 1
             ⎕FR←fr⊃fr_dbl fr_decf
-            case←'cmplx with non-cmplx nums with ⎕fr', ⎕fr  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
+            case←'cmplx with non-cmplx nums with ⎕fr', ⎕FR  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
             desc←testDesc⍬
             r,←'TcI1' desc RunVariations (,5,i1) (,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
         :EndFor
