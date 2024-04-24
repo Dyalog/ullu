@@ -5,6 +5,7 @@
 ⍝ Note that the magnitude of a complex number a+⍳b is defined to be (a^2+b^2)*(÷2).
 :Namespace magnitude
     Assert←#.unittest.Assert
+    isDyalogClassic←#.utils.isClassic
 
     model←{⍵×(¯1@(∊∘0)(⍵>0))}
     
@@ -33,7 +34,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRS
     ∇
 
-    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl
+    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl;char0;char1;char2;char3;charptr;c1;f;Message
         fr_dbl←645
         fr_decf←1287
 
@@ -41,10 +42,20 @@
         i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
         i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+
+        char0←⎕AV                                       ⍝ 82: DyalogAPL classic char set
+        :If ~isDyalogClassic
+            char1←⎕UCS ⍳255                             ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                      ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                    ⍝ 320: 32 bits character
+        :EndIf
+        charptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+
         dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
         ⍝ Hdbl and Sdbl is 645 but larger and smaller numbers
         Hdbl←{⍵,-⍵}1E14+(2×⍳50)
         Sdbl←{⍵,-⍵}(⍳10)×1E¯40
+
         ⍝ Hfl and Sfl is 1287 but larger and smaller numbers
         ⎕FR←fr_decf                                   ⍝ use ⎕FR=1287
         fl←{⍵,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
@@ -53,7 +64,7 @@
         ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
 
         r←⍬
-        testDesc←{'for ',case, '& ⎕FR:', ⎕FR}
+        testDesc←{'for ',case, ' & ⎕FR:', ⎕FR}
 
         :For fr :In 1 2
             ⎕FR←fr⊃fr_dbl fr_decf
@@ -64,8 +75,10 @@
                 :If case≢'bool'
                     r,←'T1' desc RunVariations ({(⊣,⊣)((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
                     r,←'T2' desc RunVariations (model data) data ⍝ custom func finds results on array
+                    r,←'T3' desc Assert (model¨ (data data))≡(|data data) ⍝ test on pointer array
+
                     d←data[?≢data]
-                    r,←'T3' desc RunVariations (model d) d ⍝ custom func finds results on single element
+                    r,←'T4' desc RunVariations (model d) d ⍝ custom func finds results on single element
                 :Else
                     r,←'Tb1' desc RunVariations (0 1) bool
                     r,← 'Tb2' desc RunVariations 0 (⊃bool)
@@ -80,10 +93,28 @@
             case←'for singleton scalar boolean' ⍝ edge case for when a singleton scalar boolean is passed as rarg to magnitude. 
             desc←testDesc⍬
             r,←'tb3' desc RunVariations (∧/1 0 1 0) (|∧/1 0 1 0) ⍝ | is applied here becuase of type conversion when argument is passed to RunVariations
+
+            ⍝ tests for known errors
+            :For case :In 'char0' 'char1' 'char2' 'char3' 'charptr'
+                :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'charptr') 
+                    :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                :EndIf
+                data←⍎case
+                desc←testDesc⍬
+                c1←data[?≢data]
+
+                f←0 ⍝ flag
+                :Trap 11 ⍝ 11: Domain error
+                    |c1
+                :Else
+                    f←1
+                :EndTrap
+                r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'')
+            :EndFor
         :EndFor
     ∇
 
-    ∇ r←test_magnitude_cmplx ;cmplx;Hcmplx;magCmplx;d;case;data;testDesc;desc
+    ∇ r←test_magnitude_cmplx ;cmplx;Hcmplx;model;d;case;data;testDesc;desc;i1;fr_dbl;fr_decf;fr;⎕FR
         i1←{⍵}⍳120                                    ⍝ 83: 8 bits signed integer
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but larger numbers
@@ -91,26 +122,26 @@
         fr_dbl←645
         fr_decf←1287
 
-        magCmplx←{0.5*⍨+.×⍨9 11○⍵}
+        model←{0.5*⍨+.×⍨9 11○⍵}
         r←⍬
         testDesc←{'for ',case}
 
         :For fr :In 2 1
             ⎕FR←fr⊃fr_dbl fr_decf
-            case←'cmplx with non-cmplx nums with ⎕fr', ⎕fr  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
+            case←'cmplx with non-cmplx nums with ⎕fr', ⎕FR  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
             desc←testDesc⍬
-            r,←'Ti1' desc RunVariations (,5,i1) (,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
+            r,←'TcI1' desc RunVariations (,5,i1) (,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
         :EndFor
 
         :For case :In 'cmplx' 'Hcmplx'
             data←⍎case
             desc←testDesc⍬
-            r,←'Tc1' desc RunVariations (magCmplx¨data) data
-
+            r,←'Tc1' desc RunVariations (model¨data) data
+            r,←'Tc2' desc Assert (model¨¨ (data data))≡(|data data) ⍝ test on pointer array
             :For d :In data
                 case←d
                 desc←testDesc⍬
-                r,←'Tc2' desc RunVariations (magCmplx d) d
+                r,←'Tc2' desc RunVariations (model d) d
             :EndFor
         :EndFor
     ∇

@@ -66,7 +66,7 @@
         tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
     ∇
 
-    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;charptr;c1;f
+    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;charptr;c1;f;Message
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -93,7 +93,6 @@
             char3←⎕UCS (100000+⍳100)                    ⍝ 320: 32 bits character
         :EndIf
         charptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-
 
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
@@ -164,7 +163,7 @@
                     :Else
                         f←1
                     :EndTrap
-                    r,← 'TDomainE1' desc Assert f
+                    r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'')
                 :EndFor
                 case←⍬ ⍝ disposing case for testDesc
             :EndFor
