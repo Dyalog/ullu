@@ -124,6 +124,41 @@
                         r,← 'TCross5' desc RunVariations (d1 model d2) d1 d2 ⍝ model finds results on single element
                     :EndFor
                     case2←⍬ ⍝ dispose case2
+
+                    ⍝ tests for known errors
+                    :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
+                        :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'ptr') 
+                            :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                        :EndIf
+                        data3←⍎case3
+                        desc←testDesc⍬
+                        c1←data3[?≢data3]
+                        c2←(data3~c1)[?¯1+≢data3]
+
+                        f←0 ⍝ flag
+                        :Trap 11 ⍝ 11: Domain error
+                            c1+c2 ⍝ N/A type + N/A type
+                        :Else
+                            f←1
+                            r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                        :EndTrap
+                        
+                        f←0 ⍝ flag
+                        :Trap 11 ⍝ 11: Domain error
+                            d1+c2 ⍝ Number type + N/A type
+                        :Else
+                            f←1
+                            r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                        :EndTrap
+                        
+                        f←0 ⍝ flag
+                        :Trap 11 ⍝ 11: Domain error
+                            c1+d1 ⍝ N/A type + number type
+                        :Else
+                            f←1
+                            r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                        :EndTrap
+                    :EndFor
                 :EndFor
             :EndFor
         :EndFor
