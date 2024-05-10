@@ -72,8 +72,7 @@
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕DIV:',⎕DIV}
 
-        case←⍬
-        case2←⍬
+        r case case2←⍬ ⍬ ⍬
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
