@@ -46,7 +46,7 @@
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
-        :If ~isDyalogClassic        
+        :If ~isDyalogClassic
             char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
             char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
             char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
@@ -74,7 +74,6 @@
 
         case←⍬
         case2←⍬
-        desc←testDesc⍬
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
