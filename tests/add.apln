@@ -4,7 +4,7 @@
     isDyalogClassic←#.utils.isClassic
 
     model←{
-        ⍺+⍵
+        ⍺--⍵
     }
 
     ∇ tRes←tData RunVariations exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
