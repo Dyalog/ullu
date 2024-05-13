@@ -27,15 +27,15 @@
     ∇ r←rep ExecuteTests tests ;r;tests;i;expr;t;nPass;nFail;time
         time←⎕AI[2]
         :Section ExecuteTests
-            ⎕←'Repetition:',rep, 'with Option:'
             ⍝ 0 is used to generate a random seed value and the random value is the noted in the logs
             ⎕RL←rl←{⍵≡0:?¯2+2*31⋄⍵} randLink
-            ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl
 
             tList←⍳≢tests
             r←⍬
             :For i :In tList
-                ⎕←''⋄tests[i]⋄⎕←''
+                :If ~prod
+                    ⎕←''⋄tests[i]⋄⎕←''
+                :EndIf
                 t←i⊃tests
                 r,←⍎expr←t
             :EndFor
@@ -43,29 +43,40 @@
 
         :Section EvalRepeatResult            
             nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-            ⎕←''⋄⎕←'Repetition',rep, 'tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
+            :If ~prod ∧ (nPass≡≢r) 
+                ⎕←'Repetition:',rep, 'with Option:'
+                ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl
+                ⎕←''⋄⎕←'Repetition',rep, 'tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
+            :EndIf
         :EndSection
     ∇
 
     ⍝ This function runs the tests
     ⍝ It takes 1 mandatory and 3 optional arguments [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value] (0 default)
-    ∇ RunTests args ;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep
-        time←⎕AI[2] ⍝ Start time of execution of tests 
-        ⎕←''
+    ∇ z←RunTests args ;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep;versionInfo
+        time←⎕AI[2] ⍝ Start time of execution of tests
+        ⎕pw←1000
         :Section parseArguments ⍝ This section parses and verifies input arguments
             'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳5)↓11
-            (testNS verbose stop reps randLink)←5↑args,0 0 0 0 0
+            (testNS prod verbose stop reps randLink)←6↑args,0 0 0 0 0 0
+            'Prod can only be 0 or 1'⎕SIGNAL (prod ∊ 0 1)↓11
             'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
             'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11
             reps←{reps<1:1⋄reps}reps
-            ⎕←'Options:'
+            :If prod
+                verbose←0
+            :Else
+                ⎕←''
+                ⎕←'Version information:'
+                versionInfo←⎕SE.UCMD 'tools.version'
+                ⎕←versionInfo
+            :EndIf
+
             :If verbose
+                ⎕←'Options:'
                 ⎕←(6⍴' '),'verbose:', verbose
                 ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
             :EndIf
-            ⎕←''
-            ⎕←'Version information:'
-            ⎕SE.UCMD 'tools.version'
         :EndSection
         
         :Section FetchTests
@@ -80,7 +91,12 @@
         
         :Section EvalResult            
             nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-            ⎕←''⋄⎕←'All tests completed: ', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
+            :If ~prod ∧ (nPass≡≢r) 
+                ⎕←''⋄⎕←'All tests completed for',testNS,':', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
+            :EndIf
+            :If prod
+                z←nPass≡≢r
+            :EndIf
         :EndSection
     ∇
 

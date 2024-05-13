@@ -1,0 +1,239 @@
+:Namespace divide
+    Assert←#.unittest.Assert
+    stripToSameLen←#.utils.stripToSameLen
+    isDyalogClassic←#.utils.isClassic
+    dyalogVersion←#.utils.version
+
+    model←{
+        ⍺⌹¨⍵
+    }
+
+    ∇ tRes←tData RunVariations exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
+        (expectedR larg rarg)←exp
+        (tID tCmt)←tData
+        tRes←⍬
+
+        ⍝ normal
+        actualR←larg÷rarg
+        tRes,←tData Assert expectedR≡actualR
+
+        ⍝ empty
+        actualRE←(0⍴larg)÷(0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
+
+        ⍝ different shapes
+        shape←?(?4)/4
+        actualRS←(shape⍴larg)÷(shape⍴rarg)
+        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
+
+        ⍝ different shapes with 0 in shape
+        shapeW0←(0@(?(≢shape)))shape
+        actualRSW0←(shapeW0⍴larg)÷(shapeW0⍴rarg)
+        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
+    ∇
+
+    ∇ r←test_divide;ct_default;dct_default;fr_dbl;fr_decf;div_0;div_1;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Sdbl;Hdbl;Hfl;fl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;⎕FR;div;⎕DIV;data;d1;f;_;d2;data2;Message;data3;case3;c1;c2;almostd1S;almostd1B;almost0
+        ct_default←1E¯14
+        dct_default←1E¯28
+        fr_dbl←645
+        fr_decf←1287
+        div_0←0 ⍝ ⎕DIV values
+        div_1←1
+
+        ⍝ All data generated is unique
+        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+        i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
+        i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
+        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
+        :If ~isDyalogClassic        
+            char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
+        :EndIf
+        charptr←(13↑⎕a) (13↓⎕a)                       ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+        ⍝ Hdbl is 645 but larger numbers to test for CT value
+        ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
+        ⍝ come under the region of tolerant equality
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)                       ⍝ 645: large numbers
+        Sdbl←{⍵,-⍵}(⍳500)÷1000                        ⍝ 645: Small numbers
+
+        ⍝ Hfl is 1287 but larger numbers to test for CT value
+        ⍝ far intervals are chosen for non overlap 
+        ⍝ with region of tolerant equality
+        ⎕FR←fr_decf
+        fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
+        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
+        ⎕FR←fr_dbl
+
+        r←⍬
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕DIV:',⎕DIV}
+
+        case←⍬
+        case2←⍬
+        desc←testDesc⍬
+
+        :For ct :In 0 1
+            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
+
+            :For fr :In 2 1
+                ⎕FR←fr⊃fr_dbl fr_decf
+
+                :For div :In 0 1
+                    ⎕DIV←div
+                    case←'independant'
+                    desc←testDesc⍬
+
+                    r,←'TI1' desc Assert (~div)≡0÷0
+                    r,←'TNull1' desc Assert ⍬≡''÷0
+                    r,←'TNull2' desc Assert ⍬≡⍬÷0
+                    r,←'TNull3' desc Assert ⍬≡0÷''
+                    r,←'TNull4' desc Assert ⍬≡0÷⍬
+
+                    :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+                        data←⍎case
+                        desc←testDesc⍬
+
+                        ⍝ General tests to test the basic rules of divide
+                        r,← 'TGen1' desc Assert (≢data)≡≢data÷data
+                        r,← 'TGen2' desc Assert (⎕dr bool)≡⎕dr data ÷ data
+
+                        d1←(data~0)[?≢data~0]
+                        f←1
+                        :Trap 11
+                            _←d1÷0
+                            f←div
+                        :EndTrap
+                        r,←'TI1' desc Assert f
+
+                        :If case≢'bool'
+                            r,← 'T1' desc RunVariations (1⍨¨data) data data ⍝ division with the same number gives a 1
+                            d1←data[?≢data]
+                            d2←data[?≢(data~d1)]
+                            r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ model func finds results on single element
+                            r,← 'T3' desc RunVariations data data 1         ⍝ Identity
+                        :EndIf
+
+                        ⍝ Cross type tests
+                        :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                            data2←⍎case2
+                            data data2←data stripToSameLen data2
+                            desc←testDesc⍬
+                            :If (case≡case2)
+                                :Continue
+                            :EndIf
+
+                            r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2) ⍝ data type test
+
+                            r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
+
+                            :If case≡'bool'
+                                f←1 ⍝ flag
+                                :Trap 11 ⍝ 11: DOMAIN ERROR: Divide by zero
+                                        _←data2÷data
+                                :Else
+                                    f←~div
+                                    r,← 'TDomainE1' desc Assert (((f) ∧ (⎕dmx.Message≡'Divide by zero')) ∨ ((dyalogVersion≤19) ∧ 1289≡⎕DR data2)) ⍝ check DMX message for divide by 0
+                                :EndTrap
+                            :Else
+                                r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ reverse of TCross1 without any div by 0 case
+                                r,← 'TCross3' desc RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
+                                r,← 'TCross4' desc Assert (((data2 data) model¨ (data data2))≡(data2 data)÷(data data2)) ⍝ merge two different arrays creating a pointer array
+                            :EndIf
+
+                            d1←data[?≢data]
+                            d2←data2[?≢(data2~d1)]
+                            r,← 'TCross5' desc RunVariations (d1 model d2) d1 d2 ⍝ model finds results on single element
+                        :EndFor
+                        case2←⍬ ⍝ dispose case2
+
+                        ⍝ tests for known errors
+                        :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
+                            :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'ptr') 
+                                :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                            :EndIf
+                            data3←⍎case3
+                            desc←testDesc⍬
+                            c1←data3[?≢data3]
+                            c2←(data3~c1)[?¯1+≢data3]
+
+                            f←0 ⍝ flag
+                            :Trap 11 ⍝ 11: Domain error
+                                c1÷c2 ⍝ N/A type ÷ N/A type
+                            :Else
+                                f←1
+                                r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                            :EndTrap
+                            
+                            f←0 ⍝ flag
+                            :Trap 11 ⍝ 11: Domain error
+                                d1÷c2 ⍝ Number type ÷ N/A type
+                            :Else
+                                f←1
+                                r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                            :EndTrap
+                            
+                            f←0 ⍝ flag
+                            :Trap 11 ⍝ 11: Domain error
+                                c1÷d1 ⍝ N/A type ÷ number type
+                            :Else
+                                f←1
+                                r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                            :EndTrap
+                        :EndFor
+
+                        ⍝ tests with comparison tolerance
+                        :If 1289≡⎕DR data ⍝ skipping ct tests for complex because complex division works in a different way
+                            :Continue
+                        :EndIf
+                        d1←(data~0)[?≢data~0] ⍝ 0 interferes with the calculations of almostd1S and almostd1B hence it is removed
+                        almostd1S←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                        almostd1B←d1×1+fr⊃1E¯1×ct_default dct_default ⍝ infinitesimally close to d1 but bigger
+                        :If ct ⍝ tolerant
+                            :If (⊂d1)∊Hdbl, Hfl ⍝ bigger numbers
+                                ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                                r,← 'CTDefault1' desc Assert (((1≡d1÷d1+1) ∨ ((fr=2) ∧ case≡'Hdbl')) )
+                            :Else ⍝ other than bigger numbers
+                                r,← 'CTDefault2' desc Assert (1≢d1÷d1+1)                    ⍝ not tolerantly equal for other numbers
+                                r,← 'CTDefaultAlmostS' desc Assert (1≡d1÷almostd1S)         ⍝ d1 and almostd1S are tolerantly equal
+                                r,← 'CTDefaultAlmostB' desc Assert (1≡d1÷almostd1B)         ⍝ d1 and almostd1B are tolerantly equal
+                            :EndIf
+                        :Else ⍝ exact
+                            ⍝ ⍝ d≠d+1 for all numeric types
+                            r,← 'CTZero' desc Assert ((1≢∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
+                            r,← 'CTZeroAlmostS' desc Assert (1≢d1÷almostd1S)
+                            r,← 'CTZeroAlmostB' desc Assert (1≢d1÷almostd1B)
+                        :EndIf
+                    :EndFor
+
+                    ⍝ improper ⎕DMX messages are ignored here
+                    :If 0≡div
+                        f←0 ⍝ flag
+                        :Trap 11 ⍝ 11: Domain error
+                            :If 1≡fr
+                                _←1÷1E¯309 ⍝ getting a infinite result with a non 0 number
+                            :Else
+                                _←1÷1E¯6145 ⍝ for ⎕fr=1287
+                            :EndIf
+                        :Else
+                            f←1
+                        :EndTrap
+                        r,←'Tborder1' desc Assert f
+                    :Else
+                        r,←'Tborder2' desc Assert 0≡1÷({⍵-1:1E¯6145⋄1E¯309}fr) ⍝ testing for border values
+                    :EndIf
+
+                    ⍝ infinitesimally small divided by 0
+                    :If ~(div≡0) ∧ (fr≡2) ∧ ct≡1 ⍝ we don't want to test for divide by 0 here
+                        almost0←((?0)×fr⊃⎕CT ⎕DCT)
+                        r,←'almost0Div0' desc Assert (~div)≡almost0÷0
+                    :EndIf
+                :EndFor
+            :EndFor
+        :EndFor
+    ∇
+
+:EndNamespace

@@ -1,4 +1,4 @@
-:Namespace unique
+:Namespace uniquemask
     Assert←#.unittest.Assert
     isDyalogClassic←#.utils.isClassic
     doSlowTests←#.utils.doSlowTests
@@ -7,8 +7,15 @@
     intertwine←#.utils.intertwine
     hashArray←#.utils.hashArray
 
-    ⍝ modelUnion←{⍺,(∧/⍺≢¨⍵)/⍵} ⍝ model function for union (X∪Y) (used to model unique)
-    model←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ model function for unique
+    ⍝ model ← { ⍝ from aplwiki nubsieve page ⍝ does not work if shape has a 0
+    ⍝     ⎕IO←0
+    ⍝     notin ← (⍳=≢⍤⊣)⍨
+    ⍝     x ← 1/⍵                          ⍝ Treat scalar as vector
+    ⍝     m ← ⍬                            ⍝ Initial mask
+    ⍝     m ⊣ {m,←(⍵⌷x) notin m⌿⍵↑x}¨ ⍳≢x
+    ⍝ }
+    modelUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ from tests/unique.apln
+    model←(⍳⍤≢=⍳⍨)⍤(modelUnique⍳1/⊢)
 
     ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0;actualRSc;expectedRSc
         (expectedR rarg)←exp
@@ -16,34 +23,34 @@
         tRes←⍬
 
         ⍝ normal
-        actualR←∪rarg
+        actualR←≠rarg
         tRes,←tData Assert expectedR≡actualR
 
         ⍝ scalar
         ele←(?∘≢⊃⊢)rarg
-        actualRSc←∪ele
-        expectedRSc←,ele
+        actualRSc←≠ele
+        expectedRSc←(,1⍨¨ele)
         tRes,←('Scalar',tID) tCmt Assert expectedRSc≡actualRSc
 
         ⍝ empty
-        actualRE←∪0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+        actualRE←≠0⍴rarg ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
         expectedRE←0∘⌿expectedR ⍝ empty array along first axis
         tRes,←('Empty',tID) tCmt Assert expectedRE≡actualRE ⍝ empty array is expectedR
 
-        ⍝ ⍝ different shapes
+        ⍝ different shapes
         shape←?(?4)/4
-        actualRS←∪(shape⍴rarg)
+        actualRS←≠(shape⍴rarg)
         expectedRS←model shape⍴rarg
         tRes,←('Multiple',tID) tCmt Assert expectedRS ≡ actualRS
 
         ⍝ different shapes with 0 in shape
         shapeW0←(0@(?(≢shape)))shape
-        actualRSW0←∪shapeW0⍴rarg
+        actualRSW0←≠shapeW0⍴rarg
         expectedRSW0←model shapeW0⍴rarg
         tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
     ∇
 
-    ∇ r←test_unique ;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;Sdbl;cmplx;Hcmplx;fl;Hfl;⎕FR;⎕CT;⎕DCT;testDesc;case;case2;desc;ct;fr;data;data2;shuffledData;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d;u;s;x
+    ∇ r←test_uniquemask;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;⎕FR;fl;Hfl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;u;s;x;data;data2;shuffledData;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -55,10 +62,10 @@
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
-        :If ~isDyalogClassic        
-            char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
-            char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
-            char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
+        :If ~isDyalogClassic
+            char1←⎕UCS (100+⍳100)                         ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
         :EndIf
         ptr←(13↑⎕a) (13↓⎕a)                           ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
         dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
@@ -103,51 +110,48 @@
                     case←u s
                     desc←testDesc⍬
                     x←s 2⍴?u⍴0
-                    r,←'TICC1' desc Assert (model x)≡(∪x)
+                    r,←'TICC1' desc Assert (model x)≡(≠x)
                 :EndFor
 
-                :For case :In 'bool' 'i1' 'i2' 'i3' 'char0' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+                :For case :In 'bool' 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
                     :If (isDyalogClassic) ∧ ((case≡'char1') ∨ (case≡'char2') ∨ (case≡'char3'))
                         :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
                     :EndIf
                     data←⍎case
                     desc←testDesc⍬
 
-                    ⍝ General tests to test the basic rules of unique
-                    r,← 'TGen1' desc Assert (≢data)≥≢∪data                        ⍝ unique cannot return a result that is exceding the number of elements than the input
-                    r,← 'TGen2' desc Assert (⎕dr data)≡⎕dr ∪data intertwine data  ⍝ datatype of the data will not change under unique
-
+                    ⍝ General tests to test the basic rules of uniquemask
+                    r,← 'TGen1' desc Assert (≢data)≥≢≠data                  ⍝ uniquemask cannot return a result that is exceding the number of elements than the input
+                    r,← 'TGen2' desc Assert 11≡⎕dr ≠data intertwine data    ⍝ datatype of the result will always be boolean
+                
                     :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
                         :If (case≡'char0') ∨ (isDyalogClassic) ∧ ((case2≡'char1') ∨ (case2≡'char2') ∨ (case2≡'char3'))
                             :Continue ⍝ char0 has overlapping elements with char1 and Skip tests for unicode character sets in DyalogAPL classic
                         :EndIf
                         data2←⍎case2
                         desc←testDesc⍬
-                            :If (case≡case2) ∨ (case≡'bool') ⍝ skipping bool because of overlap with i1
-                                 :Continue
-                            :EndIf
-                        r,← 'TCross1' desc RunVariations (data,data2) (data,data2) ⍝ all elements are concatenated
-                        r,← 'TCross2' desc RunVariations (data intertwine data2) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined
-                        r,← 'TCross3' desc Assert (model (data data2))≡∪(data data2) ⍝ TCross1 but with ptr arrays
+                        :If (case≡case2) ∨ (case≡'bool') ⍝ skipping bool because of overlap with i1
+                             :Continue
+                        :EndIf
+                        r,← 'TCross1' desc RunVariations (1⍨¨data,data2) (data,data2)   ⍝ all elements are concatenated
+                        r,← 'TCross2' desc RunVariations (model (2/data) intertwine (2/data2)) ((2/data) intertwine (2/data2)) ⍝ all elements are doubled & perfectly intertwined
+                        r,← 'TCross3' desc Assert (model (data data2))≡≠(data data2)    ⍝ TCross1 but with ptr arrays
 
-                        ⍝ datatype of the data will not change under unique
-                        ⍝ 326 stays 326
-                        ⍝ char + num becomes 326
-                        ⍝ char + char and num + num becomes the greater sized type
-                        r,← 'TGen3' desc Assert ((data){(⎕dr ⍺){326∊(⍺ ⍵):326⋄0∊≠ 0 2∊⍨10|(⍺ ⍵):⍺⌈⍵⋄326}⎕dr ⍵}(data2))≡⎕dr ∪data intertwine data2
+                        ⍝ datatype of the result will always be boolean
+                        r,← 'TGen3' desc Assert 11≡⎕dr ≠data intertwine data2
                     :EndFor
 
                     case2←⍬ ⍝ dispose case2
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations data data                               ⍝ all elements of data are unique
-                    r,← 'T2' desc RunVariations data (data,data)                           ⍝ all elements of data are repeated sequentially
-                    r,← 'T3' desc RunVariations data (data intertwine data)             ⍝ all elements are perfectly intertwined
-                    r,← 'T4' desc RunVariations data (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
-
+                    r,← 'T1' desc RunVariations (1⍨¨data) data                               ⍝ all elements of data are unique
+                    r,← 'T2' desc RunVariations ((1⍨¨data),0⍨¨data) (data,data)                           ⍝ all elements of data are repeated sequentially
+                    r,← 'T3' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (data intertwine data)             ⍝ all elements are perfectly intertwined
+                    r,← 'T4' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
+                
                     shuffledData←↑shuffle data
                     r,← 'T5' desc RunVariations (model shuffledData) shuffledData   ⍝ shuffle data without creating duplicate data
-
+                
                     repetitions←?6
                     shuffledRepeatedData←↑shuffle repetitions/data
                     r,← 'T6' desc RunVariations (model shuffledRepeatedData) shuffledRepeatedData  ⍝ duplicate and shuffle
@@ -160,38 +164,31 @@
                         :If ct ⍝ tolerant
                             :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
                                 ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
-                                r,← 'CTDefault1' desc Assert (((,d1)≡∪d1,d1+1) ∨ ((fr=2) ∧ case≡'Hdbl'))
+                                r,← 'CTDefault1' desc Assert (((1 0)≡≠d1,d1+1) ∨ ((fr=2) ∧ case≡'Hdbl'))
                             :Else ⍝ other than bigger numbers
-                                r,← 'CTDefault2' desc Assert ((d1,d1+1)≡∪d1,d1+1)               ⍝ not tolerantly equal for other numbers
-                                r,← 'CTDefaultAlmostS' desc Assert ((,d1)≡∪d1,almostd1S)        ⍝ d1 and almostd1S are tolerantly equal
-                                r,← 'CTDefaultAlmostB' desc Assert ((,d1)≡∪d1,almostd1B)        ⍝ d1 and almostd1B are tolerantly equal
+                                r,← 'CTDefault2' desc Assert ((1 1)≡≠d1,d1+1)               ⍝ not tolerantly equal for other numbers
+                                r,← 'CTDefaultAlmostS' desc Assert ((1 0)≡≠d1,almostd1S)        ⍝ d1 and almostd1S are tolerantly equal
+                                r,← 'CTDefaultAlmostB' desc Assert ((1 0)≡≠d1,almostd1B)        ⍝ d1 and almostd1B are tolerantly equal
                             :EndIf
                         :Else ⍝ exact
                             ⍝ ⍝ d≠d+1 for all numeric types
-                            r,← 'CTZero' desc Assert (((d1,d1+1)≡∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
-                            r,← 'CTZeroAlmostS' desc Assert (((d1,almostd1S)≡∪d1,almostd1S) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
-                            r,← 'CTZeroAlmostB' desc Assert (((d1,almostd1B)≡∪d1,almostd1B) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
+                            r,← 'CTZero' desc Assert (((1,1)≡≠d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
+                            r,← 'CTZeroAlmostS' desc Assert (((1,1)≡≠d1,almostd1S) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
+                            r,← 'CTZeroAlmostB' desc Assert (((1,1)≡≠d1,almostd1B) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
                         :EndIf
                     :EndIf
                 :EndFor
-
                 ⍝ Independant tests
                 case←'independant'
                 case2←⍬
                 desc←testDesc⍬
 
-                ⍝ Generating singleton scalar boolean using ∧/1 0 1 0 and ∧/1 1 1 1
-                ⍝ 2/ to generate a bool vector that gives one result element when ∪ is applied
-                r,←'TboolI1' desc Assert (,0)≡∪2/∧/1 0 1 0
-                r,←'TboolI2' desc Assert (,1)≡∪2/∧/1 1 1 1
-
                 ⍝ The special case can be hit if we have two 8 bit int numbers in the input: a & b, and a is b-⎕CT. 
                 ⍝ That means, that when we get to element b in the loop, we will find element a and hit the case.
                 ⍝ Occurrence: same.c.html#L1152
                 d←i1[?≢i1]
-                r,←'TCTI1' desc Assert (,d-({fr-1:⎕dct⋄⎕ct}⍬))≡(∪ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
+                r,←'TCTI1' desc Assert (1 0)≡(≠ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
             :EndFor
         :EndFor
     ∇
-
 :EndNamespace
