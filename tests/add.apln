@@ -36,8 +36,6 @@
         dct_default←1E¯28
         fr_dbl←645
         fr_decf←1287
-        div_0←0 ⍝ ⎕DIV values
-        div_1←1
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
@@ -68,7 +66,7 @@
         Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
         ⎕FR←fr_dbl
 
-        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕DIV:',⎕DIV}
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
 
         r case case2←⍬ ⍬ ⍬
 
@@ -93,8 +91,7 @@
 
                     ⍝ General tests to test the basic rules of divide
                     r,← 'TGen1' desc Assert (≢data)≡≢data+data
-                    ⍝ todo
-                    ⍝ r,← 'TGen2' desc Assert (⎕dr data)≡⎕dr data + data
+                    r,← 'TGen2' desc Assert ({1287≡(⎕dr ⍵): ⎕fr≡⎕dr ⍵ + ⍵ ⋄(⎕dr ⍵)≤⎕dr ⍵ + ⍵}data)
 
                     r,← 'T1' desc RunVariations (2× data) data data ⍝ addition with the same number doubles the result
                     d1←data[?≢data]
