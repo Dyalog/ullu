@@ -90,8 +90,9 @@
                     desc←testDesc⍬
 
                     ⍝ General tests to test the basic rules of divide
-                    r,← 'TGen1' desc Assert (≢data)≡≢data+data
-                    r,← 'TGen2' desc Assert ({1287≡(⎕dr ⍵): ⎕fr≡⎕dr ⍵ + ⍵ ⋄(⎕dr ⍵)≤⎕dr ⍵ + ⍵}data)
+                    r,← 'TGen1' desc Assert (≢data)≡≢data+data ⍝ length of the array will not change
+                    r,← 'TGen2' desc Assert ({1287≡(⎕dr ⍵): ⎕fr≡⎕dr ⍵ + ⍵ ⋄(⎕dr ⍵)≤⎕dr ⍵ + ⍵}data) ⍝ datatype will always be greater than or equal to the original datatype, excluding floats
+                    r,← 'TGen3' desc Assert (11≡⎕dr data+-data) ⍝ should always be an array of 0s
 
                     r,← 'T1' desc RunVariations (2× data) data data ⍝ addition with the same number doubles the result
                     d1←data[?≢data]
@@ -108,8 +109,10 @@
                             :Continue
                         :EndIf
 
-                        ⍝ todo
-                        ⍝ r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2) ⍝ data type test
+                        ⍝ data type test
+                        ⍝ except for 1287, the maximum of the ⎕dr value of data and data2 will be the result
+                        ⍝ skipped for cmplx
+                        r,← 'TGen3' desc Assert (data{(1287≡(⎕dr ⍺)) ∨ (1287≡(⎕dr ⍵)): ⎕fr≡⎕dr ⍺ + ⍵ ⋄((⎕dr ⍺)⌈⎕dr ⍵)≤⎕dr ⍺ + ⍵}data2) ∨ ((1289≡⎕dr data2)∨(1289≡⎕dr data))
 
                         r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
                         r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ reverse of TCross1
