@@ -200,8 +200,8 @@
                                 r,← 'CTDefaultAlmostB' desc Assert (1≡d1÷almostd1B)         ⍝ d1 and almostd1B are tolerantly equal
                             :EndIf
                         :Else ⍝ exact
-                            ⍝ ⍝ d≠d+1 for all numeric types
-                            r,← 'CTZero' desc Assert ((1≢∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
+                            ⍝ d≠d+1 for all numeric types
+                            r,← 'CTZero' desc Assert ((1≢d1÷d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
                             r,← 'CTZeroAlmostS' desc Assert (1≢d1÷almostd1S)
                             r,← 'CTZeroAlmostB' desc Assert (1≢d1÷almostd1B)
                         :EndIf

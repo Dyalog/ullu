@@ -102,12 +102,12 @@
                 
                     ⍝ Cross type tests
                     :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                        data2←⍎case2
-                        data data2←data stripToSameLen data2
-                        desc←testDesc⍬
                         :If (case≡case2)
                             :Continue
                         :EndIf
+                        data2←⍎case2
+                        data data2←data stripToSameLen data2
+                        desc←testDesc⍬
 
                         ⍝ data type test
                         ⍝ except for 1287, the maximum of the ⎕dr value of data and data2 will be the result
@@ -124,6 +124,30 @@
                         r,← 'TCross5' desc RunVariations (d1 model d2) d1 d2 ⍝ model finds results on single element
                     :EndFor
                     case2←⍬ ⍝ dispose case2
+                    desc←testDesc⍬
+
+                    ⍝ tests with comparison tolerance
+                    :If 1289≡⎕DR data ⍝ skipping ct tests for complex because complex division works in a different way
+                        :Continue
+                    :EndIf
+                    d1←(data~0)[?≢data~0] ⍝ 0 interferes with the calculations of almostd1S and almostd1B hence it is removed
+                    almostd1S←d1×1-fr⊃1E¯1×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                    almostd1B←d1×1+fr⊃1E¯1×ct_default dct_default ⍝ infinitesimally close to d1 but bigger
+                    :If ct ⍝ tolerant
+                        :If (⊂d1)∊Hdbl, Hfl ⍝ bigger numbers
+                            ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
+                            r,← 'CTDefault1' desc Assert ((((d1+d1)≡d1+d1+1) ∨ ((fr=2) ∧ case≡'Hdbl')) )
+                        :Else ⍝ other than bigger numbers
+                            r,← 'CTDefault2' desc Assert ((d1+d1)≢d1+d1+1)                    ⍝ not tolerantly equal for other numbers
+                            r,← 'CTDefaultAlmostS' desc Assert ((d1+d1)≡d1+almostd1S)         ⍝ d1 and almostd1S are tolerantly equal
+                            r,← 'CTDefaultAlmostB' desc Assert ((d1+d1)≡d1+almostd1B)         ⍝ d1 and almostd1B are tolerantly equal
+                        :EndIf
+                    :Else ⍝ exact
+                        ⍝ d≠d+1 for all numeric types
+                        r,← 'CTZero' desc Assert (((d1+d1+1)≡d1+d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
+                        r,← 'CTZeroAlmostS' desc Assert ((d1+d1)≢d1+almostd1S) ⍝∨ ((fr=1) ∧ case≡'bool'))
+                        r,← 'CTZeroAlmostB' desc Assert ((d1+d1)≢d1+almostd1B)
+                    :EndIf
 
                     ⍝ tests for known errors
                     :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
