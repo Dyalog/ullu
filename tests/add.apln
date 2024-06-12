@@ -99,6 +99,8 @@
                     d2←data[?≢(data~d1)]
                     r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ model func finds results on single element
                     r,← 'T3' desc RunVariations data data 0         ⍝ Identity
+                    r,← 'T4' desc RunVariations d1 d1 0             ⍝ Identity
+                    r,← 'T5' desc RunVariations (d1 d1) d1 (0 0)    ⍝ Identity (also hits arith_su.c#352 l_ladd_l)
                 
                     ⍝ Cross type tests
                     :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
