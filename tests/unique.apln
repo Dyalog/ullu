@@ -167,7 +167,7 @@
                                 r,← 'CTDefaultAlmostB' desc Assert ((,d1)≡∪d1,almostd1B)        ⍝ d1 and almostd1B are tolerantly equal
                             :EndIf
                         :Else ⍝ exact
-                            ⍝ ⍝ d≠d+1 for all numeric types
+                            ⍝ d≠d+1 for all numeric types
                             r,← 'CTZero' desc Assert (((d1,d1+1)≡∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
                             r,← 'CTZeroAlmostS' desc Assert (((d1,almostd1S)≡∪d1,almostd1S) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
                             r,← 'CTZeroAlmostB' desc Assert (((d1,almostd1B)≡∪d1,almostd1B) ∨ ((fr=2) ∧ 1289≡⎕dr d1)) ⍝ due to limited precision of IEEE 745 doubles cmplx is ignored with ⎕fr←1287
