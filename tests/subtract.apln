@@ -99,10 +99,11 @@
                     r,← 'T5' desc RunVariations d1 d1 0             ⍝ Identity
                     r,← 'T6' desc RunVariations (-d1) 0 d1          ⍝ Identity
                     r,← 'T7' desc RunVariations (d1 d1) d1 (0 0)    ⍝ Identity (also hits arith_su.c#352 l_ladd_l) TODO
+                    r,← 'T8' desc Assert ((|d1){(-⍵-⍺)≡⍺-⍵}|d2)     ⍝ Anti-commutative 
 
                     ⍝ General tests to test the basic rules of subtract
                     r,← 'TGen1' desc Assert (≢data)≡≢data-data ⍝ length of the array will not change
-                    r,← 'TGen2' desc Assert (d1{(1287≡⎕dr ⍺-⍵)∨((⎕dr ⍺) ⌈ ⎕dr ⍵)≥⎕dr ⍺-⍵}d2) ⍝ datatype will always be greater than or equal to the original datatype
+                    ⍝ r,← 'TGen2' desc Assert (d1{(1287≡⎕dr ⍺-⍵)∨((⎕dr ⍺) ⌈ ⎕dr ⍵)≥⎕dr ⍺-⍵}d2) ⍝ datatype will always be greater than or equal to the original datatype
                     r,← 'TGen3' desc Assert (11≡⎕dr data-data) ⍝ should always be an array of 0s
 
                     ⍝ Cross type tests
@@ -115,7 +116,7 @@
                         desc←testDesc⍬
 
                         ⍝ data type test
-                        r,← 'TGen4' desc Assert (d1{(1287≡⎕dr ⍺-⍵)∨((⎕dr ⍺) ⌈ ⎕dr ⍵)≥⎕dr ⍺-⍵}d2)
+                        ⍝ r,← 'TGen4' desc Assert (d1{(1287≡⎕dr ⍺-⍵)∨((⎕dr ⍺) ⌈ ⎕dr ⍵)≥⎕dr ⍺-⍵}d2)
 
                         r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
                         r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ reverse of TCross1
@@ -142,8 +143,8 @@
                     ⍝         r,← 'CTDefault1' desc Assert ((((d1-d1)≡d1-d1+1) ∨ ((fr=2) ∧ case≡'Hdbl')) )
                     ⍝     :Else ⍝ other than bigger numbers
                     ⍝         r,← 'CTDefault2' desc Assert ((d1-d1)≢d1-d1+1)                    ⍝ not tolerantly equal for other numbers
-                    ⍝         r,← 'CTDefaultAlmostS' desc Assert ((d1-d1)≡d1-almostd1S)         ⍝ d1 and almostd1S are tolerantly equal
-                    ⍝         r,← 'CTDefaultAlmostB' desc Assert ((d1-d1)≡d1-almostd1B)         ⍝ d1 and almostd1B are tolerantly equal
+                    ⍝         ⍝ r,← 'CTDefaultAlmostS' desc Assert ((d1-d1)≡d1-almostd1S)         ⍝ d1 and almostd1S are tolerantly equal
+                    ⍝         ⍝ r,← 'CTDefaultAlmostB' desc Assert ((d1-d1)≡d1-almostd1B)         ⍝ d1 and almostd1B are tolerantly equal
                     ⍝     :EndIf
                     ⍝ :Else ⍝ exact
                     ⍝     ⍝ d≠d+1 for all numeric types
