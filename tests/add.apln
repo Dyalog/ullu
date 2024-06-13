@@ -116,7 +116,7 @@
                         ⍝ data type test
                         ⍝ except for 1287, the maximum of the ⎕dr value of data and data2 will be the result
                         ⍝ skipped for cmplx
-                        r,← 'TGen3' desc Assert (data{(1287≡(⎕dr ⍺)) ∨ (1287≡(⎕dr ⍵)): ⎕fr≡⎕dr ⍺ + ⍵ ⋄((⎕dr ⍺)⌈⎕dr ⍵)≤⎕dr ⍺ + ⍵}data2) ∨ ((1289≡⎕dr data2)∨(1289≡⎕dr data))
+                        r,← 'TGen4' desc Assert (data{(1287≡(⎕dr ⍺)) ∨ (1287≡(⎕dr ⍵)): ⎕fr≡⎕dr ⍺ + ⍵ ⋄((⎕dr ⍺)⌈⎕dr ⍵)≤⎕dr ⍺ + ⍵}data2) ∨ ((1289≡⎕dr data2)∨(1289≡⎕dr data))
 
                         r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
                         r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ reverse of TCross1
