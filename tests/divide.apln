@@ -46,7 +46,7 @@
         i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
         i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
         char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
-        :If ~isDyalogClassic        
+        :If ~isDyalogClassic
             char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
             char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
             char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
@@ -72,9 +72,7 @@
         r←⍬
         testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕DIV:',⎕DIV}
 
-        case←⍬
-        case2←⍬
-        desc←testDesc⍬
+        r case case2←⍬ ⍬ ⍬
 
         :For ct :In 0 1
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
@@ -202,8 +200,8 @@
                                 r,← 'CTDefaultAlmostB' desc Assert (1≡d1÷almostd1B)         ⍝ d1 and almostd1B are tolerantly equal
                             :EndIf
                         :Else ⍝ exact
-                            ⍝ ⍝ d≠d+1 for all numeric types
-                            r,← 'CTZero' desc Assert ((1≢∪d1,d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
+                            ⍝ d≠d+1 for all numeric types
+                            r,← 'CTZero' desc Assert ((1≢d1÷d1+1) ∨ ((fr=1) ∧ case≡'Hfl'))
                             r,← 'CTZeroAlmostS' desc Assert (1≢d1÷almostd1S)
                             r,← 'CTZeroAlmostB' desc Assert (1≢d1÷almostd1B)
                         :EndIf
