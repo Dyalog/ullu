@@ -1,5 +1,17 @@
 :Namespace testfns
     Assert←#.unittest.Assert
+
+    ⍝ tests that don't use this are:
+    ⍝ need monadic support:
+    ⍝ - floor
+    ⍝ - magnitude
+    ⍝ - unique
+    ⍝ - uniquemask
+    ⍝ use a different runvariations:
+    ⍝ - indexof
+    ⍝ - membership
+
+    ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ tRes←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
         (expectedR larg rarg)←exp
         (tID tCmt)←tData

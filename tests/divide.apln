@@ -8,29 +8,8 @@
         ⍺⌹¨⍵
     }
 
-    ∇ tRes←tData RunVariations exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
-        (expectedR larg rarg)←exp
-        (tID tCmt)←tData
-        tRes←⍬
-
-        ⍝ normal
-        actualR←larg÷rarg
-        tRes,←tData Assert expectedR≡actualR
-
-        ⍝ empty
-        actualRE←(0⍴larg)÷(0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
-
-        ⍝ different shapes
-        shape←?(?4)/4
-        actualRS←(shape⍴larg)÷(shape⍴rarg)
-        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
-
-        ⍝ different shapes with 0 in shape
-        shapeW0←(0@(?(≢shape)))shape
-        actualRSW0←(shapeW0⍴larg)÷(shapeW0⍴rarg)
-        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
-    ∇
+    ⍝ use RunVariations operator and modify it for divide
+    RunVariations←(model #.testfns._RunVariations_ ÷)
 
     ∇ r←test_divide;ct_default;dct_default;fr_dbl;fr_decf;div_0;div_1;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Sdbl;Hdbl;Hfl;fl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;⎕FR;div;⎕DIV;data;d1;f;_;d2;data2;Message;data3;case3;c1;c2;almostd1S;almostd1B;almost0
         ct_default←1E¯14
