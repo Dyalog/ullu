@@ -33,38 +33,9 @@
         x≥y: b+1
         b+0j1
     }
-    
-    ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS;trimmedp;rand
-        (expectedR p)←exp
-        (tID tCmt)←tData
-        tRes←⍬
 
-        ⍝ normal
-        actualR←⌊p
-        tRes,←tData Assert expectedR≡actualR
-
-        ⍝ scalar
-        rand←?≢p
-        trimmedp←rand↓p ⍝ so that not always the first is selected
-        shape←⍬         ⍝ scalar shape
-        actualRS←⌊shape⍴trimmedp
-        tRes,←('Scalar',tID) tCmt Assert (shape⍴rand↓expectedR)≡actualRS
-
-        ⍝ empty
-        actualRE←⌊(0⍴p) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE
-
-        ⍝ randomize shape of expectedR and p
-        shape←?(?4)/4
-        actualRS←⌊shape⍴p ⍝ change shape and then evaluate
-        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
-
-        ⍝ randomize shapes with 0 a random position of shape
-        shapeW0←(0@(?(≢shape)))shape
-        actualRS←⌊shapeW0⍴p
-        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
-    ∇
+    ⍝ use RunVariations operator and modify it for floor
+    RunVariations←(modelFloor #.testfns._RunVariations_ ⌊)
 
     ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;charptr;c1;f;Message
         ct_default←1E¯14
@@ -170,6 +141,9 @@
         :EndFor
     ∇
 
+    ⍝ use RunVariationsCmplx operator and modify it for complex floor
+    RunVariationsCmplx←(modelCmpxFloor #.testfns._RunVariations_ ⌊)
+
     ∇ r←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf;⎕CT;⎕DCT;⎕FR
         ct_default←1E¯14
         dct_default←1E¯28
@@ -189,7 +163,7 @@
                 :For case :In 'cmplx' 'Hcmplx'
                     data←⍎case
                     desc←testDesc⍬
-                    r,←'T1' desc RunVariations data data    ⍝ all of data are whole cmplx numbers
+                    r,←'T1' desc RunVariationsCmplx data data    ⍝ all of data are whole cmplx numbers
 
                     ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type xJy ¯xJy xJ¯y ¯xJ¯y
                     dataplus←(data,(data+2⊃⊣),(data+2⊃⊣),(data+(1⊃⊣)+2⊃⊣)) (?0⍨¨data) (¯11○(?0⍨¨data))
