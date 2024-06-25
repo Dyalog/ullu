@@ -10,28 +10,4 @@
     isBigEndian←0=⊃11 ⎕DR 128
     version←{⍎(2>+\⍵='.')/⍵}⊃1↓'.'⎕wg'APLVersion'
     doSlowTests←⊃(//)⎕vfi 2 ⎕NQ #'GetEnvironment' 'DYALOG_QA_SLOW_TESTS'
-
-    ∇ tRes←tData (model RunVariations op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
-    (expectedR larg rarg)←exp
-    (tID tCmt)←tData
-    tRes←⍬
-
-    ⍝ normal
-    actualR←larg op rarg
-    tRes,←tData Assert expectedR≡actualR
-
-    ⍝ empty
-    actualRE←(0⍴larg) op (0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-    tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
-
-    ⍝ different shapes
-    shape←?(?4)/4
-    actualRS←(shape⍴larg) op (shape⍴rarg)
-    tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
-
-    ⍝ different shapes with 0 in shape
-    shapeW0←(0@(?(≢shape)))shape
-    actualRSW0←(shapeW0⍴larg) op (shapeW0⍴rarg)
-    tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
-    ∇
 :EndNamespace
