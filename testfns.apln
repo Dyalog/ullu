@@ -2,12 +2,9 @@
     Assert←#.unittest.Assert
 
     ⍝ tests that don't use this are:
-    ⍝ need monadic support:
-    ⍝ - floor
-    ⍝ - magnitude
+    ⍝ use a different runvariations:
     ⍝ - unique
     ⍝ - uniquemask
-    ⍝ use a different runvariations:
     ⍝ - indexof
     ⍝ - membership
 
