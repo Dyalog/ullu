@@ -9,7 +9,7 @@
     ⍝ - membership
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
+    ∇ tRes←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
         :If 3≡≢exp ⍝ dyadic op
             val←2 ⍝ valence
             (expectedR larg rarg)←exp
