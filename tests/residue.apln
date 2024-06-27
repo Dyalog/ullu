@@ -11,7 +11,7 @@
     ⍝ use RunVariations operator and modify it for residue
     RunVariations←(model #.testfns._RunVariations_ |)
 
-    ∇ r←test_residue ;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char0;char1;char2;char3;charptr;halfLen;case3;data3;c1;c2;f;Message
+    ∇ {r}←test_residue ;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char0;char1;char2;char3;charptr;halfLen;case3;data3;c1;c2;f;Message
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645

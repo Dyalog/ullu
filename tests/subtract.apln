@@ -10,7 +10,7 @@
     ⍝ use RunVariations operator and modify it for subtract
     RunVariations←(model #.testfns._RunVariations_ -)
 
-    ∇ r←test_substract;fr_dbl;fr_decf;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d1;d2;data2;case3;data3;c1;c2;f
+    ∇ {r}←test_substract;fr_dbl;fr_decf;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d1;d2;data2;case3;data3;c1;c2;f
         fr_dbl←645
         fr_decf←1287
 

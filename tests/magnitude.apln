@@ -13,7 +13,7 @@
     ⍝ use RunVariations operator and modify it for non-cmplx magnitude
     RunVariations←(modelMag #.testfns._RunVariations_ |)
 
-    ∇ r←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl;char0;char1;char2;char3;charptr;c1;f;Message
+    ∇ {r}←test_magnitude_general ;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl;char0;char1;char2;char3;charptr;c1;f;Message
         fr_dbl←645
         fr_decf←1287
 
@@ -96,7 +96,7 @@
     ⍝ use RunVariations operator and modify it for cmplx magnitude
     RunVariations←(modelMagCmplx #.testfns._RunVariations_ |)
 
-    ∇ r←test_magnitude_cmplx ;cmplx;Hcmplx;d;case;data;testDesc;desc;i1;fr_dbl;fr_decf;fr;⎕FR
+    ∇ {r}←test_magnitude_cmplx ;cmplx;Hcmplx;d;case;data;testDesc;desc;i1;fr_dbl;fr_decf;fr;⎕FR
         i1←{⍵}⍳120                                    ⍝ 83: 8 bits signed integer
         cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
         Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but larger numbers

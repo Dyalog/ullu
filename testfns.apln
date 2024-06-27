@@ -9,7 +9,7 @@
     ⍝ - membership
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
+    ∇ {tRes}←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
         :If 3≡≢exp ⍝ dyadic op
             val←2 ⍝ valence
             (expectedR larg rarg)←exp
@@ -28,8 +28,8 @@
         :If val≡1
             ⍝ scalar
             randr←?≢rarg
-            trimmedrarg←randr↓rarg ⍝ so that not always the first is selected
-            shape←⍬         ⍝ scalar shape
+            trimmedrarg←randr↓rarg  ⍝ so that not always the first is selected
+            shape←⍬                 ⍝ scalar shape
             actualRS←op shape⍴trimmedrarg
             tRes,←('Scalar',tID) tCmt Assert (shape⍴randr↓expectedR)≡actualRS
         :EndIf
@@ -50,5 +50,7 @@
 
         ⍝ testing larg and rarg specifically from model
         tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model rarg)≡larg op rarg ⋄ (model¨ rarg)≡op rarg}⍬)
+
+        
     ∇
 :EndNamespace
