@@ -1,36 +1,9 @@
 :Namespace data
 
-    giveBound←{
-        b_11←0 1                                     ⍝ 11  : 1 bit boolean arrays
-        b_80←⎕UCS 0 255                              ⍝ 80  : 8 bits character
-        b_83←¯128 127                                ⍝ 83  : 8 bits signed integer
-        b_160←⎕UCS 0 65535                            ⍝ 160 : 16 bits character
-        b_163←¯32768 32767                            ⍝ 163 : 16 bits signed integer
-        b_320←⎕UCS 0 1114111                          ⍝ 320 : 32 bits character
-        b_323←¯2147483648 2147483647                  ⍝ 323 : 32 bits signed integer
-        b_645←(⌈/⍬)(⌊/⍬)                              ⍝ 645 : 64 bits floating
-        ⎕FR←1287 ⋄ b_1287←(⌈/⍬)(⌊/⍬) ⋄ ⎕FR←645         ⍝ 1287: 128 bits decimal
-        b_1289←{(-⍵),⍵,(+⍵),(-+⍵)}(⌈/⍬)(⊣+¯11○⊢)(⌊/⍬)  ⍝ 1289: 128 bits complex
-        ⍎'b_',⍕(181⌶)⍵
-    }
-
     ∇ r←GenData args;b;u;s;v;i;w;l;p;d;f;z
         :Section init
         ⍝ heavily inspired from PQA v1
         ⍝ http://wiki.dyalog.bramley/index.php/Performance_Measurement/pqa#Expression_labels
-
-            ⍝ boundaries
-            b_11←0 1                                     ⍝ 11  : 1 bit boolean arrays
-            b_80←⎕UCS 0 255                              ⍝ 80  : 8 bits character
-            b_83←¯128 127                                ⍝ 83  : 8 bits signed integer
-            b_160←⎕UCS 0 65535                            ⍝ 160 : 16 bits character
-            b_163←¯32768 32767                            ⍝ 163 : 16 bits signed integer
-            b_320←⎕UCS 0 1114111                          ⍝ 320 : 32 bits character
-            b_323←¯2147483648 2147483647                  ⍝ 323 : 32 bits signed integer
-            b_645←(⌈/⍬)(⌊/⍬)                              ⍝ 645 : 64 bits floating
-            ⎕FR←1287 ⋄ b_1287←(⌈/⍬)(⌊/⍬) ⋄ ⎕FR←645         ⍝ 1287: 128 bits decimal
-            b_1289←{(-⍵),⍵,(+⍵),(-+⍵)}(⌈/⍬)(⊣+¯11○⊢)(⌊/⍬)  ⍝ 1289: 128 bits complex
-
             ⍝ length
             l_0←1
             l_1←10

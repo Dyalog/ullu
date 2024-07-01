@@ -1,6 +1,19 @@
 :Namespace testfns
     Assert←#.unittest.Assert
-    giveBound←#.data.data.giveBound
+
+    giveBound←{
+        b_11←0 1                                     ⍝ 11  : 1 bit boolean arrays
+        b_80←⎕UCS 0 255                              ⍝ 80  : 8 bits character
+        b_83←¯128 127                                ⍝ 83  : 8 bits signed integer
+        b_160←⎕UCS 0 65535                            ⍝ 160 : 16 bits character
+        b_163←¯32768 32767                            ⍝ 163 : 16 bits signed integer
+        b_320←⎕UCS 0 1114111                          ⍝ 320 : 32 bits character
+        b_323←¯2147483648 2147483647                  ⍝ 323 : 32 bits signed integer
+        b_645←(⌈/⍬)(⌊/⍬)                              ⍝ 645 : 64 bits floating
+        ⎕FR←1287 ⋄ b_1287←(⌈/⍬)(⌊/⍬) ⋄ ⎕FR←645         ⍝ 1287: 128 bits decimal
+        b_1289←{(-⍵),⍵,(+⍵),(-+⍵)}(⌈/⍬)(⊣+¯11○⊢)(⌊/⍬)  ⍝ 1289: 128 bits complex
+        ⍎'b_',⍕(181⌶)⍵
+    }
 
     ⍝ tests that don't use this are:
     ⍝ use a different runvariations:
@@ -8,6 +21,7 @@
     ⍝ - uniquemask
     ⍝ - indexof
     ⍝ - membership
+
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ {tRes}←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
@@ -58,7 +72,7 @@
             :If val=2
                 nlarg←?(≢larg)/2⊃bound
             :EndIf
-            tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model nrarg)≡larg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
+            tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
         :EndIf
     ∇
 :EndNamespace
