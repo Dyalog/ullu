@@ -1,5 +1,6 @@
 :Namespace testfns
     Assert←#.unittest.Assert
+    giveBound←#.data.data.giveBound
 
     ⍝ tests that don't use this are:
     ⍝ use a different runvariations:
@@ -51,6 +52,13 @@
         ⍝ testing larg and rarg specifically from model
         tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model rarg)≡larg op rarg ⋄ (model¨ rarg)≡op rarg}⍬)
 
-        
+        :If 644>⎕dr rarg
+            bound←giveBound rarg
+            nrarg←?(≢rarg)/2⊃bound
+            :If val=2
+                nlarg←?(≢larg)/2⊃bound
+            :EndIf
+            tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model nrarg)≡larg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
+        :EndIf
     ∇
 :EndNamespace
