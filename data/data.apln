@@ -1,0 +1,34 @@
+:Namespace data
+
+    ∇ r←GenData args;b;u;s;v;i;w;l;p;d;f;z
+        :Section init
+        ⍝ heavily inspired from PQA v1
+        ⍝ http://wiki.dyalog.bramley/index.php/Performance_Measurement/pqa#Expression_labels
+            ⍝ length
+            l_0←1
+            l_1←10
+            l_2←100
+            l_4←10000
+
+            ⍝ kind
+            k_s←0 ⍝ scalar
+            k_v←1 ⍝ vector
+            k_t←2 ⍝ tall matrix, 11-column matrix with 10*0 1 2 4 rows
+            k_w←3 ⍝ wide matrix, 11-row matrix with 10*0 1 2 4 columns
+            k_q←4 ⍝ square matrix with ⌈10*0 1 2 4×0.6 (1 4 16 252) rows/columns
+
+            ⍝ todo make type
+            ⍝ t_b←1       ⍝ 11  : 1 bit boolean arrays
+            ⍝ t_u←'a'     ⍝ 80  : 8 bits character
+            ⍝ t_s←2       ⍝ 83  : 8 bits signed integer
+            ⍝ t_v←'a'     ⍝ 160 : 16 bits character
+            ⍝ t_i←3       ⍝ 163 : 16 bits signed integer
+            ⍝ t_w←'a'     ⍝ 320 : 32 bits character
+            ⍝ t_l←4       ⍝ 323 : 32 bits signed integer
+            ⍝ t_p←'a'     ⍝ 326 : pointer
+            ⍝ t_d←5       ⍝ 645 : 64 bits floating
+            ⍝ t_f←7       ⍝ 1287: 128 bits decimal
+            ⍝ t_z←6       ⍝ 1289: 128 bits complex
+      :EndSection
+    ∇
+:EndNamespace

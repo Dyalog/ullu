@@ -1,0 +1,78 @@
+:Namespace testfns
+    Assert←#.unittest.Assert
+
+    giveBound←{
+        b_11←0 1                                     ⍝ 11  : 1 bit boolean arrays
+        b_80←⎕UCS 0 255                              ⍝ 80  : 8 bits character
+        b_83←¯128 127                                ⍝ 83  : 8 bits signed integer
+        b_160←⎕UCS 0 65535                            ⍝ 160 : 16 bits character
+        b_163←¯32768 32767                            ⍝ 163 : 16 bits signed integer
+        b_320←⎕UCS 0 1114111                          ⍝ 320 : 32 bits character
+        b_323←¯2147483648 2147483647                  ⍝ 323 : 32 bits signed integer
+        b_645←(⌈/⍬)(⌊/⍬)                              ⍝ 645 : 64 bits floating
+        ⎕FR←1287 ⋄ b_1287←(⌈/⍬)(⌊/⍬) ⋄ ⎕FR←645         ⍝ 1287: 128 bits decimal
+        b_1289←{(-⍵),⍵,(+⍵),(-+⍵)}(⌈/⍬)(⊣+¯11○⊢)(⌊/⍬)  ⍝ 1289: 128 bits complex
+        ⍎'b_',⍕(181⌶)⍵
+    }
+
+    ⍝ tests that don't use this are:
+    ⍝ use a different runvariations:
+    ⍝ - unique
+    ⍝ - uniquemask
+    ⍝ - indexof
+    ⍝ - membership
+
+
+    ⍝ Run Variations of each test with normal, empty and multiple shaped data
+    ∇ {tRes}←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
+        :If 3≡≢exp ⍝ dyadic op
+            val←2 ⍝ valence
+            (expectedR larg rarg)←exp
+        :Else ⍝ monadic op
+            val←1
+            (expectedR rarg)←exp
+        :EndIf
+
+        (tID tCmt)←tData
+        tRes←⍬
+
+        ⍝ normal
+        actualR←{val≡2:larg op rarg ⋄ op rarg}⍬
+        tRes,←tData Assert expectedR≡actualR
+
+        :If val≡1
+            ⍝ scalar
+            randr←?≢rarg
+            trimmedrarg←randr↓rarg  ⍝ so that not always the first is selected
+            shape←⍬                 ⍝ scalar shape
+            actualRS←op shape⍴trimmedrarg
+            tRes,←('Scalar',tID) tCmt Assert (shape⍴randr↓expectedR)≡actualRS
+        :EndIf
+
+        ⍝ empty
+        actualRE←{val≡2:(0⍴larg) op (0⍴rarg) ⋄ op (0⍴rarg)}⍬ ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
+
+        ⍝ different shapes
+        shape←?(?4)/4
+        actualRS←{val≡2:(shape⍴larg) op (shape⍴rarg) ⋄ op (shape⍴rarg)}⍬
+        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
+
+        ⍝ different shapes with 0 in shape
+        shapeW0←(0@(?(≢shape)))shape
+        actualRSW0←{val≡2:(shapeW0⍴larg) op (shapeW0⍴rarg) ⋄ op (shapeW0⍴rarg)}⍬
+        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
+
+        ⍝ testing larg and rarg specifically from model
+        tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model rarg)≡larg op rarg ⋄ (model¨ rarg)≡op rarg}⍬)
+
+        :If 644>⎕dr rarg
+            bound←giveBound rarg
+            nrarg←?(≢rarg)/2⊃bound
+            :If val=2
+                nlarg←?(≢larg)/2⊃bound
+            :EndIf
+            tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
+        :EndIf
+    ∇
+:EndNamespace
