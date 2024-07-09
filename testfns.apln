@@ -22,6 +22,10 @@
     ⍝ - indexof
     ⍝ - membership
 
+    ⍝ TODO: Limitations:
+    ⍝ - no character random numbers
+    ⍝ - ⎕dr 1287 numbers are not handled
+    ⍝ - cmplx is not handled
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ {tRes}←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
@@ -67,13 +71,13 @@
         tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model rarg)≡larg op rarg ⋄ (model¨ rarg)≡op rarg}⍬)
 
         :If 1200>⎕dr rarg
+            ⍝ todo: errors with floor
             bound←giveBound rarg
-            
             nrarg←rarg{⍵<¯1+2*63:?(≢⍺)/⍵⋄({×/?(2+?16)/1E17}¨⍺)}2⊃bound
             :If val=2
                 nlarg←larg{⍵<¯1+2*63:?(≢⍺)/⍵⋄({×/?(2+?16)/1E17}¨⍺)}2⊃bound
             :EndIf
-            tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
+            tRes,←('RandModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
         :EndIf
     ∇
 :EndNamespace
