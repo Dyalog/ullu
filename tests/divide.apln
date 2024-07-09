@@ -8,10 +8,11 @@
         ⍺⌹¨⍵
     }
 
-    ⍝ use RunVariations operator and modify it for divide
-    RunVariations←(model #.testfns._RunVariations_ ÷)
 
-    ∇ {r}←test_divide;ct_default;dct_default;fr_dbl;fr_decf;div_0;div_1;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Sdbl;Hdbl;Hfl;fl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;⎕FR;div;⎕DIV;data;d1;f;_;d2;data2;Message;data3;case3;c1;c2;almostd1S;almostd1B;almost0
+    ∇ {r}←test_divide ;RunVariations;ct_default;dct_default;fr_dbl;fr_decf;div_0;div_1;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Sdbl;Hdbl;Hfl;fl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;⎕FR;div;⎕DIV;data;d1;f;_;d2;data2;Message;data3;case3;c1;c2;almostd1S;almostd1B;almost0
+        ⍝ use RunVariations operator and modify it for divide
+        RunVariations←(model #.testfns._RunVariations_ ÷)
+
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645

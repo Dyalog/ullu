@@ -10,7 +10,6 @@
     modelMag←{⍵×(¯1@(∊∘0)(⍵>0))}
     modelMagCmplx←{0.5*⍨+.×⍨9 11○⍵}
     
-
     ∇ {r}←test_magnitude_general ;RunVariations;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl;char0;char1;char2;char3;charptr;c1;f;Message
         ⍝ use RunVariations operator and modify it for non-cmplx magnitude
         RunVariations←(modelMag #.testfns._RunVariations_ |)
