@@ -15,6 +15,12 @@
         ⍎'b_',⍕(181⌶)⍵
     }
 
+    ⍝ generating big random numbers upto 1E6144
+    bigRand308←{×/?(2+?16)/1E17}
+    bigRand308to6144←{×/1(⊢+⊣×0=⊢)(2+?18)↑⍵}
+    rollLimit←{⎕fr←1287 ⋄ ⍵<¯1+2*63 ⋄⎕fr←645}
+    bigRand←{(1287≡⎕dr ⍵) ∧ ⎕fr≡1287: {bigRand308to6144 bigRand308¨⍳20}¨⍺ ⋄ ⍺{rollLimit ⍵:?(≢⍺)/⍵ ⋄ (bigRand308¨⍺)}⍵}
+
     ⍝ tests that don't use this are:
     ⍝ use a different runvariations:
     ⍝ - unique
@@ -24,7 +30,6 @@
 
     ⍝ TODO: Limitations:
     ⍝ - no character random numbers
-    ⍝ - ⎕dr 1287 numbers are not handled
     ⍝ - cmplx is not handled
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
@@ -70,12 +75,12 @@
         ⍝ testing larg and rarg specifically from model
         tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model rarg)≡larg op rarg ⋄ (model¨ rarg)≡op rarg}⍬)
 
-        :If 1200>⎕dr rarg
+        :If 1288>⎕dr rarg
             ⍝ todo: errors with floor
             bound←giveBound rarg
-            nrarg←rarg{⍵<¯1+2*63:?(≢⍺)/⍵⋄({×/?(2+?16)/1E17}¨⍺)}2⊃bound
+            nrarg←rarg bigRand 2⊃bound
             :If val=2
-                nlarg←larg{⍵<¯1+2*63:?(≢⍺)/⍵⋄({×/?(2+?16)/1E17}¨⍺)}2⊃bound
+                nlarg←larg bigRand 2⊃bound
             :EndIf
             tRes,←('RandModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
         :EndIf
