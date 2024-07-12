@@ -75,12 +75,13 @@
         ⍝ testing larg and rarg specifically from model
         tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model rarg)≡larg op rarg ⋄ (model¨ rarg)≡op rarg}⍬)
 
-        :If 1288>⎕dr rarg
-            ⍝ todo: errors with floor
-            bound←giveBound rarg
-            nrarg←rarg bigRand 2⊃bound
+        :If (1288>⎕dr rarg) ∧ {val≡2:1288>⎕dr larg⋄1}⍬
+            ⍝ todo: errors with floor and residue
+            boundR←giveBound rarg
+            nrarg←rarg bigRand 2⊃boundR
             :If val=2
-                nlarg←larg bigRand 2⊃bound
+                boundL←giveBound larg
+                nlarg←larg bigRand 2⊃boundL
             :EndIf
             tRes,←('RandModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
         :EndIf
