@@ -6,5 +6,6 @@
     magnitude←System.Math.Abs
     cmplxmagnitude←{sqrt add (pow (9∘○⍵) 2) (pow (11∘○⍵) 2) }
     pow←System.Math.Pow
+    residue←System.Decimal.Remainder
     sqrt←System.Math.Sqrt
 :EndNamespace
