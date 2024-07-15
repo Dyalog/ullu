@@ -3,6 +3,7 @@
     intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
     hashArray←1500⌶                 ⍝ pre-hash array
     stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array
+    numOrChar←{326(=-⍨2|⊢)⎕DR ⍵}  ⍝ Type of ⍵ (¯1:mixed, 0:character, 1:numeric)
 
     ⍝ Interpreter version information
     isClassic←82=⎕dr''
