@@ -1,6 +1,7 @@
 :Namespace testfns
     Assert←#.unittest.Assert
     numOrChar←#.utils.numOrChar
+    change0sto1←#.utils.change0sto1
 
     giveBound←{
         type←181⌶⍵
@@ -16,11 +17,14 @@
         type=1289:{(-⍵),⍵,(+⍵),(-+⍵)}(⌈/⍬)(⊣+¯11○⊢)(⌊/⍬)    ⍝ 1289: 128 bits complex
     }
 
+    ⍝ shouldNotRandTest checks what test is running and returns a 0
+    ⍝ if the test mentioned in ⍵ are running to simplify the if case
+    ⍝ in RandModelTest to skip the test for certain primitives
     shouldNotRandTest←{~∨/⊃,/{∨/⍵⍷↑#.unittest.tests}¨⍵}
 
     ⍝ generating big random numbers upto 1E6144
     bigRand308←{×/?(2+?16)/1E17}
-    bigRand308to6144←{×/1(⊢+⊣×0=⊢)(2+?18)↑}
+    bigRand308to6144←{×/change0sto1(2+?18)↑}
     rollLimit←{⎕fr←1287 ⋄ ⍵<¯1+2*63 ⋄⎕fr←645}
     bigRand←{1289≡⎕dr ⍵:⍺⋄(1287≡⎕dr ⍵) ∧ ⎕fr≡1287: {bigRand308to6144 bigRand308¨⍳20}¨⍺ ⋄ ⍺{rollLimit ⍵:?(≢⍺)/⍵ ⋄ (bigRand308¨⍺)}⍵} ⍝ rarg bigRand bound
     ⍝ todo: add this for characters when this runs for it
