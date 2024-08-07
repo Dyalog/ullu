@@ -40,6 +40,8 @@
     ⍝ rarg bigRand bound
     ⍝ uses bigRand308to6144 and bigRand308 to use the required random number generator
     ⍝ to generate a appropriate random number based on the bounds and the datatype
+    ⍝
+    ⍝        <---cmplx---> <-----decimal numbers running with 128 bit arithmetic----->  <numbers under ? limit> <floating point nos>                                                                                   
     bigRand←{1289≡⎕dr ⍵:⍺⋄(1287≡⎕dr ⍵) ∧ ⎕fr≡1287: {bigRand308to6144 bigRand308¨⍳20}¨⍺ ⋄ ⍺{rollLimit ⍵:?(≢⍺)/⍵ ⋄ (bigRand308¨⍺)}⍵}
 
     ⍝ todo: add this for characters when this runs for it
