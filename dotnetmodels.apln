@@ -1,4 +1,6 @@
 :Namespace dotnetmodels
+    ⍝ Archive for dotnet models of apl primitives which may be
+    ⍝ used in the future
     ⎕using←''
     add←System.Decimal.Add
     divide←System.Decimal.Divide

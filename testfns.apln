@@ -4,7 +4,7 @@
     change0sto1←#.utils.change0sto1
 
     giveBound←{
-        type←181⌶⍵
+        type←(181⌶)⍵
         type=11:0 1                                         ⍝ 11  : 1 bit boolean arrays
         type=80:⎕UCS 0 255                                  ⍝ 80  : 8 bits character
         type=83:¯128 127                                    ⍝ 83  : 8 bits signed integer
@@ -122,5 +122,16 @@
             :EndIf
             tRes,←('RandModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
         :EndIf
+
+        ⍝ todo: 
+        ⍝ new variations needs more tests of:
+        ⍝ lengths of arrays from 1 to 10000
+        ⍝ and
+        ⍝ of kind
+        ⍝ scalar
+        ⍝ vector
+        ⍝ tall matrix, 11-column matrix with 10*0 1 2 4 rows
+        ⍝ wide matrix, 11-row matrix with 10*0 1 2 4 columns
+        ⍝ square matrix with ⌈10*0 1 2 4×0.6 (1 4 16 252) rows/columns
     ∇
 :EndNamespace

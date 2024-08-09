@@ -7,12 +7,16 @@ DYALOG ← 2 ⎕NQ #'GetEnvironment' 'DYALOG'
 ⎕SE.Link.Import # '/Users/rush/wdr/projects/bb-test-apl'
 
 ⍝ list of available tests
+ts←⊂'add'
+ts←⊂'divide'
 ts←⊂'floor'
 ts,←⊂'indexof'
 ts,←⊂'magnitude'
 ts,←⊂'membership'
 ts,←⊂'residue'
+ts←⊂'subtract'
 ts,←⊂'unique'
+ts←⊂'uniquemask'
 
 ⎕←''
 ⎕←'Hi, Choose supported tests:'
@@ -27,7 +31,7 @@ tName←¯1∘⎕C ⍞ ⍝ stdin to lowercase
 ⎕←'verbose stop repetitions randLink'
 opts←⍎⍞
 ⎕←opts
-(verbose stop reps randLink)←4↑opts,0 0 0 0
+(prod verbose stop reps randLink)←5↑opts,0 0 0 0 0
 ⎕←''
 
 t←{
