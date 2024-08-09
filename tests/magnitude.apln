@@ -14,8 +14,8 @@
         ⍝ use RunVariations operator and modify it for non-cmplx magnitude
         RunVariations←(modelMag #.testfns._RunVariations_ |)
 
-        fr_dbl←645
-        fr_decf←1287
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer

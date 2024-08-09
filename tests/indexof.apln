@@ -39,12 +39,12 @@
     ∇
 
     ∇ {r}←test_indexof ;⎕CT;⎕DCT;ct;⎕FR;fr;⎕IO;io;ct_default;dct_default;fr_dbl;fr_decf;io_default;io_0;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;fl;Hfl;cmplx;Hcmplx;case;case2;data;d;data2;pos;testDesc;desc
-        ct_default←1E¯14
-        dct_default←1E¯28
-        fr_dbl←645
-        fr_decf←1287
-        io_default←1
-        io_0←0
+        ct_default←#.utils.ct_default
+        dct_default←#.utils.dct_default
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
+        io_default←#.utils.io_default
+        io_0←#.utils.io_0
 
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,-⍵}⍳60                                  ⍝ 83: 8 bits signed integer
