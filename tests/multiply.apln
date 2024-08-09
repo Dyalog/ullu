@@ -7,7 +7,7 @@
     }
 
     ∇ {r}←test_multiply
-        RunVariations←(model #.testfns._RunVariations_ ÷)
+        RunVariations←(model #.testfns._RunVariations_ ×)
 
         ⍝ constants
         fr_dbl←#.utils.fr_dbl
@@ -70,6 +70,13 @@
                 r,←'TI3' desc Assert 0≡(d1)×0
                 r,←'TI2' desc Assert d1≡1×d1
                 r,←'TI3' desc Assert d1≡(d1)×1
+
+                r,← 'T1' desc RunVariations (data model data) data data ⍝ model test
+                d1←data[?≢data]
+                d2←data[?≢(data~d1)]
+                r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ model func finds results on single element
+                r,← 'T3' desc RunVariations data data 1         ⍝ Identity
+                r,← 'T4' desc RunVariations (0⍨¨data) data 0    ⍝ x×0=0
             :EndFor
         :EndFor
     ∇
