@@ -1,0 +1,58 @@
+:Namespace multiply
+    Assert←#.unittest.Assert
+    isDyalogClassic←#.utils.isClassic
+
+    model←{
+        ⍺×⍵
+    }
+
+    ∇ {r}←test_multiply
+        RunVariations←(model #.testfns._RunVariations_ ÷)
+
+        ⍝ constants
+        fr_dbl←645
+        fr_decf←1287
+
+        ⍝ All data generated is unique
+        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+        i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
+        i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
+        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+        char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
+        :If ~isDyalogClassic
+            char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
+            char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
+            char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
+        :EndIf
+        charptr←(13↑⎕a) (13↓⎕a)                       ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
+        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+        ⍝ Hdbl is 645 but larger numbers to test for CT value
+        ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
+        ⍝ come under the region of tolerant equality
+        Hdbl←{⍵,-⍵}1E14+(2×⍳50)                       ⍝ 645: large numbers
+        Sdbl←{⍵,-⍵}(⍳500)÷1000                        ⍝ 645: Small numbers
+
+        ⍝ Hfl is 1287 but larger numbers to test for CT value
+        ⍝ far intervals are chosen for non overlap 
+        ⍝ with region of tolerant equality
+        ⎕FR←fr_decf
+        fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
+        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
+        ⎕FR←fr_dbl
+
+        r←⍬
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕DIV:',⎕DIV}
+
+        r case case2←⍬ ⍬ ⍬
+
+        :For fr :In 2 1
+            ⎕FR←fr⊃fr_dbl fr_decf
+            case←'independant'
+            desc←testDesc⍬
+
+            r,←'TI1' desc Assert 0≡0×0
+        :EndFor
+    ∇
+:EndNamespace
