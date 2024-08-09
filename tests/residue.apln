@@ -13,10 +13,10 @@
         ⍝ use RunVariations operator and modify it for residue
         RunVariations←(model #.testfns._RunVariations_ |)
 
-        ct_default←1E¯14
-        dct_default←1E¯28
-        fr_dbl←645
-        fr_decf←1287
+        ct_default←#.utils.ct_default
+        dct_default←#.utils.dct_default
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         bool←0 1                                        ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer

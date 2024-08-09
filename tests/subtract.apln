@@ -12,8 +12,8 @@
         ⍝ use RunVariations operator and modify it for subtract
         RunVariations←(model #.testfns._RunVariations_ -)
 
-        fr_dbl←645
-        fr_decf←1287
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
