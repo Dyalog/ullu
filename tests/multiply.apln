@@ -10,8 +10,8 @@
         RunVariations←(model #.testfns._RunVariations_ ÷)
 
         ⍝ constants
-        fr_dbl←645
-        fr_decf←1287
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
@@ -43,7 +43,7 @@
         ⎕FR←fr_dbl
 
         r←⍬
-        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕DIV:',⎕DIV}
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵}, '& ⎕FR:', ⎕FR}
 
         r case case2←⍬ ⍬ ⍬
 
@@ -53,6 +53,24 @@
             desc←testDesc⍬
 
             r,←'TI1' desc Assert 0≡0×0
+            r,←'TNull1' desc Assert ⍬≡''×0
+            r,←'TNull2' desc Assert ⍬≡⍬×0
+            r,←'TNull3' desc Assert ⍬≡0×''
+            r,←'TNull4' desc Assert ⍬≡0×⍬
+
+            :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+                data←⍎case
+                desc←testDesc⍬
+
+                ⍝ General tests to test the basic rules of multiply
+                r,← 'TGen1' desc Assert (≢data)≡≢data×data
+                
+                d1←(data~0)[?≢data~0]
+                r,←'TI2' desc Assert 0≡0×d1
+                r,←'TI3' desc Assert 0≡(d1)×0
+                r,←'TI2' desc Assert d1≡1×d1
+                r,←'TI3' desc Assert d1≡(d1)×1
+            :EndFor
         :EndFor
     ∇
 :EndNamespace
