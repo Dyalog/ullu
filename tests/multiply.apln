@@ -1,5 +1,6 @@
 :Namespace multiply
     Assert←#.unittest.Assert
+    stripToSameLen←#.utils.stripToSameLen
     isDyalogClassic←#.utils.isClassic
 
     model←{
@@ -77,6 +78,18 @@
                 r,← 'T6' desc Assert d1≡1×d1
                 r,← 'T7' desc Assert d1≡d1×1
                 r,← 'T8' desc Assert (d1×d2)≡d2×d1              ⍝ commutability
+            :EndFor
+
+            ⍝ Cross type tests
+            :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                data2←⍎case2
+                data data2←data stripToSameLen data2
+                desc←testDesc⍬
+                :If (case≡case2)
+                    :Continue
+                :EndIf
+
+                r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
             :EndFor
 
             ⍝ tests for known errors
