@@ -90,6 +90,11 @@
                 :EndIf
 
                 r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
+                r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ TCross1 but reversed
+                r,← 'TCross3' desc RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
+                r,← 'TCross4' desc Assert (((data2 data) model (data data2))≡(data2 data)×(data data2)) ⍝ merge two different arrays creating a pointer array
+
+
             :EndFor
 
             ⍝ tests for known errors
