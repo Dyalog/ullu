@@ -48,30 +48,32 @@
         :For fr :In 1 2
             ⎕FR←fr⊃fr_dbl fr_decf
 
+            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
             :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
                 data←⍎case
                 desc←testDesc⍬
                 :If case≢'bool'
-                    r,←'T1' desc RunVariations ({(⊣,⊣)((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
-                    r,←'T2' desc RunVariations (modelMag data) data ⍝ custom func finds results on array
+                    r,←'T1' desc quadparams RunVariations ({(⊣,⊣)((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
+                    r,←'T2' desc quadparams RunVariations (modelMag data) data ⍝ custom func finds results on array
                     r,←'T3' desc Assert (modelMag¨ (data data))≡(|data data) ⍝ test on pointer array
 
                     d←data[?≢data]
-                    r,←'T4' desc RunVariations (modelMag d) d ⍝ custom func finds results on single element
+                    r,←'T4' desc quadparams RunVariations (modelMag d) d ⍝ custom func finds results on single element
                 :Else
-                    r,←'Tb1' desc RunVariations (0 1) bool
-                    r,← 'Tb2' desc RunVariations 0 (⊃bool)
+                    r,←'Tb1' desc quadparams RunVariations (0 1) bool
+                    r,← 'Tb2' desc quadparams RunVariations 0 (⊃bool)
                 :EndIf
             :EndFor
 
             case←'for limits of i4' ⍝ 32-bit int range [¯2147483648, 2147483647]. Therefore, |¯2147483648 is stored as float.
             desc←testDesc⍬
-            r,←'tLim1' desc RunVariations (,2147483648) (,¯2147483648)
-            r,←'tLim2' desc RunVariations (,2147483648, modelMag i1) (¯2147483648,i1) ⍝ Rarg to | will have the same type, and similarly the elements in the result will do as well.
+            r,←'tLim1' desc quadparams RunVariations (,2147483648) (,¯2147483648)
+            r,←'tLim2' desc quadparams RunVariations (,2147483648, modelMag i1) (¯2147483648,i1) ⍝ Rarg to | will have the same type, and similarly the elements in the result will do as well.
 
             case←'for singleton scalar boolean' ⍝ edge case for when a singleton scalar boolean is passed as rarg to magnitude. 
             desc←testDesc⍬
-            r,←'tb3' desc RunVariations (∧/1 0 1 0) (|∧/1 0 1 0) ⍝ | is applied here becuase of type conversion when argument is passed to RunVariations
+            r,←'tb3' desc quadparams RunVariations (∧/1 0 1 0) (|∧/1 0 1 0) ⍝ | is applied here becuase of type conversion when argument is passed to RunVariations
 
             ⍝ tests for known errors
             :For case :In 'char0' 'char1' 'char2' 'char3' 'charptr'
@@ -110,20 +112,22 @@
 
         :For fr :In 2 1
             ⎕FR←fr⊃fr_dbl fr_decf
+            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
             case←'cmplx with non-cmplx nums with ⎕fr', ⎕FR  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
             desc←testDesc⍬
-            r,←'TcI1' desc RunVariations (,5,i1) (,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
+            r,←'TcI1' desc quadparams RunVariations (,5,i1) (,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
         :EndFor
 
         :For case :In 'cmplx' 'Hcmplx'
+            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
             data←⍎case
             desc←testDesc⍬
-            r,←'Tc1' desc RunVariations (modelMagCmplx¨data) data
+            r,←'Tc1' desc quadparams RunVariations (modelMagCmplx¨data) data
             r,←'Tc2' desc Assert (modelMagCmplx¨¨ (data data))≡(|data data) ⍝ test on pointer array
             :For d :In data
                 case←d
                 desc←testDesc⍬
-                r,←'Tc2' desc RunVariations (modelMagCmplx d) d
+                r,←'Tc2' desc quadparams RunVariations (modelMagCmplx d) d
             :EndFor
         :EndFor
     ∇

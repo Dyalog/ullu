@@ -65,7 +65,7 @@
     ⍝ - membership
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ {tRes}←tData (model _RunVariations_ op) exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
+    ∇ {tRes}←tData (model _RunVariations_ op) exp;⎕CT;⎕DCT;⎕FR;⎕IO;⎕DIV;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
         :If 3≡≢exp ⍝ dyadic op
             val←2 ⍝ valence
             (expectedR larg rarg)←exp
@@ -73,13 +73,13 @@
             val←1
             (expectedR rarg)←exp
         :EndIf
-
-        (tID tCmt)←tData
+        (tID tCmt quadparams)←tData
+        ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams
         tRes←⍬
 
         ⍝ normal
         actualR←{val≡2:larg op rarg ⋄ op rarg}⍬
-        tRes,←tData Assert expectedR≡actualR
+        tRes,←(tID tCmt) Assert expectedR≡actualR
 
         :If val≡1
             ⍝ scalar
@@ -115,10 +115,14 @@
         ⍝ skipping big rand test for mentioned primitives because of issues with the model
         :If (shouldNotRandTest 'residue' 'floor' 'multiply')
             boundR←giveBound rarg ⍝ get boundaries of rarg
+            ⎕fr←645
             nrarg←rarg getRand boundR ⍝ generate a random element in range of rarg
+            ⎕fr←3⊃quadparams
             :If val=2
                 boundL←giveBound larg
+                ⎕fr←645
                 nlarg←larg getRand boundL
+                ⎕fr←3⊃quadparams
             :EndIf
             tRes,←('RandModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
         :EndIf
