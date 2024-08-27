@@ -52,12 +52,14 @@
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf
 
+                quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
                 ⍝ Tests added to achieve complete code coverage
                 case←'independant'
                 case2←⍬
                 desc←testDesc⍬
-                r,← 'Ti1' desc RunVariations (0 model 11) 0 11        ⍝ Special optimization for scalar 0 from iresidue at apl/allos/src/scalarscalar.cpp#L518
-                r,← 'Ti2' desc RunVariations (¯1 model 11) ¯1 11      ⍝ Special optimization for scalar ¯1 from iresidue at apl/allos/src/scalarscalar.cpp#L518
+                r,← 'Ti1' desc quadparams RunVariations (0 model 11) 0 11        ⍝ Special optimization for scalar 0 from iresidue at apl/allos/src/scalarscalar.cpp#L518
+                r,← 'Ti2' desc quadparams RunVariations (¯1 model 11) ¯1 11      ⍝ Special optimization for scalar ¯1 from iresidue at apl/allos/src/scalarscalar.cpp#L518
                 r,← 'Ti3' desc Assert (2/(2 model 1J1))≡(2|2/1J1)     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
                 r,← 'Ti4' desc Assert (2/0)≡(2|2/1E40)                     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
 
@@ -71,34 +73,34 @@
                         :EndIf
                         desc←testDesc⍬
                         :If (data≡data2)
-                            r,←'TCross0' desc RunVariations (0⍨¨data) data data2
+                            r,←'TCross0' desc quadparams RunVariations (0⍨¨data) data data2
                             :Continue
                         :EndIf
                         data2←(≢data)↑data2                                                             ⍝ strip data2 to be equal length to data
-                        r,← 'TCross1' desc RunVariations (data model data2) data data2
-                        r,← 'TCross2' desc RunVariations (data2 model data) data2 data
+                        r,← 'TCross1' desc quadparams RunVariations (data model data2) data data2
+                        r,← 'TCross2' desc quadparams RunVariations (data2 model data) data2 data
                         r,← 'TCross3' desc Assert (((data2 data) model (data data2))≡(data2 data)|(data data2)) ⍝ merge two different arrays creating a pointer array
                     :EndFor
 
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (data model ⌽data) data (⌽data)                    ⍝ generator func finds results on array
+                    r,← 'T1' desc quadparams RunVariations (data model ⌽data) data (⌽data)                    ⍝ generator func finds results on array
                     d1←data[?≢data]
                     d2←data[?≢(data~d1)]
-                    r,← 'T2' desc RunVariations (d1 model d2) d1 d2                                ⍝ generator func finds results on single element
-                    r,← 'T3' desc RunVariations (0⍨¨data) 1 (⌊data)                                ⍝ check remainder with 1 result is a defined output
+                    r,← 'T2' desc quadparams RunVariations (d1 model d2) d1 d2                                ⍝ generator func finds results on single element
+                    r,← 'T3' desc quadparams RunVariations (0⍨¨data) 1 (⌊data)                                ⍝ check remainder with 1 result is a defined output
 
                     :If (⊂data)∊i1 i2 i3
                         halfLen←(¯1+≢data)÷2
-                        r,← 'TSeq2' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data         ⍝ sequences to test functionality of residue
-                        r,← 'TSeq1' desc RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data          ⍝ remainder sequence is ⍳(N-1), 0
+                        r,← 'TSeq2' desc quadparams RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data         ⍝ sequences to test functionality of residue
+                        r,← 'TSeq1' desc quadparams RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data          ⍝ remainder sequence is ⍳(N-1), 0
                     :EndIf
 
                     :If case≡'dbl'
                         halfLen←(¯1+≢data)÷2
-                        r,← 'TSeqDbl1' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,3.5}halfLen⍴(1.5 2.5 3.5 0.5)) 4 data    ⍝ sequences to test functionality of residue
-                        r,← 'TSeqDbl2' desc RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ sequences to test functionality of residue
+                        r,← 'TSeqDbl1' desc quadparams RunVariations ({⍵,0,(2↓⌽⍵),0.5,3.5}halfLen⍴(1.5 2.5 3.5 0.5)) 4 data    ⍝ sequences to test functionality of residue
+                        r,← 'TSeqDbl2' desc quadparams RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ sequences to test functionality of residue
                     :EndIf
 
                     ⍝ tests with comparison tolerance
