@@ -7,33 +7,13 @@
         ⍺--⍵
     }
 
-    ∇ tRes←tData RunVariations exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
-        (expectedR larg rarg)←exp
-        (tID tCmt)←tData
-        tRes←⍬
 
-        ⍝ normal
-        actualR←larg+rarg
-        tRes,←tData Assert expectedR≡actualR
+    ∇ {r}←test_add ;RunVariations;fr_dbl;fr_decf;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d2;d1;data2;case3;data3;c1;c2;f
+        ⍝ use RunVariations operator and modify it for addition
+        RunVariations←(model #.testfns._RunVariations_ +)
 
-        ⍝ empty
-        actualRE←(0⍴larg)+(0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
-
-        ⍝ different shapes
-        shape←?(?4)/4
-        actualRS←(shape⍴larg)+(shape⍴rarg)
-        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
-
-        ⍝ different shapes with 0 in shape
-        shapeW0←(0@(?(≢shape)))shape
-        actualRSW0←(shapeW0⍴larg)+(shapeW0⍴rarg)
-        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
-    ∇
-
-    ∇ r←test_add
-        fr_dbl←645
-        fr_decf←1287
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
@@ -163,3 +143,4 @@
         :EndFor
     ∇
 :EndNamespace
+

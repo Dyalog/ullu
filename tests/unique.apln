@@ -10,7 +10,7 @@
     ⍝ modelUnion←{⍺,(∧/⍺≢¨⍵)/⍵} ⍝ model function for union (X∪Y) (used to model unique)
     model←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵} ⍝ model function for unique
 
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0;actualRSc;expectedRSc
+    ∇ {tRes}←tData RunVariations exp ;actualR;actualRE;expectedR;expectedRE;ele;rarg;tID;tCmt;shape;actualRS;shapeW0;actualRSW0;expectedRS;expectedRSW0;actualRSc;expectedRSc
         (expectedR rarg)←exp
         (tID tCmt)←tData
         tRes←⍬
@@ -43,11 +43,11 @@
         tRes,←('ShapeW0',tID) tCmt Assert expectedRSW0 ≡ actualRSW0
     ∇
 
-    ∇ r←test_unique ;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;Sdbl;cmplx;Hcmplx;fl;Hfl;⎕FR;⎕CT;⎕DCT;testDesc;case;case2;desc;ct;fr;data;data2;shuffledData;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d;u;s;x
-        ct_default←1E¯14
-        dct_default←1E¯28
-        fr_dbl←645
-        fr_decf←1287
+    ∇ {r}←test_unique ;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;Hdbl;Sdbl;cmplx;Hcmplx;fl;Hfl;⎕FR;⎕CT;⎕DCT;testDesc;case;case2;desc;ct;fr;data;data2;shuffledData;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d;u;s;x
+        ct_default←#.utils.ct_default
+        dct_default←#.utils.dct_default
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays

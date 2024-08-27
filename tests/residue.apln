@@ -8,36 +8,15 @@
 
     model←{⍵-⍺×⌊⍵÷⍺+⍺=0} ⍝ Generator function for residue
 
-    ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;larg;rarg;res;tID;tCmt;shape;actualRS;shapeW0;actualRSW0
-        (expectedR larg rarg)←exp
-        (tID tCmt)←tData
-        tRes←⍬
 
-        ⍝ normal
-        actualR←larg|rarg
-        tRes,←tData Assert expectedR≡actualR
-        
-        ⍝ empty
-        actualRE←(0⍴larg)|(0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
-    
-        ⍝ different shapes
-        shape←?(?4)/4
-        actualRS←(shape⍴larg)|(shape⍴rarg)
-        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
+    ∇ {r}←test_residue ;RunVariations;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char0;char1;char2;char3;charptr;halfLen;case3;data3;c1;c2;f;Message
+        ⍝ use RunVariations operator and modify it for residue
+        RunVariations←(model #.testfns._RunVariations_ |)
 
-        ⍝ different shapes with 0 in shape
-        shapeW0←(0@(?(≢shape)))shape
-        actualRSW0←(shapeW0⍴larg)|(shapeW0⍴rarg)
-        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
-    ∇
-
-    ∇ r←test_residue ;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char0;char1;char2;char3;charptr;halfLen;case3;data3;c1;c2;f;Message
-        ct_default←1E¯14
-        dct_default←1E¯28
-        fr_dbl←645
-        fr_decf←1287
+        ct_default←#.utils.ct_default
+        dct_default←#.utils.dct_default
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         bool←0 1                                        ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
