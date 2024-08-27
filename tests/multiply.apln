@@ -3,11 +3,12 @@
     stripToSameLen←#.utils.stripToSameLen
     isDyalogClassic←#.utils.isClassic
 
-    model←{
-        ⍺×⍵
-    }
+    model←{⍺{
+        0≡⍵:0
+        ⍺⌹¨÷⍵
+    }¨⍵}
 
-    ∇ {r}←test_multiply
+    ∇ {r}←test_multiply;fr_dbl;fr_decf;RunVariations;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d1;d2;data2;case3;data3;c1;c2;f
         RunVariations←(model #.testfns._RunVariations_ ×)
 
         ⍝ constants
@@ -50,6 +51,8 @@
 
         :For fr :In 2 1
             ⎕FR←fr⊃fr_dbl fr_decf
+
+            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
             case←'independant'
             desc←testDesc⍬
 
@@ -68,11 +71,11 @@
                 
                 d1←(data~0)[?≢data~0]
 
-                r,← 'T1' desc RunVariations (data model data) data data ⍝ model test
+                r,← 'T1' desc quadparams RunVariations (data model data) data data ⍝ model test
                 d1←data[?≢data]
                 d2←data[?≢(data~d1)]
-                r,← 'T2' desc RunVariations data data 1         ⍝ Identity
-                r,← 'T3' desc RunVariations (0⍨¨data) data 0    ⍝ x×0=0
+                r,← 'T2' desc quadparams RunVariations data data 1         ⍝ Identity
+                r,← 'T3' desc quadparams RunVariations (0⍨¨data) data 0    ⍝ x×0=0
                 r,← 'T4' desc Assert 0≡0×d1
                 r,← 'T5' desc Assert 0≡d1×0
                 r,← 'T6' desc Assert d1≡1×d1
@@ -89,9 +92,9 @@
                     :Continue
                 :EndIf
 
-                r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
-                r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ TCross1 but reversed
-                r,← 'TCross3' desc RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
+                r,← 'TCross1' desc quadparams RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
+                r,← 'TCross2' desc quadparams RunVariations (data2 model data) data2 data ⍝ TCross1 but reversed
+                r,← 'TCross3' desc quadparams RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
                 r,← 'TCross4' desc Assert (((data2 data) model (data data2))≡(data2 data)×(data data2)) ⍝ merge two different arrays creating a pointer array
 
 
@@ -134,3 +137,4 @@
         :EndFor
     ∇
 :EndNamespace
+
