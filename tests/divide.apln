@@ -8,37 +8,17 @@
         ⍺⌹¨⍵
     }
 
-    ∇ tRes←tData RunVariations exp;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0
-        (expectedR larg rarg)←exp
-        (tID tCmt)←tData
-        tRes←⍬
 
-        ⍝ normal
-        actualR←larg÷rarg
-        tRes,←tData Assert expectedR≡actualR
+    ∇ {r}←test_divide ;RunVariations;ct_default;dct_default;fr_dbl;fr_decf;div_0;div_1;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Sdbl;Hdbl;Hfl;fl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;⎕FR;div;⎕DIV;data;d1;f;_;d2;data2;Message;data3;case3;c1;c2;almostd1S;almostd1B;almost0
+        ⍝ use RunVariations operator and modify it for divide
+        RunVariations←(model #.testfns._RunVariations_ ÷)
 
-        ⍝ empty
-        actualRE←(0⍴larg)÷(0⍴rarg) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
-
-        ⍝ different shapes
-        shape←?(?4)/4
-        actualRS←(shape⍴larg)÷(shape⍴rarg)
-        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
-
-        ⍝ different shapes with 0 in shape
-        shapeW0←(0@(?(≢shape)))shape
-        actualRSW0←(shapeW0⍴larg)÷(shapeW0⍴rarg)
-        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
-    ∇
-
-    ∇ r←test_divide;ct_default;dct_default;fr_dbl;fr_decf;div_0;div_1;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Sdbl;Hdbl;Hfl;fl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;⎕FR;div;⎕DIV;data;d1;f;_;d2;data2;Message;data3;case3;c1;c2;almostd1S;almostd1B;almost0
-        ct_default←1E¯14
-        dct_default←1E¯28
-        fr_dbl←645
-        fr_decf←1287
-        div_0←0 ⍝ ⎕DIV values
-        div_1←1
+        ct_default←#.utils.ct_default
+        dct_default←#.utils.dct_default
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
+        div_0←#.utils.div_0
+        div_1←#.utils.div_1
 
         ⍝ All data generated is unique
         bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
@@ -82,6 +62,9 @@
 
                 :For div :In 0 1
                     ⎕DIV←div
+
+                    quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
                     case←'independant'
                     desc←testDesc⍬
 
@@ -108,11 +91,11 @@
                         r,←'TI1' desc Assert f
 
                         :If case≢'bool'
-                            r,← 'T1' desc RunVariations (1⍨¨data) data data ⍝ division with the same number gives a 1
+                            r,← 'T1' desc quadparams RunVariations (1⍨¨data) data data ⍝ division with the same number gives a 1
                             d1←data[?≢data]
                             d2←data[?≢(data~d1)]
-                            r,← 'T2' desc RunVariations (d1 model d2) d1 d2 ⍝ model func finds results on single element
-                            r,← 'T3' desc RunVariations data data 1         ⍝ Identity
+                            r,← 'T2' desc quadparams RunVariations (d1 model d2) d1 d2 ⍝ model func finds results on single element
+                            r,← 'T3' desc quadparams RunVariations data data 1         ⍝ Identity
                         :EndIf
 
                         ⍝ Cross type tests
@@ -126,7 +109,7 @@
 
                             r,← 'TGen3' desc Assert (({1289∊⎕dr data,data2:1289⋄⎕fr}⍬)≡⎕dr data ÷ data2) ⍝ data type test
 
-                            r,← 'TCross1' desc RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
+                            r,← 'TCross1' desc quadparams RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
 
                             :If case≡'bool'
                                 f←1 ⍝ flag
@@ -137,14 +120,14 @@
                                     r,← 'TDomainE1' desc Assert (((f) ∧ (⎕dmx.Message≡'Divide by zero')) ∨ ((dyalogVersion≤19) ∧ 1289≡⎕DR data2)) ⍝ check DMX message for divide by 0
                                 :EndTrap
                             :Else
-                                r,← 'TCross2' desc RunVariations (data2 model data) data2 data ⍝ reverse of TCross1 without any div by 0 case
-                                r,← 'TCross3' desc RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
+                                r,← 'TCross2' desc quadparams RunVariations (data2 model data) data2 data ⍝ reverse of TCross1 without any div by 0 case
+                                r,← 'TCross3' desc quadparams RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
                                 r,← 'TCross4' desc Assert (((data2 data) model¨ (data data2))≡(data2 data)÷(data data2)) ⍝ merge two different arrays creating a pointer array
                             :EndIf
 
                             d1←data[?≢data]
                             d2←data2[?≢(data2~d1)]
-                            r,← 'TCross5' desc RunVariations (d1 model d2) d1 d2 ⍝ model finds results on single element
+                            r,← 'TCross5' desc quadparams RunVariations (d1 model d2) d1 d2 ⍝ model finds results on single element
                         :EndFor
                         case2←⍬ ⍝ dispose case2
 
@@ -235,3 +218,4 @@
     ∇
 
 :EndNamespace
+

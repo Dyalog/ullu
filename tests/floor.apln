@@ -33,44 +33,16 @@
         x≥y: b+1
         b+0j1
     }
-    
-    ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ tRes←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;p;shape;shapeW0;actualRS;trimmedp;rand
-        (expectedR p)←exp
-        (tID tCmt)←tData
-        tRes←⍬
 
-        ⍝ normal
-        actualR←⌊p
-        tRes,←tData Assert expectedR≡actualR
 
-        ⍝ scalar
-        rand←?≢p
-        trimmedp←rand↓p ⍝ so that not always the first is selected
-        shape←⍬         ⍝ scalar shape
-        actualRS←⌊shape⍴trimmedp
-        tRes,←('Scalar',tID) tCmt Assert (shape⍴rand↓expectedR)≡actualRS
+    ∇ {r}←test_floor ;RunVariations;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;charptr;c1;f;Message
+        ⍝ use RunVariations operator and modify it for floor
+        RunVariations←(modelFloor #.testfns._RunVariations_ ⌊)
 
-        ⍝ empty
-        actualRE←⌊(0⍴p) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE
-
-        ⍝ randomize shape of expectedR and p
-        shape←?(?4)/4
-        actualRS←⌊shape⍴p ⍝ change shape and then evaluate
-        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
-
-        ⍝ randomize shapes with 0 a random position of shape
-        shapeW0←(0@(?(≢shape)))shape
-        actualRS←⌊shapeW0⍴p
-        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0)≡actualRS
-    ∇
-
-    ∇ r←test_floor ;r;data;dataplus;case;data2;case2;type;zero;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;halfLen;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char1;char2;char3;char0;charptr;c1;f;Message
-        ct_default←1E¯14
-        dct_default←1E¯28
-        fr_dbl←645
-        fr_decf←1287
+        ct_default←#.utils.ct_default
+        dct_default←#.utils.dct_default
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
 
         bool←0 1                                        ⍝ 11: 1 bit Boolean type arrays
         i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
@@ -101,14 +73,17 @@
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
             :For fr :In 2 1
                 ⎕FR←fr⊃fr_dbl fr_decf ⍝ set type of floating-point computations
+                
+                quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+                
                 :For case :In 'zero' 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
                     data←⍎case
                     ⍝ Cross type tests
                     :For case2 :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'Hdbl' 'Hfl'
                         data2←⍎case2
                         desc←testDesc⍬
-                        r,← 'TCross1' desc RunVariations (modelFloor¨ data,data2) (data,data2) ⍝ concat data and data2
-                        r,← 'TCross2' desc RunVariations (modelFloor¨ data2,data) (data2,data) ⍝ concat data and data2 reversed
+                        r,← 'TCross1' desc quadparams RunVariations (modelFloor¨ data,data2) (data,data2) ⍝ concat data and data2
+                        r,← 'TCross2' desc quadparams RunVariations (modelFloor¨ data2,data) (data2,data) ⍝ concat data and data2 reversed
                         r,← 'TCross3' desc Assert ((modelFloor¨¨ data data2)≡(⌊data data2)) ⍝ TCross1 on pointer array
                         r,← 'TCross4' desc Assert ((modelFloor¨¨ data2 data)≡(⌊data2 data)) ⍝ TCross2 on pointer array
                     :EndFor
@@ -116,17 +91,17 @@
                     case2←⍬ ⍝ disposing case2 for testDesc
                     desc←testDesc⍬
 
-                    r,← 'T1' desc RunVariations (modelFloor¨data) data                          ⍝ generator func finds results on array
+                    r,← 'T1' desc quadparams RunVariations (modelFloor¨data) data                          ⍝ generator func finds results on array
 
                     dataplus←data+?0⍨¨data                                                      ⍝ data plus a number between (0,1) to data
                     r,← 'T2' desc Assert ((modelFloor¨dataplus)≡⌊dataplus) ∨ ((fr=1) ∧ case≡'Hfl')  ⍝ ⎕fr=645 and Hfl is skipped because of rounding off 
 
                     :If (⊂data)∊i1 i2 i3
-                        r,← 'TInt1' desc RunVariations data data                                ⍝ floor of integers will always be floor
-                        r,← 'TInt2' desc RunVariations data dataplus                            ⍝ floor of integers will always be floor
+                        r,← 'TInt1' desc quadparams RunVariations data data                                ⍝ floor of integers will always be floor
+                        r,← 'TInt2' desc quadparams RunVariations data dataplus                            ⍝ floor of integers will always be floor
                     :ElseIf (⊂data)∊dbl fl
                         halfLen←(¯1+≢data)÷2
-                        r,← 'TDbl' desc RunVariations ({(⍵-0.5),0,-0.5+⍵}(halfLen↑data)) data   ⍝ floor of dbl is removing the 0.5 from the number
+                        r,← 'TDbl' desc quadparams RunVariations ({(⍵-0.5),0,-0.5+⍵}(halfLen↑data)) data   ⍝ floor of dbl is removing the 0.5 from the number
                     :EndIf
                 
                     ⍝ tests with comparison tolerance
@@ -170,7 +145,11 @@
         :EndFor
     ∇
 
-    ∇ r←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf;⎕CT;⎕DCT;⎕FR
+
+    ∇ {r}←test_cmplx_floor ;cmplx;Hcmplx;dataplus;d1;almostd1;case;data;testDesc;desc;ct;fr;ct_default;dct_default;fr_dbl;fr_decf;⎕CT;⎕DCT;⎕FR
+        ⍝ use RunVariationsCmplx operator and modify it for complex floor
+        RunVariationsCmplx←(modelCmpxFloor #.testfns._RunVariations_ ⌊)
+
         ct_default←1E¯14
         dct_default←1E¯28
         fr_dbl←645
@@ -186,10 +165,13 @@
             (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
             :For fr :In 1 2
                 ⎕FR←fr⊃fr_dbl fr_decf
+
+                quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
                 :For case :In 'cmplx' 'Hcmplx'
                     data←⍎case
                     desc←testDesc⍬
-                    r,←'T1' desc RunVariations data data    ⍝ all of data are whole cmplx numbers
+                    r,←'T1' desc quadparams RunVariationsCmplx data data    ⍝ all of data are whole cmplx numbers
 
                     ⍝ adding a number between (0,1) to data making it a array of cmplx numbers of type xJy ¯xJy xJ¯y ¯xJ¯y
                     dataplus←(data,(data+2⊃⊣),(data+2⊃⊣),(data+(1⊃⊣)+2⊃⊣)) (?0⍨¨data) (¯11○(?0⍨¨data))

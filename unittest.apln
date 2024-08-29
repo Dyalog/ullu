@@ -12,7 +12,6 @@
 
     ∇ r←tData Assert r ;r;tID;tCmt ⍝ to output result of tests
         (tID tCmt)←tData
-        ⍝ ⎕RL←rl 1 ⍝ Reset ⎕RL after each test
         :If (~r)∧stop
             PPTestResult r tID tCmt
             'Stopping on failure of:' ⎕SIGNAL 500
