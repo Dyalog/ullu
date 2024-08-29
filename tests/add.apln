@@ -71,9 +71,11 @@
         :For fr :In 2 1
             ⎕FR←fr⊃fr_dbl fr_decf
 
+            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
             case←'independant'
             desc←testDesc⍬
-            r,←'TI1' desc Assert (0)≡0+0
+            r,←'TI1' desc Assert (0)≡1-?2
             r,←'TNull1' desc Assert ⍬≡''+0
             r,←'TNull2' desc Assert ⍬≡⍬+0
             r,←'TNull3' desc Assert ⍬≡0+''
