@@ -76,8 +76,9 @@
         :EndSection
 
         ⍝ 0 is used to generate a random seed value and the random value is the noted in the logs
-        (#.tests.add).⎕RL←rl←{⍵≡0:?¯2+2*31⋄⍵} randLink
-        
+        ⍝ all test namespaces have the same ⎕RL value supplied at the start of the tests
+        (#.testfns ({⍎'#.tests.',⍵}¨#.tests.⎕NL ¯9.1)).⎕RL←rl←{⍵≡0:?¯2+2*31⋄⍵} randLink
+
         :Section FetchTests
             tests←GetTests testNS
             'no tests found'⎕SIGNAL (~(0=≢tests))↓11
