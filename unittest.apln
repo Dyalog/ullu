@@ -49,11 +49,11 @@
 
     ⍝ This function runs the tests
     ⍝ It takes 1 mandatory and 3 optional arguments [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value] (0 default)
-    ∇ z←RunTests args ;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep;versionInfo
+    ∇ {z}←RunTests args ;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep;versionInfo
         time←⎕AI[2] ⍝ Start time of execution of tests
         ⎕pw←1000
         :Section parseArguments ⍝ This section parses and verifies input arguments
-            'missing or extra arguments. Correct usage is: [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳6)↓11
+            'missing or extra arguments. Correct usage is: [test_namespace] [prod=1|0] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳6)↓11
             (testNS prod verbose stop reps randLink)←6↑args,0 0 0 0 0 0
             'Prod can only be 0 or 1'⎕SIGNAL (prod ∊ 0 1)↓11
             'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
@@ -94,9 +94,7 @@
             :If ~prod ∧ (nPass≡≢r) 
                 ⎕←''⋄⎕←'All tests completed for',testNS,':', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
             :EndIf
-            :If prod
-                z←nPass≡≢r
-            :EndIf
+            z←nPass≡≢r
         :EndSection
     ∇
 
