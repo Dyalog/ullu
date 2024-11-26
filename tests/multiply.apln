@@ -3,8 +3,18 @@
     stripToSameLen←#.utils.stripToSameLen
     isDyalogClassic←#.utils.isClassic
 
+    complexMultiplyModel←{
+        a c b d←∊(9 11○⊂)⍺ ⍵ 
+        ⍝ (a+bi)(c+di)=(ac−bd)+(ad+bc)i
+        x←((a model c)-(b model d))
+        y←((a model d)+(b model c))
+        x(⊣+¯11○⊢)y 
+    }
+
     model←{⍺{
         0≡⍵:0
+        ⍝ is ⍵ or ⍺ complex
+        (1289≡⎕DR ⍵) ∨ (1289≡⎕DR ⍺): ⍺ complexMultiplyModel¨ ⍵
         ⍺⌹¨÷⍵
     }¨⍵}
 
