@@ -46,7 +46,7 @@ readOption←{
 	(name val)←'='(≠⊆⊢)⍵
 	name←optionNames⍳⊂name
 	(valid val)←⎕VFI val
-	(1≠+⌿'='=⍵)∨(name=≢optionNames)∨(0∊valid): ('Invalid option update: ',⍵)⎕SIGNAL 11
+	(1≠+⌿'='=⍵)∨(name>≢optionNames)∨(0∊valid): ('Invalid option update: ',⍵)⎕SIGNAL 11
 	(name⊃optionValues)←val
 	('Updated ',(name⊃optionNames),': ',⍕val)⎕SIGNAL 11
 }
