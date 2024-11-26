@@ -1,8 +1,7 @@
 #!/usr/local/bin/dyalogscript
 
 ⍝ Full session start-up
-DYALOG ← 2 ⎕NQ #'GetEnvironment' 'DYALOG'
-⍎⊃2⎕FIX 'file://',DYALOG,'/StartupSession.aplf'
+⎕SE.(⍎⊃2⎕FIX'/StartupSession.aplf',⍨2⎕NQ#'GetEnvironment' 'DYALOG')
 
 ⍝ Load the code from the current directory
 ⎕SE.Link.Import # (⎕SE.Dyalog.Utils.CD '')
