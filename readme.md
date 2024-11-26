@@ -13,16 +13,20 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 ## 🎿 Coverage
 
 ### 💪  Available Tests
+- add (dyadic +)
 - divide (dyadic ÷)
 - floor (monadic ⌊)
 - magnitude (monadic |)
 - residue (dyadic |)
+- subtract (dyadic -)
 - unique (monadic ∪)
 - unique mask (monadic ≠)
 
-### 🧱 Under progress
+### 🧱 In progress
 - index of (dyadic ⍳) (Not tested for coverage)
 - membership (dyadic ∊) (Not tested for coverage)
+- Multiply (dyadic ×) (#76)
+- Not (monadic ~) (#84)
 
 ### 🔜 Next Up
 - Lots of primitives but hopwfully `*` `⌈` `⌊` `<` `≤` `=` `≥` `>` `≠` and `monadic ~` and optimisations for square root `x*0.5`
@@ -59,12 +63,14 @@ Using Dyalog Interpreter (prefered):
 - Run the test cases
 
 ```
-unittest.RunTests tests.[test_namespace] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(''?'' for random)] (0 default)
+unittest.RunTests tests.[test_namespace] [prod=1|0] [verbose= 1|0] [stop=1|0] [⎕RL=any seed value(''?'' for random)] (0 default)
 ```
 
 Options:
 
-verbose: if set to 0, only output failing tests and a single summary line.
+prod: Changes the result of the test suite to be completely non-verbose and just return 1 if everything passes to not clutter the Jenkins jobs
+
+verbose: if set to 0, only output failing tests and a single summary line and version information.
 
 stop: if set to 1, any test which fails causes the framework to stop and allows the developer to inspect the failing test.
 
@@ -72,7 +78,7 @@ stop: if set to 1, any test which fails causes the framework to stop and allows 
 
 Example:
 ```
-unittest.RunTests tests.membership 1 0 1232
+unittest.RunTests tests.membership 0 1 0 1232
 ```
 or
 ```

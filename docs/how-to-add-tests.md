@@ -8,7 +8,7 @@ Eg: uniquemask
 
 ```APL
 :Namespace uniquemask
-    ⍝...
+    ⍝ ...
 :EndNamespace
 ```
 
@@ -18,22 +18,24 @@ Start with making the main function titled `test_functionname` like `test_unique
 
 ### Initialise variables
 
-Primitives depend on ⎕CT/⎕DCT, ⎕FR and ⎕IO, so all default values of these can be initialised:
+Primitives depend on ⎕CT/⎕DCT, ⎕FR, ⎕DIV and ⎕IO, so all default values of these can be initialised:
 
 ```APL
-ct_default←1E¯14
-dct_default←1E¯28
-fr_dbl←645
-fr_decf←1287
-io_default←1
-io_0←0
+ct_default←#.utils.ct_default
+dct_default←#.utils.dct_default
+fr_dbl←#.utils.fr_dbl
+fr_decf←#.utils.fr_decf
+io_default←#.utils.io_default
+io_0←#.utils.io_0
+div_0←#.utils.div_0
+div_1←#.utils.div_1
 ```
 
 Then we need to get some specific data that we can manipulate to give us expected results to some testcases to logically/mathematically check the correct output. This is meant as a very basic fallback for testing with model functions fail.
 
 This can look something like this:
 
-This is an example from [unique mask](tests\uniquemask.apln) (≠)
+This is an example from [unique mask](tests\uniquemask.apln) (≠). These values can be changed according to what you want the fundamental tests to do but general layout should remain the same covering all the data types possible.
 
 ```APL
 ⍝ All data generated is unique
@@ -83,12 +85,14 @@ Assert is a function described in `./unittest.apln` that takes in a test express
 
 #### `RunVariations`
 
-RunVariations is a function described in each test file which takes the expressions to be evaluated and does the following:
+RunVariations is a function described in testfns.apln which takes the expressions to be evaluated and does the following:
 - tests using the standard form it comes in
 - tests a scalar element from the data it gets
 - tests an empty array derived from the input
 - applies a different shape to the input and evaluates
 - creates a different shape that has a 0 in the shape of the input
+- tests the input with the model function to double check the result
+- RandModelTest takes the datatype and the boundary values of the expressions and generates a random array of the same datatype to increase the amount of data we have.
 
 #### Model function
 
@@ -104,7 +108,8 @@ A model function replicates the behavior of an existing function by employing al
 
 ### The tests
 
-All tests should run with all types of ⎕CT/⎕DCT, ⎕FR and ⎕IO values depending on which settings are implicit arguments of the primitive, ie. all of the settings that they depend on.
+All tests should run with all types of ⎕CT/⎕DCT, ⎕FR, ⎕DIV and ⎕IO values depending on which settings are implicit arguments of the primitive, ie. all of the settings that they depend on.
+
 ```APL
 :For io :In io_default io_0
     ⎕IO←io
@@ -139,16 +144,11 @@ General tests are tests that test information other than if the primitive gives 
 
 ##### Logical/mathematical tests
 
-These are tests that evaluate the result of the primitive with a very logical straightforward approach and try to depend on as few primitives as possible to reduce the number of false failures if the dependent primitives fail. Some examples of unique mask:
+These are tests that evaluate the result of the primitive with a very logical straightforward approach and try to depend on as few primitives as possible to reduce the number of false failures if the dependent primitives fail. Some examples of subtract:
 
-- all elements of data are unique so the result would be all 1s
+- substraction with the same number gives 0
     ```APL
-    r,← 'T1' desc RunVariations (1⍨¨data) data
-    ```
-
-- all elements are perfectly intertwined so the result would be 1 0 1 0 1 0...
-    ```APL
-    r,← 'T3' desc RunVariations ((1⍨¨data) intertwine (0⍨¨data)) (data intertwine data)
+    r,← 'T1' desc quadparams RunVariations ((0⍨¨data) data data)
     ```
 
 ##### Cross datatype tests
