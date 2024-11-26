@@ -1,0 +1,10 @@
+:Namespace not
+    Assert←#.unittest.Assert
+
+
+    ∇ {r}←test_not
+      r←⍬
+     
+      r,←'Test0' 'testing'Assert 0=1
+    ∇
+:EndNamespace
