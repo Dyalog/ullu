@@ -44,17 +44,17 @@ options,←⊂0 'randlink' 'Initial value of ⎕RL. 0 for random ⎕RL'
 readOption←{
 	''≡⍵:⍬ ⍝ done
 
-	(name val)←'←'(≠⊆⊢)⍵
+	(name val)←'='(≠⊆⊢)⍵
 	name←optionNames⍳⊂name
 	(valid val)←⎕VFI val
-	(1≠+⌿'←'=⍵)∨(name=≢optionNames)∨(0∊valid): ('Invalid option update: ',⍵)⎕SIGNAL 11
+	(1≠+⌿'='=⍵)∨(name=≢optionNames)∨(0∊valid): ('Invalid option update: ',⍵)⎕SIGNAL 11
 	(name⊃optionValues)←val
 	('Updated ',(name⊃optionNames),': ',⍕val)⎕SIGNAL 11
 }
 
 askOptions←{
 	⎕←'Change test options, or hit ENTER to use the current values.'
-	⎕←'Type ? for more information, or OPTION←NEWVAL to update.'
+	⎕←'Type ? for more information, or OPTION=NEWVAL to update.'
 	⎕←'Current options:'
 	_←optionNames{⎕←'∘ ',⍺,': ',⍕⍵ ⋄ 0}¨optionValues
 	{⍞}⍣{
