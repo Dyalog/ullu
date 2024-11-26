@@ -48,7 +48,7 @@
     ∇
 
     ⍝ This function runs the tests
-    ⍝ It takes 1 mandatory and 3 optional arguments [test_namespace] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value] (0 default)
+    ⍝ It takes 1 mandatory and 3 optional arguments [test_namespace] [prod=1|0] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value] (0 default)
     ∇ {z}←RunTests args ;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep;versionInfo
         time←⎕AI[2] ⍝ Start time of execution of tests
         ⎕pw←1000
