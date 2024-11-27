@@ -1,49 +1,74 @@
 #!/usr/local/bin/dyalogscript
 
 ⍝ Full session start-up
-DYALOG ← 2 ⎕NQ #'GetEnvironment' 'DYALOG'
-⍎⊃2⎕FIX 'file://',DYALOG,'/startup.dyalog'
+⎕SE.(⍎⊃2⎕FIX'/StartupSession.aplf',⍨2⎕NQ#'GetEnvironment' 'DYALOG')
 
-⎕SE.Link.Import # '/Users/rush/wdr/projects/bb-test-apl'
+⍝ Load the code from the current directory
+⎕SE.Link.Import # (⎕SE.Dyalog.Utils.CD '')
 
-⍝ list of available tests
-ts←⊂'add'
-ts←⊂'divide'
-ts←⊂'floor'
-ts,←⊂'indexof'
-ts,←⊂'magnitude'
-ts,←⊂'membership'
-ts,←⊂'residue'
-ts←⊂'subtract'
-ts,←⊂'unique'
-ts←⊂'uniquemask'
-
-⎕←''
-⎕←'Hi, Choose supported tests:'
-⎕←'all', ts
-⎕←''
-⎕←'Enter TestName:'
-tName←¯1∘⎕C ⍞ ⍝ stdin to lowercase
-⎕←''
-
-⎕←''
-⎕←'Test options: (not supported with all, stop has limited functionality)'
-⎕←'verbose stop repetitions randLink'
-opts←⍎⍞
-⎕←opts
-(prod verbose stop reps randLink)←5↑opts,0 0 0 0 0
-⎕←''
-
-t←{
-    3::'Test not found, please select from the list'⎕SIGNAL 11
-    tIndex ←ts⍳⊂tName
-    tName≡'all':(⊂'tests.'),¨ts
-    'tests.',⊃ts[tIndex]
-}⍬
-
-run←{
-    tName≡'all' : unittest.RunTests ¨(⍎¨t)
-    unittest.RunTests (⍎t) verbose stop reps randLink
+retry←{
+	fn←∇
+	11::{⎕←'→ ',⎕DMX.EM ⋄ fn ⍵}⍵
+	⍺⍺ ⍵⍵ ⍵
 }
 
-run⍬
+testnames←tests.⎕NL ¯9
+
+⎕←'Available tests:'
+⎕←'∘ ',⍤1⊢↑testnames
+
+readName←{
+	⍵≡'all': testnames
+	(⊂⍵)∊testnames: ⊂⍵
+	('Invalid test name: ',⍵)⎕SIGNAL 11
+}
+
+askNames←{
+	⍞←'Choose tests to run, or hit ENTER to run all: '
+	in←¯1⎕C⍞ ⍝ lowercase stdin
+	in≡'':⊂'all'
+	' '(≠⊆⊢)in ⍝ split on spaces
+}
+
+choosen←⊃,⌿readName¨ retry askNames ⍬
+⎕←'Tests choosen:'
+⎕←'∘ ',⍤1⊢↑choosen
+
+options ←⊂1 'prod' 'Production mode (0 or 1)'
+options,←⊂0 'verbose' 'Verbose output (0 or 1)'
+options,←⊂1 'reps' 'How many repetitions of the tests to run'
+options,←⊂0 'randlink' 'Initial value of ⎕RL. 0 for random ⎕RL'
+(optionValues optionNames optionDescriptions)←↓⍉↑options
+
+readOption←{
+	''≡⍵:⍬ ⍝ done
+
+	(name val)←'='(≠⊆⊢)⍵
+	name←optionNames⍳⊂name
+	(valid val)←⎕VFI val
+	(1≠+⌿'='=⍵)∨(name>≢optionNames)∨(0∊valid): ('Invalid option update: ',⍵)⎕SIGNAL 11
+	(name⊃optionValues)←val
+	('Updated ',(name⊃optionNames),': ',⍕val)⎕SIGNAL 11
+}
+
+askOptions←{
+	⎕←'Change test options, or hit ENTER to use the current values.'
+	⎕←'Type ? for more information, or OPTION=NEWVAL to update.'
+	⎕←'Current options:'
+	_←optionNames{⎕←'∘ ',⍺,': ',⍕⍵ ⋄ 0}¨optionValues
+	{⍞}⍣{
+		⍺≢,'?': 1
+		⎕←↑optionNames{'∘ ',⍺,': ',⍵}¨optionDescriptions
+		0
+	}⍬
+}
+
+readOption retry askOptions ⍬
+
+optionNames,←⊂'stop'
+optionValues,←0
+
+:For test :In choosen
+	⎕←'Running test: ',test
+	unittest.RunTests (⍎'tests.',test),optionValues[optionNames⍳'prod' 'verbose' 'stop' 'reps' 'randlink']
+:EndFor
