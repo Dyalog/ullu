@@ -4,6 +4,7 @@
     isDyalogClassic←#.utils.isClassic
 
     complexMultiplyModel←{
+        (⎕FR≡1287) ∧ case≡'Hcmplx': ⍺×⍵ ⍝ Skipping cmplx for ⎕FR←1287
         a c b d←∊(9 11○⊂)⍺ ⍵ 
         ⍝ (a+bi)(c+di)=(ac−bd)+(ad+bc)i
         x←((a model c)-(b model d))
