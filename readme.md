@@ -16,17 +16,17 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 - add (dyadic +)
 - divide (dyadic ÷)
 - floor (monadic ⌊)
+- index of (dyadic ⍳) (Not tested for coverage)
 - magnitude (monadic |)
+- membership (dyadic ∊) (Not tested for coverage)
 - residue (dyadic |)
 - subtract (dyadic -)
 - unique (monadic ∪)
 - unique mask (monadic ≠)
 
 ### 🧱 In progress
-- index of (dyadic ⍳) (Not tested for coverage)
-- membership (dyadic ∊) (Not tested for coverage)
-- Multiply (dyadic ×) (#76)
-- Not (monadic ~) (#84)
+
+All details about upcoming tests can be found in the [project board](https://github.com/Dyalog/ullu/projects/4)
 
 ## ✍ The name
 
