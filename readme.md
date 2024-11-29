@@ -26,7 +26,7 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 
 ### 🧱 In progress
 
-All details about upcoming tests can be found in the [project board](https://github.com/Dyalog/ullu/projects/4)
+All details about upcoming tests can be found in the [project board](https://github.com/orgs/Dyalog/projects/4/views/1)
 
 ## ✍ The name
 
