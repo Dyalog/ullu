@@ -6,12 +6,15 @@
     complexMultiplyModel←{
         (⎕FR≡1287) ∧ case≡'Hcmplx': ⍺×⍵ ⍝ Skipping cmplx for ⎕FR←1287
         a c b d←∊(9 11○⊂)⍺ ⍵ 
-        ⍝ (a+bi)(c+di)=(ac−bd)+(ad+bc)i
+        ⍝ using formula (a+bi)(c+di)=(ac−bd)+(ad+bc)i
         x←((a model c)-(b model d))
         y←((a model d)+(b model c))
         x(⊣+¯11○⊢)y
     }
 
+    ⍝ model for multiply might not be completely accurate for floats
+    ⍝ because it uses reciprocal and divide and there might be a
+    ⍝ loss of precision
     model←{⍺{
         0≡⍵:0
         ⍝ is ⍵ or ⍺ complex
@@ -68,7 +71,7 @@
             desc←testDesc⍬
 
             r,←'TI1' desc Assert 0≡0×0
-            r,←'TNull1' desc Assert ⍬≡''×0
+            r,←'TNull1' desc Assert ⍬≡''×0 ⍝ testing for null values
             r,←'TNull2' desc Assert ⍬≡⍬×0
             r,←'TNull3' desc Assert ⍬≡0×''
             r,←'TNull4' desc Assert ⍬≡0×⍬
