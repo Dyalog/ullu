@@ -1,9 +1,9 @@
 # Non Scalar Selection functions
 
-## Unique (`R←∪Y`)([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Unique.htm))
+## [Unique](../../../tests/unique.apln) (`R←∪Y`)([docs](https://help.dyalog.com/latest/Content/Language/Primitive%20Functions/Unique.htm))
 Same as unqiue mask below
 
-## Unique Mask (`R←≠Y`)([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Unique%20Mask.htm))
+## [Unique Mask](../../../tests/uniquemask.apln) (`R←≠Y`)([docs](https://help.dyalog.com/latest/Content/Language/Primitive%20Functions/Unique%20Mask.htm))
 
 Most of it is very similar to other tests so only documenting the different parts here. One thing that bugged me for a very long time was a switch case at `allos/src/same.c.html#L1311` in function `tolerant_nubsieve(void)` where the lines of code were not hit with a the normal cases.
 

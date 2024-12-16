@@ -1,6 +1,6 @@
 # Scalar Monadic Functions
 
-## Magnitude (`R←|Y`)([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Magnitude.htm))
+## [Magnitude](../../../tests/magnitude.apln) (`R←|Y`)([docs](https://help.dyalog.com/latest/Content/Language/Primitive%20Functions/Magnitude.htm))
 
 The tests include:
 - Datatype tests: tests for positive and negative for all the available numeric datatypes

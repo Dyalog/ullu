@@ -1,6 +1,6 @@
 # Non Scalar Selector functions
 
-## Index of (`R←X⍳Y`)([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Index%20Of.htm))
+## [Index of](../../../tests/indexof.apln) (`R←X⍳Y`)([docs](https://help.dyalog.com/latest/Content/Language/Primitive%20Functions/Index%20Of.htm))
 
 The tests include:
 - Datatype tests: tests for found and indexed/not-found variations for all the available datatypes
@@ -18,7 +18,7 @@ Variations include:
 
 Code Coverage report: NA
 
-## Membership (`R←X∊Y`) ([docs](https://help.dyalog.com/latest/#Language/Primitive%20Functions/Membership.htm))
+## [Membership](../../../tests/membership.apln) (`R←X∊Y`) ([docs](https://help.dyalog.com/latest/Content/Language/Primitive%20Functions/Membership.htm))
 
 The tests include:
 - Datatype tests: tests for found/not-found variations for all the available datatypes.
