@@ -72,7 +72,7 @@ A primitive is a built-in function or operator which is a core part of the langu
 Ullu tests the primitives one by one, covering all the code written in the sources of Dyalog APL, all possible cases, including edge cases, and all types of inputs it can receive. 
 
 <!-- demo for a primitive (blog) -->
-A workflow demonstration blog on how to write tests is present in [docs/how-to-add-tests.md](https://github.com/Dyalog/ullu/blob/main/docs/how-to-add-tests.md)
+A workflow demonstration blog on how to write tests is present in [docs/how-to-add-tests.md](docs/how-to-add-tests.md)
 
 ## Contributing Docs
 
@@ -81,14 +81,14 @@ A workflow demonstration blog on how to write tests is present in [docs/how-to-a
 <!-- what it is -->
 Decision Docs are records for detailing key decisions, fostering transparency and aiding future collaboration by providing a structured account of the decision-making process. Documenting why certain decisions were taken in the codebase, they explain the mindset of the developer writing the tests and also help document any anomalies in the codebase.
 
-It can be found [here](https://github.com/Dyalog/ullu/tree/docs-revamp/docs/decision)
+It can be found [here](docs/decision)
 
 <!-- how to write -->
 In the decision docs, you need to mention the types of test cases included in the tests, a description of all the variations of the tests, and all the edge cases that were faced/handled. It needs to have all the information that a person in the future would need to expand on the same tests or write new related ones.
 
 <!-- example -->
-Decision docs for the primitive Magnitude are a good example of this. They can be found [here](https://github.com/Dyalog/ullu/blob/docs-revamp/docs/decision/primitive-functions/scalar-monadic.md#magnitude-rydocs)
+Decision docs for the primitive Magnitude are a good example of this. They can be found [here](docs/decision/primitive-functions/scalar-monadic.md#magnitude-rydocs)
 
 ---
 
-Note: By submitting a PR you agree to license your contribution under the ullu’s MIT [license](https://github.com/Dyalog/ullu/blob/main/LICENSE) unless explicitly noted otherwise.
+Note: By submitting a PR you agree to license your contribution under the ullu’s MIT [license](LICENSE) unless explicitly noted otherwise.

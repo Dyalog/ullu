@@ -1,6 +1,6 @@
 ![ullu Banner](assets/ullu-cover.png)
 
-[![GitHub Licence](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
+[![GitHub Licence](https://img.shields.io/github/license/sloorush/ullu)](LICENSE)
 
 # ullu
 
@@ -84,8 +84,8 @@ unittest.RunTests tests.membership
 
 ### 🔗 More documentation
 
-- [Contributing.md](https://github.com/Dyalog/ullu/blob/main/contributing.md): Guide on how to contribute to the codebase
-- [Decision docs](https://github.com/Dyalog/ullu/tree/main/docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
+- [contributing.md](contributing.md): Guide on how to contribute to the codebase
+- [Decision docs](docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
 
 
 ### 🔗 Suggestions/Questions
