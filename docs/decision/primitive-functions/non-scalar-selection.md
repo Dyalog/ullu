@@ -29,7 +29,7 @@ gt is the element type of the grade-up index, so its squeezed type is dependent 
 This gives the possible combinations (ignore the colouring for now):
 ```
 ![unique email](../../../assets/unique-email.png)
-``` 
+```
 However, there can’t be more unique elements than elements, so I think the red lines are impossible.
 
 Also, it appears that the generated cluster index doesn’t necessarily consist of the smallest element type – in particular, if gt is APLLONG then ct is always APLLONG too. That makes the orange lines impossible.

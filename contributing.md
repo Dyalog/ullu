@@ -69,7 +69,7 @@ Yay! Now, you are all set. ٩(ˊᗜˋ*)و
 
 A primitive is a built-in function or operator which is a core part of the language. It is represented by a glyph, which it may share with another primitive. More information [here](https://aplwiki.com/wiki/Primitive)
 
-Ullu tests the primitives one by one, covering all the code written in the sources of Dyalog APL, all possible cases, including edge cases, and all types of inputs it can receive. 
+Ullu tests the primitives one by one, covering all the code written in the sources of Dyalog APL, all possible cases, including edge cases, and all types of inputs it can receive.
 
 <!-- demo for a primitive (blog) -->
 A workflow demonstration blog on how to write tests is present in [docs/how-to-add-tests.md](docs/how-to-add-tests.md)

@@ -55,13 +55,13 @@ Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbe
 ⍝ come under the region of tolerant equality
 Hdbl←{⍵,-⍵}1E14+(2×⍳50)
 
-⍝ This is needed for a case that can be hit if we have a lot of small numbers 
+⍝ This is needed for a case that can be hit if we have a lot of small numbers
 ⍝ which produce a hash collision
 ⍝ Occurrence: same.c.html#L1153
 Sdbl←{⍵,-⍵}(⍳500)÷1000
 
 ⍝ Hfl is 1287 but larger numbers to test for CT value
-⍝ far intervals are chosen for non overlap 
+⍝ far intervals are chosen for non overlap
 ⍝ with region of tolerant equality
 ⎕FR←fr_decf
 fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
@@ -114,7 +114,7 @@ All tests should run with all types of ⎕CT/⎕DCT, ⎕FR, ⎕DIV and ⎕IO val
 :For io :In io_default io_0
     ⎕IO←io
 
-    :For ct :In 1 0 
+    :For ct :In 1 0
         (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
 
         :For fr :In fr_dbl fr_decf

@@ -8,7 +8,7 @@
 
 ## 🤔 What is ullu?
 
-Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests specifically the functionality of primitives one by one. This test suite's main focus is finding bugs, irregularities, edge cases and code coverage.  
+Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests specifically the functionality of primitives one by one. This test suite's main focus is finding bugs, irregularities, edge cases and code coverage.
 
 ## 🎿 Coverage
 
