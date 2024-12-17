@@ -1,6 +1,6 @@
 # Scalar Dyadic Arithmetic Functions
 
-## Residue (`R←X|Y`)([docs](http://help.dyalog.com/latest/index.htm#Language/Primitive%20Functions/Residue.htm))
+## [Residue](../../../tests/residue.apln) (`R←X|Y`)([docs](http://help.dyalog.com/latest/Content/Language/Primitive%20Functions/Residue.htm))
 
 The tests include:
 - Datatype tests: tests for positive and negative for all the available numeric datatypes
