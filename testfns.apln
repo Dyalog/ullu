@@ -3,24 +3,24 @@
     numOrChar←#.utils.numOrChar
     change0sto1←#.utils.change0sto1
 
-    giveBound←{
-        type←(181⌶)⍵
-        type=11:0 1                                         ⍝ 11  : 1 bit boolean arrays
-        type=80:⎕UCS 0 255                                  ⍝ 80  : 8 bits character
-        type=83:¯128 127                                    ⍝ 83  : 8 bits signed integer
-        type=160:⎕UCS 0 65535                               ⍝ 160 : 16 bits character
-        type=163:¯32768 32767                               ⍝ 163 : 16 bits signed integer
-        type=320:⎕UCS 0 1114111                             ⍝ 320 : 32 bits character
-        type=323:¯2147483648 2147483647                     ⍝ 323 : 32 bits signed integer
-        type=645:(⌈/⍬)(⌊/⍬)                                 ⍝ 645 : 64 bits floating
-        ⎕FR←1287 ⋄ type=1287:(⌈/⍬)(⌊/⍬) ⋄ ⎕FR←645           ⍝ 1287: 128 bits decimal
-        type=1289:{(-⍵),⍵,(+⍵),(-+⍵)}(⌈/⍬)(⊣+¯11○⊢)(⌊/⍬)    ⍝ 1289: 128 bits complex
-    }
+      giveBound←{
+          type←(181⌶)⍵
+          type=11:0 1                                         ⍝ 11  : 1 bit boolean arrays
+          type=80:⎕UCS 0 255                                  ⍝ 80  : 8 bits character
+          type=83:¯128 127                                    ⍝ 83  : 8 bits signed integer
+          type=160:⎕UCS 0 65535                               ⍝ 160 : 16 bits character
+          type=163:¯32768 32767                               ⍝ 163 : 16 bits signed integer
+          type=320:⎕UCS 0 1114111                             ⍝ 320 : 32 bits character
+          type=323:¯2147483648 2147483647                     ⍝ 323 : 32 bits signed integer
+          type=645:(⌈/⍬)(⌊/⍬)                                 ⍝ 645 : 64 bits floating
+          ⎕FR←1287 ⋄ type=1287:(⌈/⍬)(⌊/⍬) ⋄ ⎕FR←645           ⍝ 1287: 128 bits decimal
+          type=1289:{(-⍵),⍵,(+⍵),(-+⍵)}(⌈/⍬)(⊣+¯11○⊢)(⌊/⍬)    ⍝ 1289: 128 bits complex
+      }
 
-    ⍝ shouldNotRandTest checks what test is running and returns a 0
+    ⍝ isCurrentlyRunning checks what test is running and returns a 1
     ⍝ if the test mentioned in ⍵ are running to simplify the if case
     ⍝ in RandModelTest to skip the test for certain primitives
-    shouldNotRandTest←{~∨/⊃,/{∨/⍵⍷↑#.unittest.tests}¨⍵}
+    isCurrentlyRunning←{∨/⊃,/{∨/⍵⍷↑#.unittest.tests}¨⍵}
 
     ⍝ -------------------------
     ⍝ Generating Random Numbers
@@ -28,20 +28,20 @@
 
     ⍝ generating big random numbers upto 1E6144
     rollLimit←{⎕fr←1287 ⋄ ⍵<¯1+2*63 ⋄⎕fr←645} ⍝ limit of the roll(X?Y) primitive
-    
+
     ⍝ generate 3 to 18 random numbers smaller than 1E17 and multiply them to get
-    ⍝ a random number between 1E49 to 1E306    
+    ⍝ a random number between 1E49 to 1E306
     bigRand308←{×/?(2+?16)/1E17}
-    
+
     ⍝ takes a number from bigRand308 and picks 3 to 20 random numbers and multiplies
     ⍝ all of them to generate a random number between 1E308 to 1E6144
-    bigRand308to6144←{×/change0sto1(2+?18)↑}
-    
+    bigRand308to6144←{×/change0sto1(2+?18)↑⍵}
+
     ⍝ rarg bigRand bound
     ⍝ uses bigRand308to6144 and bigRand308 to use the required random number generator
     ⍝ to generate a appropriate random number based on the bounds and the datatype
     ⍝
-    ⍝        <---cmplx---> <-----decimal numbers running with 128 bit arithmetic----->  <numbers under ? limit> <floating point nos>                                                                                   
+    ⍝        <---cmplx---> <-----decimal numbers running with 128 bit arithmetic----->  <numbers under ? limit> <floating point nos>
     bigRand←{1289≡⎕dr ⍵:⍺⋄(1287≡⎕dr ⍵) ∧ ⎕fr≡1287: {bigRand308to6144 bigRand308¨⍳20}¨⍺ ⋄ ⍺{rollLimit ⍵:?(≢⍺)/⍵ ⋄ (bigRand308¨⍺)}⍵}
 
     ⍝ todo: add this for characters when this runs for it
@@ -65,69 +65,59 @@
     ⍝ - membership
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ {tRes}←tData (model _RunVariations_ op) exp;⎕CT;⎕DCT;⎕FR;⎕IO;⎕DIV;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
-        :If 3≡≢exp ⍝ dyadic op
-            val←2 ⍝ valence
-            (expectedR larg rarg)←exp
-        :Else ⍝ monadic op
-            val←1
-            (expectedR rarg)←exp
-        :EndIf
-        (tID tCmt quadparams)←tData
-        ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams
-        tRes←⍬
-
-        ⍝ normal
-        actualR←{val≡2:larg op rarg ⋄ op rarg}⍬
-        tRes,←(tID tCmt) Assert expectedR≡actualR
-
-        :If val≡1
-            ⍝ scalar
-            randr←?≢rarg
-            trimmedrarg←randr↓rarg  ⍝ so that not always the first is selected
-            shape←⍬                 ⍝ scalar shape
-            actualRS←op shape⍴trimmedrarg
-            tRes,←('Scalar',tID) tCmt Assert (shape⍴randr↓expectedR)≡actualRS
-        :EndIf
-
-        ⍝ empty
-        actualRE←{val≡2:(0⍴larg) op (0⍴rarg) ⋄ op (0⍴rarg)}⍬ ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('EmptyL',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
-
-        ⍝ different shapes
-        shape←?(?4)/4
-        actualRS←{val≡2:(shape⍴larg) op (shape⍴rarg) ⋄ op (shape⍴rarg)}⍬
-        tRes,←('Multiple',tID) tCmt Assert (shape⍴expectedR)≡actualRS
-
-        ⍝ different shapes with 0 in shape
-        shapeW0←(0@(?(≢shape)))shape
-        actualRSW0←{val≡2:(shapeW0⍴larg) op (shapeW0⍴rarg) ⋄ op (shapeW0⍴rarg)}⍬
-        tRes,←('ShapeW0',tID) tCmt Assert (shapeW0⍴0) ≡ actualRSW0
-
-        ⍝ testing larg and rarg specifically from model
-        tRes,←('ModelTest',tID) tCmt Assert ({val≡2:(larg model rarg)≡larg op rarg ⋄ (model¨ rarg)≡op rarg}⍬)
-
-        ⍝ This test creates a random element based on the datatype of the rarg and larg
-        ⍝ it is then tested using models of the function.
-        ⍝ The purpose of this test is to use the entire range of the datatype so a dataset
-        ⍝ is generated in the longer run to test more data.
-        ⍝ 
-        ⍝ skipping big rand test for mentioned primitives because of issues with the model
-        :If (shouldNotRandTest 'residue' 'floor' 'multiply')
-            boundR←giveBound rarg ⍝ get boundaries of rarg
-            ⎕fr←645
-            nrarg←rarg getRand boundR ⍝ generate a random element in range of rarg
-            ⎕fr←3⊃quadparams
-            :If val=2
-                boundL←giveBound larg
-                ⎕fr←645
-                nlarg←larg getRand boundL
-                ⎕fr←3⊃quadparams
-            :EndIf
-            tRes,←('RandModelTest',tID) tCmt Assert ({val≡2:(nlarg model nrarg)≡nlarg op nrarg ⋄ (model¨ nrarg)≡op nrarg}⍬)
-        :EndIf
-
-        ⍝ todo: 
+    ∇ {tRes}←spec(rawModel _RunVariations_ rawOp)args;ChkEqual;Eval;quadparams;runOrErr;shape;tCmt;tID;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
+      tRes←⍬
+      (tID tCmt quadparams)←spec
+      ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams
+      runOrErr←{
+          0::⊂0 ⎕DMX.(EN Message)
+          ⍺←⊢
+          ⊂1(⍺ ⍺⍺ ⍵)
+      }
+     
+      Eval←{
+          2=≢args:⍺ ⍺⍺ ⍵
+          1=≢args:⍺⍺ ⍵
+          ⎕SIGNAL 5
+      }
+      ChkEqual←{
+          (larg rarg)←2⍴⍺⍺¨args
+          model←rawModel runOrErr
+          op←rawOp runOrErr
+          expected←larg model Eval rarg
+          actual←larg op Eval rarg
+          tRes,←(tID,' - ',⍵)tCmt Assert expected≡actual
+      }
+     
+      ⍝ Base test: check that the function behaves as the model with the provided data
+      {⍵}ChkEqual'Base'
+     
+      ⍝ scalar test: Pick a random item and check.
+      {⍵[⊂?⍴⍵]}ChkEqual'RandomScalar'
+     
+      ⍝ Empty test: check that the function behaves as the model when given an empty vector of the given type.
+      {0⍴⍵}ChkEqual'Empty'
+     
+      ⍝ High rank test: generate a random shape, and check.
+      shape←{⎕IO←1 ⋄ ?(?⍵)/⍵}4
+      {shape⍴⍵}ChkEqual'RandomHighRank'
+     
+      ⍝ High rank with 0 in shape test
+      shape[?≢shape]←0
+      {shape⍴⍵}ChkEqual'RandomEmptyHighRank'
+     
+      ⍝ Random data test:
+      ⍝ This test creates a random element based on the datatype of the rarg and larg
+      ⍝ it is then tested using models of the function.
+      ⍝ The purpose of this test is to use the entire range of the datatype so a dataset
+      ⍝ is generated in the longer run to test more data.
+     
+      ⍝ skipping big rand test for mentioned primitives because of issues with the model
+      :If ~isCurrentlyRunning'residue' 'floor' 'multiply'
+          {⎕FR←645 ⋄ ⍵ getRand giveBound ⍵}ChkEqual'RandModelTest'
+      :EndIf
+     
+        ⍝ todo:
         ⍝ new variations needs more tests of:
         ⍝ lengths of arrays from 1 to 10000
         ⍝ and

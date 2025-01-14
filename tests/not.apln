@@ -1,10 +1,63 @@
 :Namespace not
     Assert←#.unittest.Assert
+    NearBoolean←#.iso_defs.NearBoolean
+    IntegerNearestTo←#.iso_defs.IntegerNearestTo
 
-
-    ∇ {r}←test_not
-      r←⍬
+    ∇ r←model data
+      ⍝ ISO 7.1.12
      
-      r,←'Test0' 'testing'Assert 0=1
+      :If ∧⌿∊NearBoolean data
+          r←1≠IntegerNearestTo data
+      :Else
+          ⎕SIGNAL 11
+      :EndIf
+    ∇
+
+    ∇ r←testDesc
+      r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+    ∇
+
+    ∇ {r}←test_not;RunVariations;case;caselist;cmpx;ct;data;data_bool;data_char1;data_char2;data_i1;data_i2;data_i4;data_nearbool;data_nearboolcmpx;data_notnearbool;data_notnearboolcmpx;desc;fr;id;ints;mask;ok;quadparams
+      r←⍬
+      RunVariations←model #.testfns._RunVariations_~
+      ints←{ ⍝ ⍺ integers of size ⍵ (bits), excluding the booleans
+          ⎕IO←0
+          ⍺⍴0 1~⍨(2*⍵-1)-⍨?2*⍵
+      }
+     
+      :For ct :In 0 1 10 0.1
+          (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
+          :For fr :In 1 2
+              ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
+              ⎕IO←1
+     
+              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+     
+              data_bool←1 0
+              data_nearbool←0 1∘.+{⍵,-⍵}0,#.iso_defs.IntegerTolerance÷⍳10
+              data_notnearbool←0 1∘.+{⍵,-⍵}#.iso_defs.(IntegerTolerance+IntegerTolerance÷⍳10)
+     
+              cmpx←,0 1∘.+{⍵,-⍵}0,#.iso_defs.IntegerTolerance÷⍳10
+              cmpx,←,(,data_nearbool)∘.{⍺+¯11○⍵},2⊃↓data_nearbool
+              mask←#.iso_defs.NearBoolean¨cmpx
+              data_nearboolcmpx←mask⌿cmpx
+              data_notnearboolcmpx←mask⌿cmpx
+     
+              data_i1←100 ints 8
+              data_i2←100 ints 16
+              data_i4←100 ints 32
+              data_char1←'apl'
+              data_char2←'⍺⍵÷'
+     
+              caselist←⎕NL ¯2
+              caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+     
+              :For case :In caselist
+                  data←⍎case
+                  desc←testDesc
+                  r,←'Not (~)'desc quadparams RunVariations⊂data
+              :EndFor
+          :EndFor
+      :EndFor
     ∇
 :EndNamespace
