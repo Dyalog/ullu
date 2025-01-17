@@ -14,7 +14,7 @@ Eg: uniquemask
 
 ### Main function
 
-Start with making the main function titled `test_functionname` like `test_uniquemask`. Here `test_` is important because the `./unittest.apln` recognises the main function of the test suite of the primitive with the `test_` keyword.
+Start with making the main function titled `test_functionname` like `test_uniquemask`. Here `test_` is important because the [`./unittest.apln`](../unittest.apln) recognises the main function of the test suite of the primitive with the `test_` keyword.
 
 ### Initialise variables
 
@@ -35,7 +35,7 @@ Then we need to get some specific data that we can manipulate to give us expecte
 
 This can look something like this:
 
-This is an example from [unique mask](tests\uniquemask.apln) (≠). These values can be changed according to what you want the fundamental tests to do but general layout should remain the same covering all the data types possible.
+This is an example from [unique mask](../tests/uniquemask.apln) (≠). These values can be changed according to what you want the fundamental tests to do but general layout should remain the same covering all the data types possible.
 
 ```APL
 ⍝ All data generated is unique
@@ -55,13 +55,13 @@ Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbe
 ⍝ come under the region of tolerant equality
 Hdbl←{⍵,-⍵}1E14+(2×⍳50)
 
-⍝ This is needed for a case that can be hit if we have a lot of small numbers 
+⍝ This is needed for a case that can be hit if we have a lot of small numbers
 ⍝ which produce a hash collision
 ⍝ Occurrence: same.c.html#L1153
 Sdbl←{⍵,-⍵}(⍳500)÷1000
 
 ⍝ Hfl is 1287 but larger numbers to test for CT value
-⍝ far intervals are chosen for non overlap 
+⍝ far intervals are chosen for non overlap
 ⍝ with region of tolerant equality
 ⎕FR←fr_decf
 fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
@@ -71,7 +71,7 @@ Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
 
 ### Initialise test description
 
-Test description gives information about the `testID`, datatypes being tested on, the [test variaiton](todo: add link to variation section), and the different setting values.
+Test description gives information about the `testID`, datatypes being tested on, the [test variation](todo: add link to variation section), and the different setting values.
 
 ```APL
 testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕IO:', ⎕IO}
@@ -81,11 +81,11 @@ testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DC
 
 #### `Assert`
 
-Assert is a function described in `./unittest.apln` that takes in a test expression that gives a boolean result and evaluates the output of the result and gives the instructions to pretty print the result based on the user settings of the test suite.
+Assert is a function described in [`./unittest.apln`](../unittest.apln) that takes in a test expression that gives a boolean result and evaluates the output of the result and gives the instructions to pretty print the result based on the user settings of the test suite.
 
 #### `RunVariations`
 
-RunVariations is a function described in testfns.apln which takes the expressions to be evaluated and does the following:
+RunVariations is a function described in [testfns.apln](../testfns.apln) which takes the expressions to be evaluated and does the following:
 - tests using the standard form it comes in
 - tests a scalar element from the data it gets
 - tests an empty array derived from the input
@@ -114,7 +114,7 @@ All tests should run with all types of ⎕CT/⎕DCT, ⎕FR, ⎕DIV and ⎕IO val
 :For io :In io_default io_0
     ⎕IO←io
 
-    :For ct :In 1 0 
+    :For ct :In 1 0
         (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
 
         :For fr :In fr_dbl fr_decf
@@ -178,4 +178,4 @@ Interesting things:
 - dyalogVersion ← DyalogAPL version from `]version`
 - isDyalog32 ← 0 or 1 for if the interpreter 64-bit ot 32-bit?
 - isDyalogClassic ← 0 or 1 for if the interpreter classic or unicode
-- utils.apln ← This file has some widely used manipulation functions
+- [utils.apln](../utils.apln) ← This file has some widely used manipulation functions
