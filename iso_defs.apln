@@ -25,6 +25,11 @@
     ∇
 
     ∇ r←B IntegralWithin A;F1;F2
+      :If 0∊⍴A
+          r←(⍴A)⍴0
+          :Return
+      :EndIf
+     
       F1←B TolerantFloor¨-A
       F2←-B TolerantFloor¨A
       r←F1 Equals F2

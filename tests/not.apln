@@ -17,7 +17,7 @@
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_not;RunVariations;case;caselist;cmpx;ct;data;data_bool;data_char1;data_char2;data_i1;data_i2;data_i4;data_nearbool;data_nearboolcmpx;data_notnearbool;data_notnearboolcmpx;desc;fr;id;ints;mask;ok;quadparams
+    ∇ {r}←test_not;RunVariations;case;caselist;ct;data;data_bool;data_char1;data_char2;data_i1;data_i2;data_i4;data_largercomplex;data_nearbool;data_notnearbool;data_smallcomplex;desc;fr;id;ints;ok;quadparams
       r←⍬
       RunVariations←model #.testfns._RunVariations_~
       ints←{ ⍝ ⍺ integers of size ⍵ (bits), excluding the booleans
@@ -37,11 +37,9 @@
               data_nearbool←0 1∘.+{⍵,-⍵}0,#.iso_defs.IntegerTolerance÷⍳10
               data_notnearbool←0 1∘.+{⍵,-⍵}#.iso_defs.(IntegerTolerance+IntegerTolerance÷⍳10)
      
-              cmpx←,0 1∘.+{⍵,-⍵}0,#.iso_defs.IntegerTolerance÷⍳10
-              cmpx,←,(,data_nearbool)∘.{⍺+¯11○⍵},2⊃↓data_nearbool
-              mask←#.iso_defs.NearBoolean¨cmpx
-              data_nearboolcmpx←mask⌿cmpx
-              data_notnearboolcmpx←mask⌿cmpx
+              data_smallcomplex←,∘.{⍺+¯11○⍵}⍨1⊃↓data_nearbool
+              data_largercomplex←,∘.{⍺+¯11○⍵}⍨2⊃↓data_nearbool
+              data_largercomplex,←,∘.{⍺+¯11○⍵}⍨,data_notnearbool
      
               data_i1←100 ints 8
               data_i2←100 ints 16
