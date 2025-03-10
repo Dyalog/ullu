@@ -2,6 +2,8 @@
     Assert←#.unittest.Assert
     stripToSameLen←#.utils.stripToSameLen
     isDyalogClassic←#.utils.isClassic
+    DMX_NODMX←#.errors.DMX_NODMX
+    DMX_FR645LIMIT←#.errors.DMX_FR645LIMIT
 
     complexMultiplyModel←{
         (⎕FR≡1287) ∧ case≡'Hcmplx': ⍺×⍵ ⍝ Skipping cmplx for ⎕FR←1287
@@ -21,6 +23,8 @@
         (1289≡⎕DR ⍵) ∨ (1289≡⎕DR ⍺): ⍺ complexMultiplyModel¨ ⍵
         ⍺⌹¨÷⍵
     }¨⍵}
+
+    ⍝ model←{*(⍟⍺)+⍟⍵}
 
     ∇ {r}←test_multiply;fr_dbl;fr_decf;RunVariations;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d1;d2;data2;case3;data3;c1;c2;f
         RunVariations←(model #.testfns._RunVariations_ ×)
@@ -59,7 +63,7 @@
         ⎕FR←fr_dbl
 
         r←⍬
-        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵}, '& ⎕FR:', ⎕FR}
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵}, ' & ⎕FR:', ⎕FR}
 
         r case case2←⍬ ⍬ ⍬
 
@@ -110,8 +114,6 @@
                 r,← 'TCross2' desc quadparams RunVariations (data2 model data) data2 data ⍝ TCross1 but reversed
                 r,← 'TCross3' desc quadparams RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
                 r,← 'TCross4' desc Assert (((data2 data) model (data data2))≡(data2 data)×(data data2)) ⍝ merge two different arrays creating a pointer array
-
-
             :EndFor
 
             ⍝ tests for known errors
@@ -129,7 +131,7 @@
                     c1×c2 ⍝ N/A type × N/A type
                 :Else
                     f←1
-                    r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                    r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
                 :EndTrap
                 
                 f←0 ⍝ flag
@@ -137,7 +139,7 @@
                     d1×c2 ⍝ Number type × N/A type
                 :Else
                     f←1
-                    r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                    r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
                 :EndTrap
                 
                 f←0 ⍝ flag
@@ -145,9 +147,23 @@
                     c1×d1 ⍝ N/A type × number type
                 :Else
                     f←1
-                    r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                    r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
                 :EndTrap
             :EndFor
+
+            :If fr≡1
+                case←'manual known errors'
+                case2←⍬
+                desc←testDesc⍬
+                f dmx←0 '' ⍝ flag
+                :Trap 11 ⍝ 11: Domain error
+                    _←×⍨1e155 ⍝ expected faliure
+                :Else
+                    f←1
+                    dmx←⎕dmx.Message
+                :EndTrap
+                r,← 'TDomainE2' desc Assert (f ∧ dmx≡DMX_FR645LIMIT) ⍝ check for error and dmx message
+            :EndIf
         :EndFor
     ∇
 :EndNamespace
