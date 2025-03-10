@@ -151,10 +151,10 @@
                 :EndTrap
             :EndFor
 
+            case←'manual known cases'
+            case2←⍬
+            desc←testDesc⍬
             :If fr≡1
-                case←'manual known errors'
-                case2←⍬
-                desc←testDesc⍬
                 f dmx←0 '' ⍝ flag
                 :Trap 11 ⍝ 11: Domain error
                     _←×⍨1e155 ⍝ expected faliure
@@ -162,8 +162,9 @@
                     f←1
                     dmx←⎕dmx.Message
                 :EndTrap
-                r,← 'TDomainE2' desc Assert (f ∧ dmx≡DMX_FR645LIMIT) ⍝ check for error and dmx message
+                r,← 'TM1' desc Assert (f ∧ dmx≡DMX_FR645LIMIT) ⍝ check for error and dmx message
             :EndIf
+            r,←'TM2' desc Assert 0≡9007199254740992×1 ⍝ Mantis mantis 21743: largest float that can be expressed as an integer (might be moved to a generalised test)
         :EndFor
     ∇
 :EndNamespace
