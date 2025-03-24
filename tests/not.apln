@@ -17,9 +17,9 @@
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_not;RunVariations;case;caselist;ct;data;data_bool;data_char1;data_char2;data_i1;data_i2;data_i4;data_largercomplex;data_nearbool;data_notnearbool;data_smallcomplex;desc;fr;id;ints;ok;quadparams
+    ∇ {r}←test_not;RunVariations;case;caselist;ct;data;data_bool;data_char1;data_char2;data_i1;data_i2;data_i4;data_largercomplex;data_nearbool;data_notnearbool;data_smallcomplex;desc;expected;fr;id;ints;ok;quadparams;static_rslt;static_tests
       r←⍬
-      RunVariations←model #.testfns._RunVariations_~
+      RunVariations←model #.testfns._RunVariationsWithModel_~
       ints←{ ⍝ ⍺ integers of size ⍵ (bits), excluding the booleans
           ⎕IO←0
           ⍺⍴0 1~⍨(2*⍵-1)-⍨?2*⍵
@@ -37,9 +37,11 @@
               data_nearbool←0 1∘.+{⍵,-⍵}0,#.iso_defs.IntegerTolerance÷⍳10
               data_notnearbool←0 1∘.+{⍵,-⍵}#.iso_defs.(IntegerTolerance+IntegerTolerance÷⍳10)
      
-              data_smallcomplex←,∘.{⍺+¯11○⍵}⍨1⊃↓data_nearbool
-              data_largercomplex←,∘.{⍺+¯11○⍵}⍨2⊃↓data_nearbool
-              data_largercomplex,←,∘.{⍺+¯11○⍵}⍨,data_notnearbool
+              :If #.utils.version≥20 ⍝ 20.0 contains a fix for ~ on complex numbers
+                  data_smallcomplex←,∘.{⍺+¯11○⍵}⍨1⊃↓data_nearbool
+                  data_largercomplex←,∘.{⍺+¯11○⍵}⍨2⊃↓data_nearbool
+                  data_largercomplex,←,∘.{⍺+¯11○⍵}⍨,data_notnearbool
+              :EndIf
      
               data_i1←100 ints 8
               data_i2←100 ints 16
@@ -55,6 +57,25 @@
                   desc←testDesc
                   r,←'Not (~)'desc quadparams RunVariations⊂data
               :EndFor
+     
+              static_tests←⍬
+              static_tests,←⊂'0≡~1' 1
+              static_tests,←⊂'1≡~0' 1
+              static_tests,←⊂'0≡~≠⌿0 1' 1
+              static_tests,←⊂'1≡~≠⌿1 1' 1
+              static_tests,←⊂'~2'(11 '')
+              static_tests,←⊂'~1.5'(11 '')
+     
+              :For (case expected) :In static_tests
+                  :Trap 0
+                      static_rslt←⍎case
+                  :Else
+                      static_rslt←⎕DMX.(EN Message)
+                  :EndTrap
+                  desc←testDesc
+                  r,←'Not (~)'desc Assert expected≡static_rslt
+              :EndFor
+     
           :EndFor
       :EndFor
     ∇
