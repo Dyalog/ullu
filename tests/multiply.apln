@@ -164,7 +164,7 @@
                 :EndTrap
                 r,← 'TM1' desc Assert (f ∧ dmx≡DMX_FR645LIMIT) ⍝ check for error and dmx message
             :EndIf
-            r,←'TM2' desc Assert 0≡9007199254740992×1 ⍝ Mantis mantis 21743: largest float that can be expressed as an integer (might be moved to a generalised test)
+            r,←'TM2' desc Assert (⊢≡1×⊢)9007199254740992 ⍝ Mantis mantis 21743: largest float that can be expressed as an integer (might be moved to a generalised test)
         :EndFor
     ∇
 :EndNamespace
