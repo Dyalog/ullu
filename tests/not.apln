@@ -37,7 +37,7 @@
               data_nearbool←0 1∘.+{⍵,-⍵}0,#.iso_defs.IntegerTolerance÷⍳10
               data_notnearbool←0 1∘.+{⍵,-⍵}#.iso_defs.(IntegerTolerance+IntegerTolerance÷⍳10)
      
-              :If #.utils.version≥20 ⍝ 20.0 contains a fix for ~ on complex numbers
+              :If #.utils.version≥20 ⍝ Mantis 21762: 20.0 contains a fix for ~ on complex numbers
                   data_smallcomplex←,∘.{⍺+¯11○⍵}⍨1⊃↓data_nearbool
                   data_largercomplex←,∘.{⍺+¯11○⍵}⍨2⊃↓data_nearbool
                   data_largercomplex,←,∘.{⍺+¯11○⍵}⍨,data_notnearbool
