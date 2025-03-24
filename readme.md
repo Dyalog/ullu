@@ -19,18 +19,19 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 - index of (dyadic ⍳) (Not tested for coverage)
 - magnitude (monadic |)
 - membership (dyadic ∊) (Not tested for coverage)
+- multiply (dyadic ×)
 - residue (dyadic |)
 - subtract (dyadic -)
 - unique (monadic ∪)
 - unique mask (monadic ≠)
 
-### 🧱 In progress
+### 🧱 In progress and Next up
 
 All details about upcoming tests can be found in the [project board](https://github.com/orgs/Dyalog/projects/4/views/1)
 
 ## ✍ The name
 
-Pronounced as `/ˈulːluː/`, The name comes from the Hindi word for owl.
+Pronounced as `/ˈulːluː/`, The name comes from the Hindi word for owl. The owl looks over Dyalog APL when everyone else is asleep.
 
 Just as the owl represents both wisdom and foolishness the QA also has a dual nature of being wise and dumb at the same time.
 
