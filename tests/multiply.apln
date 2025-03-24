@@ -26,7 +26,7 @@
 
     ⍝ model←{*(⍟⍺)+⍟⍵}
 
-    ∇ {r}←test_multiply;fr_dbl;fr_decf;RunVariations;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d1;d2;data2;case3;data3;c1;c2;f
+    ∇ {r}←test_multiply;fr_decf;RunVariations;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d1;d2;data2;case3;data3;c1;c2;f;fr_dbl
         RunVariations←(model #.testfns._RunVariations_ ×)
 
         ⍝ constants

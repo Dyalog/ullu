@@ -2,11 +2,11 @@
     Assert←#.unittest.Assert
     stripToSameLen←#.utils.stripToSameLen
     isDyalogClassic←#.utils.isClassic
+    DMX_NODMX←#.errors.DMX_NODMX
 
     model←{
         ⍺--⍵
     }
-
 
     ∇ {r}←test_add ;RunVariations;fr_dbl;fr_decf;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d2;d1;data2;case3;data3;c1;c2;f
         ⍝ use RunVariations operator and modify it for addition
@@ -122,7 +122,7 @@
                         c1+c2 ⍝ N/A type + N/A type
                     :Else
                         f←1
-                        r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                        r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
                     :EndTrap
                     
                     f←0 ⍝ flag
@@ -130,7 +130,7 @@
                         d1+c2 ⍝ Number type + N/A type
                     :Else
                         f←1
-                        r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                        r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
                     :EndTrap
                     
                     f←0 ⍝ flag
@@ -138,7 +138,7 @@
                         c1+d1 ⍝ N/A type + number type
                     :Else
                         f←1
-                        r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
+                        r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
                     :EndTrap
                 :EndFor
             :EndFor
