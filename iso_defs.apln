@@ -1,0 +1,58 @@
+:Namespace iso_defs
+    ⍝ This namespace contains definitions from
+    ⍝ the Extended APL ISO standard (ISO/IEC 13751:2001)
+
+    ⍝ Every function or value is defined within
+    ⍝ a :Section with the corresponding section number,
+    ⍝ which makes it easier to find what we are looking
+    ⍝ for.
+
+    :Section 5.2.3
+    ∇ r←IsBoolean A
+      r←∨/A∘.Equals 0 1
+    ∇
+    :EndSection
+
+    :Section 5.2.5
+
+    ∇ r←A Equals B
+      r←A≡⍥(11∘⎕DR)B
+    ∇
+
+    ∇ r←B TolerantFloor A;⎕CT
+      ⎕CT←B
+      r←⌊A
+    ∇
+
+    ∇ r←B IntegralWithin A;F1;F2
+      :If 0∊⍴A
+          r←(⍴A)⍴0
+          :Return
+      :EndIf
+     
+      F1←B TolerantFloor¨-A
+      F2←-B TolerantFloor¨A
+      r←F1 Equals F2
+    ∇
+
+    ∇ r←NearInteger data
+      r←IntegerTolerance IntegralWithin data
+    ∇
+
+    ∇ r←NearBoolean data
+      :If ∧⌿∊NearInteger data
+          r←IsBoolean IntegerNearestTo data
+      :Else
+          r←0
+      :EndIf
+    ∇
+
+    ∇ r←IntegerNearestTo data
+      r←IntegerTolerance TolerantFloor data
+    ∇
+    :EndSection
+
+    :Section 5.3.10
+    IntegerTolerance←1E¯14 ⍝ aka SYSFUZZ
+    :EndSection
+:EndNamespace
