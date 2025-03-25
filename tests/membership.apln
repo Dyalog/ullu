@@ -7,158 +7,158 @@
     isDyalogClassic←#.utils.isClassic
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ {tRes}←tData RunVariations exp ;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
-        (expectedR left right)←exp
-        (tID tCmt)←tData
-        tRes←⍬
-
+    ∇ {tRes}←tData RunVariations exp;actualR;actualRE;expectedR;left;right;res;tID;tCmt;lshape;lshapeW0;rshape;x;actualRM
+      (expectedR left right)←exp
+      (tID tCmt)←tData
+      tRes←⍬
+     
         ⍝ normal
-        actualR←left∊right
-        tRes,←tData Assert expectedR≡actualR
-
+      actualR←left∊right
+      tRes,←tData Assert expectedR≡actualR
+     
         ⍝ empty left
-        actualRE←(0⍴left)∊right ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('Empty',tID) tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
-
+      actualRE←(0⍴left)∊right ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+      tRes,←('Empty',tID)tCmt Assert ⍬≡actualRE ⍝ empty array is expectedR
+     
         ⍝ empty right
-        actualRE←left∊(0⍴right) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
-        tRes,←('Empty',tID) tCmt Assert (0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
-
+      actualRE←left∊(0⍴right) ⍝ 0 in the shape means we have no elements in the array, i.e. it's empty.
+      tRes,←('Empty',tID)tCmt Assert(0×expectedR)≡actualRE ⍝ all 0s in expectedR is the new expected result
+     
         ⍝ different shapes
         ⍝ for ANY array lshape, and for any rightshape where (≢right)≤×/rshape
         ⍝ the condition guarantees that (rshape⍴right) will create an array
         ⍝ which contains ALL the elements of right, possibly more than once
-        lshape←?4/4
+      lshape←?4/4
         ⍝ randomized shape which has ≤4 elements and each elements is ≤12 and satisfies above condition
-        rshape←{(×/(x←(?4)?⍤/?12))>≢right:x ⋄ ∇⍵}⍬
-        actualRM←(lshape⍴left)∊(rshape⍴right)
-        tRes,←('Shape',tID) tCmt Assert (lshape⍴expectedR) ≡ actualRM
-
+      rshape←{(×/(x←(?4)?⍤/?12))>≢right:x ⋄ ∇ ⍵}⍬
+      actualRM←(lshape⍴left)∊(rshape⍴right)
+      tRes,←('Shape',tID)tCmt Assert(lshape⍴expectedR)≡actualRM
+     
         ⍝ different shapes with 0 in shape
-        lshapeW0←(0@(?4))lshape
-        actualRM←(lshapeW0⍴left)∊(rshape⍴right)
-        tRes,←('ShapeW0',tID) tCmt Assert (lshapeW0⍴0) ≡ actualRM
+      lshapeW0←(0@(?4))lshape
+      actualRM←(lshapeW0⍴left)∊(rshape⍴right)
+      tRes,←('ShapeW0',tID)tCmt Assert(lshapeW0⍴0)≡actualRM
     ∇
 
     ⍝ Read more about DR: https://help.dyalog.com/latest/#Language/System%20Functions/Data%20Representation%20Monadic.htm
     ⍝ Read more about CT and DCT: https://help.dyalog.com/latest/#Language/System%20Functions/ct.htm
-    ∇ {r}←test_membership ;w;n;r;data;case;data2;case2;type;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
-        ct_default←#.utils.ct_default
-        dct_default←#.utils.dct_default
-        fr_dbl←#.utils.fr_dbl
-        fr_decf←#.utils.fr_decf
-        
-        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
-        i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
-        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
-        :If ~isDyalogClassic
-            char1←⎕UCS ⍳255                               ⍝ 80: 8 bits character
-            char2←⎕UCS (1000+⍳100)                        ⍝ 160: 16 bits character
-            char3←⎕UCS (100000+⍳100)                      ⍝ 320: 32 bits character
-        :EndIf
-        ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
-        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
-        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+    ∇ {r}←test_membership;w;n;r;data;case;data2;case2;type;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc
+      ct_default←#.utils.ct_default
+      dct_default←#.utils.dct_default
+      fr_dbl←#.utils.fr_dbl
+      fr_decf←#.utils.fr_decf
+     
+      bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+      i1←¯60+⍳120                                   ⍝ 83: 8 bits signed integer
+      i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
+      i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+      char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
+      :If ~isDyalogClassic
+          char1←⎕UCS⍳255                               ⍝ 80: 8 bits character
+          char2←⎕UCS(1000+⍳100)                        ⍝ 160: 16 bits character
+          char3←⎕UCS(100000+⍳100)                      ⍝ 320: 32 bits character
+      :EndIf
+      ptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+      dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+      cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
+      Hcmplx←{⍵,-⍵}(100000000000000J100000000000000×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
         ⍝ Hdbl is 645 but larger numbers to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
+      Hdbl←{⍵,-⍵}100000000000000+(2×⍳50)
         ⍝ Hfl is 1287 but larger numbers to test for CT value
-        ⍝ far intervals are chosen for non overlap 
+        ⍝ far intervals are chosen for non overlap
         ⍝ with region of tolerant equality
-        ⎕FR←fr_decf
-        fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
-        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
-        ⎕FR←fr_dbl
-
-        r←⍬
-        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
-
-        :For ct :In 1 0 
-            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
-
-            :For fr :In 1 2
-                ⎕FR←fr⊃fr_dbl fr_decf
-
-                :For case :In 'i1' 'i2' 'i3' 'char0' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                    :If (isDyalogClassic) ∧ ((case≡'char1') ∨ (case≡'char2') ∨ (case≡'char3'))
-                        :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
-                    :EndIf
-                    data←⍎case
-                    :If ⎕FR=fr_decf ∧ 1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
-                        :Continue
-                    :EndIf
-
+      ⎕FR←fr_decf
+      fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
+      Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)
+      ⎕FR←fr_dbl
+     
+      r←⍬
+      testDesc←{'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT,'& ⎕FR:',⎕FR}
+     
+      :For ct :In 1 0
+          (⎕CT ⎕DCT)←ct×ct_default dct_default ⍝ set comparison tolerance
+     
+          :For fr :In 1 2
+              ⎕FR←fr⊃fr_dbl fr_decf
+     
+              :For case :In 'i1' 'i2' 'i3' 'char0' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                  :If (isDyalogClassic)∧((case≡'char1')∨(case≡'char2')∨(case≡'char3'))
+                      :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                  :EndIf
+                  data←⍎case
+                  :If ⎕FR=fr_decf∧1289=⎕DR data ⍝ ⎕FR=1287 is not recommended to be used with cmplx
+                      :Continue
+                  :EndIf
+     
                     ⍝ Cross type tests
-                    :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                        :If (case≡'char0') ∨ (isDyalogClassic) ∧ ((case2≡'char1') ∨ (case2≡'char2') ∨ (case2≡'char3'))
-                            :Continue ⍝ char0 has overlapping elements with char1 and Skip tests for unicode character sets in DyalogAPL classic
-                        :EndIf
-                        data2←⍎case2
-                        desc←testDesc⍬
-                        :If (data≡data2)
-                            r,←'TCross0' desc RunVariations (1⍨¨data) data data2
-                            :Continue
-                        :EndIf
-                        r,← 'TCross1' desc RunVariations (0⍨¨data) data data2                     ⍝ no match, all return 0
-                        r,← 'TCross2' desc RunVariations (0⍨¨data2) data2 data                    ⍝ no match, all return 0
-                        r,← 'TCross3' desc RunVariations (1⍨¨data) data (data,data2)              ⍝ first data match, returns 1
-                        r,← 'TCross4' desc RunVariations ((1⍨¨data),(0⍨¨data2)) (data,data2) data ⍝ data match, data2 no match
-                        r,← 'TCross5' desc Assert ((1 1)≡(data2 data)∊(data data2)) ⍝ merge two different arrays creating a pointer array
-                    :EndFor
-                    case2←⍬ ⍝ disposing case2 for testDesc
-                    desc←testDesc⍬
-
+                  :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                      :If (case≡'char0')∨(isDyalogClassic)∧((case2≡'char1')∨(case2≡'char2')∨(case2≡'char3'))
+                          :Continue ⍝ char0 has overlapping elements with char1 and Skip tests for unicode character sets in DyalogAPL classic
+                      :EndIf
+                      data2←⍎case2
+                      desc←testDesc ⍬
+                      :If (data≡data2)
+                          r,←'TCross0'desc RunVariations(1⍨¨data)data data2
+                          :Continue
+                      :EndIf
+                      r,←'TCross1'desc RunVariations(0⍨¨data)data data2                     ⍝ no match, all return 0
+                      r,←'TCross2'desc RunVariations(0⍨¨data2)data2 data                    ⍝ no match, all return 0
+                      r,←'TCross3'desc RunVariations(1⍨¨data)data(data,data2)              ⍝ first data match, returns 1
+                      r,←'TCross4'desc RunVariations((1⍨¨data),(0⍨¨data2))(data,data2)data ⍝ data match, data2 no match
+                      r,←'TCross5'desc Assert((1 1)≡(data2 data)∊(data data2)) ⍝ merge two different arrays creating a pointer array
+                  :EndFor
+                  case2←⍬ ⍝ disposing case2 for testDesc
+                  desc←testDesc ⍬
+     
                     ⍝ same type tests
-                    r,← 'T1' desc RunVariations 1 (data[?≢data]) data           ⍝ random element is found
-                    r,← 'T2' desc RunVariations ((0⍨¨¯1↓data),1) data (¯1↑data) ⍝ All elements return 0 except last
-                    r,← 'T3' desc RunVariations (1⍨¨data) data data             ⍝ all elements return 1
-                    r,← 'T4' desc RunVariations 0 5E50 data                     ⍝ huge element outside set is not found
-
+                  r,←'T1'desc RunVariations 1(data[?≢data])data           ⍝ random element is found
+                  r,←'T2'desc RunVariations((0⍨¨¯1↓data),1)data(¯1↑data) ⍝ All elements return 0 except last
+                  r,←'T3'desc RunVariations(1⍨¨data)data data             ⍝ all elements return 1
+                  r,←'T4'desc RunVariations 0 5E50 data                     ⍝ huge element outside set is not found
+     
                     ⍝ tests with comparison tolerance
-                    d←data[?≢data]
-                    :If ct ⍝ tolerant
-                        :If (⊂data)∊Hdbl Hfl Hcmplx
+                  d←data[?≢data]
+                  :If ct ⍝ tolerant
+                      :If (⊂data)∊Hdbl Hfl Hcmplx
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF
-                            r,← 'CTDefault' desc Assert ((1≡(d∊d+1)) ∨ (fr=2 ∧ case≡'Hdbl'))
-                        :EndIf
-                    :Else  ⍝ exact
-                        :If ~(⎕DR data) ∊ 80 82 160 320 326 ⍝ non-numeric are skipped
+                          r,←'CTDefault'desc Assert((1≡(d∊d+1))∨(fr=2∧case≡'Hdbl'))
+                      :EndIf
+                  :Else  ⍝ exact
+                      :If ~(⎕DR data)∊80 82 160 320 326 ⍝ non-numeric are skipped
                             ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
-                            r,← 'CTZero' desc Assert ((0≡(d∊d+1)) ∨ (fr=1 ∧ case≡'Hfl'))
-                        :EndIf
-                    :EndIf
-                :EndFor
-
+                          r,←'CTZero'desc Assert((0≡(d∊d+1))∨(fr=1∧case≡'Hfl'))
+                      :EndIf
+                  :EndIf
+              :EndFor
+     
                 ⍝ Booleans need special tests
-                case←'bool'
-                desc←testDesc⍬
-
-                r,← 'TB1' desc RunVariations 1 0 0
-                r,← 'TB2' desc RunVariations 1 (~0) 1
-                r,← 'TB3' desc RunVariations (1 1) bool bool
-
+              case←'bool'
+              desc←testDesc ⍬
+     
+              r,←'TB1'desc RunVariations 1 0 0
+              r,←'TB2'desc RunVariations 1(~0)1
+              r,←'TB3'desc RunVariations(1 1)bool bool
+     
                 ⍝ Boolean cross type tests
-                :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx'  'Hdbl' 'Hfl' 'Hcmplx'
-                    :If (isDyalogClassic) ∧ ((case2≡'char1') ∨ (case2≡'char2') ∨ (case2≡'char3'))
-                        :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
-                    :EndIf
-                    data2←⍎case2
-                    desc←testDesc⍬
-                    :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
-                        r,← 'TCrossBool1' desc RunVariations (0⍨¨bool) bool data2  ⍝ All elements return 0
-                        r,← 'TCrossBool2' desc RunVariations (0⍨¨data2) data2 bool ⍝ All elements return 0
-                    :Else
-                        r,← 'TCrossBooli1' desc RunVariations (1⍨¨bool) bool data2 ⍝ All elements return 1
-                        r,← 'TCrossBooli2' desc RunVariations ({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1)) data2 bool ⍝ overlaping 0 1 returns 1
-                    :EndIf
-                :EndFor
-                case2←⍬
-            :EndFor
-        :EndFor
-
+              :For case2 :In 'i1' 'i2' 'i3' 'char1' 'char2' 'char3' 'ptr' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                  :If (isDyalogClassic)∧((case2≡'char1')∨(case2≡'char2')∨(case2≡'char3'))
+                      :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                  :EndIf
+                  data2←⍎case2
+                  desc←testDesc ⍬
+                  :If (83≠type←⎕DR data2) ⍝ bool requires separate cross tests because of overlap with i1
+                      r,←'TCrossBool1'desc RunVariations(0⍨¨bool)bool data2  ⍝ All elements return 0
+                      r,←'TCrossBool2'desc RunVariations(0⍨¨data2)data2 bool ⍝ All elements return 0
+                  :Else
+                      r,←'TCrossBooli1'desc RunVariations(1⍨¨bool)bool data2 ⍝ All elements return 1
+                      r,←'TCrossBooli2'desc RunVariations({⍵,(⌽⍵)}((1↓((≢i1)÷2)⍴0),1))data2 bool ⍝ overlaping 0 1 returns 1
+                  :EndIf
+              :EndFor
+              case2←⍬
+          :EndFor
+      :EndFor
+     
     ∇
 :EndNamespace

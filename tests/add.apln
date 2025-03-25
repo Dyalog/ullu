@@ -4,145 +4,144 @@
     isDyalogClassic←#.utils.isClassic
     DMX_NODMX←#.errors.DMX_NODMX
 
-    model←{
-        ⍺--⍵
-    }
+      model←{
+          ⍺--⍵
+      }
 
-    ∇ {r}←test_add ;RunVariations;fr_dbl;fr_decf;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d2;d1;data2;case3;data3;c1;c2;f
+    ∇ {r}←test_add;RunVariations;fr_dbl;fr_decf;bool;i1;i2;i3;char0;char1;char2;char3;charptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;fl;Hfl;testDesc;case;case2;fr;desc;data;d2;d1;data2;case3;data3;c1;c2;f
         ⍝ use RunVariations operator and modify it for addition
-        RunVariations←(model #.testfns._RunVariations_ +)
-
-        fr_dbl←#.utils.fr_dbl
-        fr_decf←#.utils.fr_decf
-
+      RunVariations←(model #.testfns._RunVariations_+)
+     
+      fr_dbl←#.utils.fr_dbl
+      fr_decf←#.utils.fr_decf
+     
         ⍝ All data generated is unique
-        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
-        i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
-        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-        char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
-        :If ~isDyalogClassic
-            char1←⎕UCS (100+⍳100)                     ⍝ 80: 8 bits character
-            char2←⎕UCS (1000+⍳100)                    ⍝ 160: 16 bits character
-            char3←⎕UCS (100000+⍳100)                  ⍝ 320: 32 bits character
-        :EndIf
-        charptr←(13↑⎕a) (13↓⎕a)                       ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-        dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
-        cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
-        Hcmplx←{⍵,-⍵}(1E14J1E14×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+      bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+      i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
+      i2←{⍵,-⍵}10000+⍳100                           ⍝ 163: 16 bits signed integer
+      i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+      char0←⎕AV                                     ⍝ 82: DyalogAPL classic char set
+      :If ~isDyalogClassic
+          char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
+          char2←⎕UCS(1000+⍳100)                    ⍝ 160: 16 bits character
+          char3←⎕UCS(100000+⍳100)                  ⍝ 320: 32 bits character
+      :EndIf
+      charptr←(13↑⎕A)(13↓⎕A)                       ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+      dbl←{⍵,-⍵}i3+0.1                              ⍝ 645: 64 bits Floating
+      cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                  ⍝ 1289: 128 bits Complex
+      Hcmplx←{⍵,-⍵}(100000000000000J100000000000000×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
         ⍝ Hdbl is 645 but larger numbers to test for CT value
         ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
         ⍝ come under the region of tolerant equality
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)                       ⍝ 645: large numbers
-        Sdbl←{⍵,-⍵}(⍳500)÷1000                        ⍝ 645: Small numbers
-
+      Hdbl←{⍵,-⍵}100000000000000+(2×⍳50)                       ⍝ 645: large numbers
+      Sdbl←{⍵,-⍵}(⍳500)÷1000                        ⍝ 645: Small numbers
+     
         ⍝ Hfl is 1287 but larger numbers to test for CT value
-        ⍝ far intervals are chosen for non overlap 
+        ⍝ far intervals are chosen for non overlap
         ⍝ with region of tolerant equality
-        ⎕FR←fr_decf
-        fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
-        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
-        ⎕FR←fr_dbl
-
-        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
-
-        r case case2←⍬ ⍬ ⍬
-
-        :For fr :In 2 1
-            ⎕FR←fr⊃fr_dbl fr_decf
-
-            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
-
-            case←'independant'
-            desc←testDesc⍬
-            r,←'TI1' desc Assert (0)≡0+0
-            r,←'TNull1' desc Assert ⍬≡''+0
-            r,←'TNull2' desc Assert ⍬≡⍬+0
-            r,←'TNull3' desc Assert ⍬≡0+''
-            r,←'TNull4' desc Assert ⍬≡0+⍬
-            r,←'TNull5' desc Assert ⍬≡''+⍬
-            r,←'TNull6' desc Assert ⍬≡⍬+''
-            :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
-                data←⍎case
-                desc←testDesc⍬
-
+      ⎕FR←fr_decf
+      fl←{⍵,-⍵}i3+0.01                              ⍝ 1287: 128 bits Decimal
+      Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)
+      ⎕FR←fr_dbl
+     
+      testDesc←{'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT,'& ⎕FR:',⎕FR}
+     
+      r case case2←⍬ ⍬ ⍬
+     
+      :For fr :In 2 1
+          ⎕FR←fr⊃fr_dbl fr_decf
+     
+          quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+     
+          case←'independant'
+          desc←testDesc ⍬
+          r,←'TI1'desc Assert(0)≡0+0
+          r,←'TNull1'desc Assert ⍬≡''+0
+          r,←'TNull2'desc Assert ⍬≡⍬+0
+          r,←'TNull3'desc Assert ⍬≡0+''
+          r,←'TNull4'desc Assert ⍬≡0+⍬
+          r,←'TNull5'desc Assert ⍬≡''+⍬
+          r,←'TNull6'desc Assert ⍬≡⍬+''
+          :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Sdbl' 'Hfl' 'Hcmplx'
+              data←⍎case
+              desc←testDesc ⍬
+     
                 ⍝ General tests to test the basic rules of addition
-                r,← 'TGen1' desc Assert (≢data)≡≢data+data ⍝ length of the array will not change
-                r,← 'TGen2' desc Assert ({1287≡(⎕dr ⍵): ⎕fr≡⎕dr ⍵ + ⍵ ⋄(⎕dr ⍵)≤⎕dr ⍵ + ⍵}data) ⍝ datatype will always be greater than or equal to the original datatype, excluding floats
-                r,← 'TGen3' desc Assert (11≡⎕dr data+-data) ⍝ should always be an array of 0s
-
-                r,← 'T1' desc quadparams RunVariations (2× data) data data ⍝ addition with the same number doubles the result
-                d1←data[?≢data]
-                d2←data[?≢(data~d1)]
-                r,← 'T2' desc quadparams RunVariations (d1 model d2) d1 d2 ⍝ model func finds results on single element
-                r,← 'T3' desc quadparams RunVariations data data 0         ⍝ Identity
-                r,← 'T4' desc quadparams RunVariations data 0 data         ⍝ Identity
-                r,← 'T5' desc quadparams RunVariations d1 d1 0             ⍝ Identity
-                r,← 'T6' desc quadparams RunVariations d1 0 d1             ⍝ Identity
-                r,← 'T7' desc quadparams RunVariations (d1 d1) d1 (0 0)    ⍝ Identity (also hits arith_su.c#352 l_ladd_l)
-
+              r,←'TGen1'desc Assert(≢data)≡≢data+data ⍝ length of the array will not change
+              r,←'TGen2'desc Assert({1287≡(⎕DR ⍵):⎕FR≡⎕DR ⍵+⍵ ⋄ (⎕DR ⍵)≤⎕DR ⍵+⍵}data) ⍝ datatype will always be greater than or equal to the original datatype, excluding floats
+              r,←'TGen3'desc Assert(11≡⎕DR data+-data) ⍝ should always be an array of 0s
+     
+              r,←'T1'desc quadparams RunVariations(2×data)data data ⍝ addition with the same number doubles the result
+              d1←data[?≢data]
+              d2←data[?≢(data~d1)]
+              r,←'T2'desc quadparams RunVariations(d1 model d2)d1 d2 ⍝ model func finds results on single element
+              r,←'T3'desc quadparams RunVariations data data 0         ⍝ Identity
+              r,←'T4'desc quadparams RunVariations data 0 data         ⍝ Identity
+              r,←'T5'desc quadparams RunVariations d1 d1 0             ⍝ Identity
+              r,←'T6'desc quadparams RunVariations d1 0 d1             ⍝ Identity
+              r,←'T7'desc quadparams RunVariations(d1 d1)d1(0 0)    ⍝ Identity (also hits arith_su.c#352 l_ladd_l)
+     
                 ⍝ Cross type tests
-                :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
-                    :If (case≡case2)
-                        :Continue
-                    :EndIf
-                    data2←⍎case2
-                    data data2←data stripToSameLen data2
-                    desc←testDesc⍬
-
+              :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl' 'cmplx' 'Hdbl' 'Hfl' 'Hcmplx'
+                  :If (case≡case2)
+                      :Continue
+                  :EndIf
+                  data2←⍎case2
+                  data data2←data stripToSameLen data2
+                  desc←testDesc ⍬
+     
                     ⍝ data type test
                     ⍝ except for 1287, the maximum of the ⎕dr value of data and data2 will be the result
                     ⍝ skipped for cmplx
-                    r,← 'TGen4' desc Assert (data{(1287≡(⎕dr ⍺)) ∨ (1287≡(⎕dr ⍵)): ⎕fr≡⎕dr ⍺ + ⍵ ⋄((⎕dr ⍺)⌈⎕dr ⍵)≤⎕dr ⍺ + ⍵}data2) ∨ ((1289≡⎕dr data2)∨(1289≡⎕dr data))
-
-                    r,← 'TCross1' desc quadparams RunVariations (data model data2) data data2 ⍝ check result of different datatypes using model
-                    r,← 'TCross2' desc quadparams RunVariations (data2 model data) data2 data ⍝ reverse of TCross1
-                    r,← 'TCross3' desc quadparams RunVariations ((data2,data) model (data,data2)) (data2,data) (data,data2) ⍝ concat 2 different types
-                    r,← 'TCross4' desc Assert (((data2 data) model (data data2))≡(data2 data)+(data data2)) ⍝ merge two different arrays creating a pointer array
-
-                    d1←data[?≢data]
-                    d2←data2[?≢(data2~d1)]
-                    r,← 'TCross5' desc quadparams RunVariations (d1 model d2) d1 d2 ⍝ model finds results on single element
-                :EndFor
-                case2←⍬ ⍝ dispose case2
-                desc←testDesc⍬
-
+                  r,←'TGen4'desc Assert(data{(1287≡(⎕DR ⍺))∨(1287≡(⎕DR ⍵)):⎕FR≡⎕DR ⍺+⍵ ⋄ ((⎕DR ⍺)⌈⎕DR ⍵)≤⎕DR ⍺+⍵}data2)∨((1289≡⎕DR data2)∨(1289≡⎕DR data))
+     
+                  r,←'TCross1'desc quadparams RunVariations(data model data2)data data2 ⍝ check result of different datatypes using model
+                  r,←'TCross2'desc quadparams RunVariations(data2 model data)data2 data ⍝ reverse of TCross1
+                  r,←'TCross3'desc quadparams RunVariations((data2,data)model(data,data2))(data2,data)(data,data2) ⍝ concat 2 different types
+                  r,←'TCross4'desc Assert(((data2 data)model(data data2))≡(data2 data)+(data data2)) ⍝ merge two different arrays creating a pointer array
+     
+                  d1←data[?≢data]
+                  d2←data2[?≢(data2~d1)]
+                  r,←'TCross5'desc quadparams RunVariations(d1 model d2)d1 d2 ⍝ model finds results on single element
+              :EndFor
+              case2←⍬ ⍝ dispose case2
+              desc←testDesc ⍬
+     
                 ⍝ tests for known errors
-                :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
-                    :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'ptr') 
-                        :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
-                    :EndIf
-                    data3←⍎case3
-                    desc←testDesc⍬
-                    c1←data3[?≢data3]
-                    c2←(data3~c1)[?¯1+≢data3]
-
-                    f←0 ⍝ flag
-                    :Trap 11 ⍝ 11: Domain error
-                        c1+c2 ⍝ N/A type + N/A type
-                    :Else
-                        f←1
-                        r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
-                    :EndTrap
-                    
-                    f←0 ⍝ flag
-                    :Trap 11 ⍝ 11: Domain error
-                        d1+c2 ⍝ Number type + N/A type
-                    :Else
-                        f←1
-                        r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
-                    :EndTrap
-                    
-                    f←0 ⍝ flag
-                    :Trap 11 ⍝ 11: Domain error
-                        c1+d1 ⍝ N/A type + number type
-                    :Else
-                        f←1
-                        r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡DMX_NODMX) ⍝ check for error and dmx message
-                    :EndTrap
-                :EndFor
-            :EndFor
-        :EndFor
+              :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
+                  :If (isDyalogClassic)∧(case≢'char0')∧(case≢'ptr')
+                      :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                  :EndIf
+                  data3←⍎case3
+                  desc←testDesc ⍬
+                  c1←data3[?≢data3]
+                  c2←(data3~c1)[?¯1+≢data3]
+     
+                  f←0 ⍝ flag
+                  :Trap 11 ⍝ 11: Domain error
+                      c1+c2 ⍝ N/A type + N/A type
+                  :Else
+                      f←1
+                      r,←'TDomainE2'desc Assert(f∧⎕DMX.Message≡DMX_NODMX) ⍝ check for error and dmx message
+                  :EndTrap
+     
+                  f←0 ⍝ flag
+                  :Trap 11 ⍝ 11: Domain error
+                      d1+c2 ⍝ Number type + N/A type
+                  :Else
+                      f←1
+                      r,←'TDomainE3'desc Assert(f∧⎕DMX.Message≡DMX_NODMX) ⍝ check for error and dmx message
+                  :EndTrap
+     
+                  f←0 ⍝ flag
+                  :Trap 11 ⍝ 11: Domain error
+                      c1+d1 ⍝ N/A type + number type
+                  :Else
+                      f←1
+                      r,←'TDomainE4'desc Assert(f∧⎕DMX.Message≡DMX_NODMX) ⍝ check for error and dmx message
+                  :EndTrap
+              :EndFor
+          :EndFor
+      :EndFor
     ∇
 :EndNamespace
-

@@ -9,126 +9,126 @@
 
     modelMag←{⍵×(¯1@(∊∘0)(⍵>0))}
     modelMagCmplx←{0.5*⍨+.×⍨9 11○⍵}
-    
-    ∇ {r}←test_magnitude_general ;RunVariations;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl;char0;char1;char2;char3;charptr;c1;f;Message
+
+    ∇ {r}←test_magnitude_general;RunVariations;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;fr_dbl;fr_decf;case;data;d;testDesc;desc;fr;⎕FR;Sdbl;Sfl;char0;char1;char2;char3;charptr;c1;f;Message
         ⍝ use RunVariations operator and modify it for non-cmplx magnitude
-        RunVariations←(modelMag #.testfns._RunVariations_ |)
-
-        fr_dbl←#.utils.fr_dbl
-        fr_decf←#.utils.fr_decf
-
-        bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
-        i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
-        i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
-        i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-
-        char0←⎕AV                                       ⍝ 82: DyalogAPL classic char set
-        :If ~isDyalogClassic
-            char1←⎕UCS ⍳255                             ⍝ 80: 8 bits character
-            char2←⎕UCS (1000+⍳100)                      ⍝ 160: 16 bits character
-            char3←⎕UCS (100000+⍳100)                    ⍝ 320: 32 bits character
-        :EndIf
-        charptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-
-        dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
+      RunVariations←(modelMag #.testfns._RunVariations_|)
+     
+      fr_dbl←#.utils.fr_dbl
+      fr_decf←#.utils.fr_decf
+     
+      bool←0 1                                      ⍝ 11: 1 bit Boolean type arrays
+      i1←{⍵,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
+      i2←{⍵,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
+      i3←{⍵,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+     
+      char0←⎕AV                                       ⍝ 82: DyalogAPL classic char set
+      :If ~isDyalogClassic
+          char1←⎕UCS⍳255                             ⍝ 80: 8 bits character
+          char2←⎕UCS(1000+⍳100)                      ⍝ 160: 16 bits character
+          char3←⎕UCS(100000+⍳100)                    ⍝ 320: 32 bits character
+      :EndIf
+      charptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+     
+      dbl←{⍵,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
         ⍝ Hdbl and Sdbl is 645 but larger and smaller numbers
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
-        Sdbl←{⍵,-⍵}(⍳10)×1E¯40
-
+      Hdbl←{⍵,-⍵}100000000000000+(2×⍳50)
+      Sdbl←{⍵,-⍵}(⍳10)×1E¯40
+     
         ⍝ Hfl and Sfl is 1287 but larger and smaller numbers
-        ⎕FR←fr_decf                                   ⍝ use ⎕FR=1287
-        fl←{⍵,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
-        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
-        Sfl←{⍵,-⍵}(⍳10)×1E¯40
-        ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
-
-        r←⍬
-        testDesc←{'for ',case, ' & ⎕FR:', ⎕FR}
-
-        :For fr :In 1 2
-            ⎕FR←fr⊃fr_dbl fr_decf
-
-            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
-
-            :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
-                data←⍎case
-                desc←testDesc⍬
-                :If case≢'bool'
-                    r,←'T1' desc quadparams RunVariations ({(⊣,⊣)((≢⍵)÷2)↑⍵}data) data ⍝ all positive values are chosen
-                    r,←'T2' desc quadparams RunVariations (modelMag data) data ⍝ custom func finds results on array
-                    r,←'T3' desc Assert (modelMag¨ (data data))≡(|data data) ⍝ test on pointer array
-
-                    d←data[?≢data]
-                    r,←'T4' desc quadparams RunVariations (modelMag d) d ⍝ custom func finds results on single element
-                :Else
-                    r,←'Tb1' desc quadparams RunVariations (0 1) bool
-                    r,← 'Tb2' desc quadparams RunVariations 0 (⊃bool)
-                :EndIf
-            :EndFor
-
-            case←'for limits of i4' ⍝ 32-bit int range [¯2147483648, 2147483647]. Therefore, |¯2147483648 is stored as float.
-            desc←testDesc⍬
-            r,←'tLim1' desc quadparams RunVariations (,2147483648) (,¯2147483648)
-            r,←'tLim2' desc quadparams RunVariations (,2147483648, modelMag i1) (¯2147483648,i1) ⍝ Rarg to | will have the same type, and similarly the elements in the result will do as well.
-
-            case←'for singleton scalar boolean' ⍝ edge case for when a singleton scalar boolean is passed as rarg to magnitude. 
-            desc←testDesc⍬
-            r,←'tb3' desc quadparams RunVariations (∧/1 0 1 0) (|∧/1 0 1 0) ⍝ | is applied here becuase of type conversion when argument is passed to RunVariations
-
+      ⎕FR←fr_decf                                   ⍝ use ⎕FR=1287
+      fl←{⍵,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
+      Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)
+      Sfl←{⍵,-⍵}(⍳10)×1E¯40
+      ⎕FR←fr_dbl                                    ⍝ revert ⎕FR=645
+     
+      r←⍬
+      testDesc←{'for ',case,' & ⎕FR:',⎕FR}
+     
+      :For fr :In 1 2
+          ⎕FR←fr⊃fr_dbl fr_decf
+     
+          quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+     
+          :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'Sdbl' 'fl' 'Hfl' 'Sfl'
+              data←⍎case
+              desc←testDesc ⍬
+              :If case≢'bool'
+                  r,←'T1'desc quadparams RunVariations({(⊣,⊣)((≢⍵)÷2)↑⍵}data)data ⍝ all positive values are chosen
+                  r,←'T2'desc quadparams RunVariations(modelMag data)data ⍝ custom func finds results on array
+                  r,←'T3'desc Assert(modelMag¨(data data))≡(|data data) ⍝ test on pointer array
+     
+                  d←data[?≢data]
+                  r,←'T4'desc quadparams RunVariations(modelMag d)d ⍝ custom func finds results on single element
+              :Else
+                  r,←'Tb1'desc quadparams RunVariations(0 1)bool
+                  r,←'Tb2'desc quadparams RunVariations 0(⊃bool)
+              :EndIf
+          :EndFor
+     
+          case←'for limits of i4' ⍝ 32-bit int range [¯2147483648, 2147483647]. Therefore, |¯2147483648 is stored as float.
+          desc←testDesc ⍬
+          r,←'tLim1'desc quadparams RunVariations(,2147483648)(,¯2147483648)
+          r,←'tLim2'desc quadparams RunVariations(,2147483648,modelMag i1)(¯2147483648,i1) ⍝ Rarg to | will have the same type, and similarly the elements in the result will do as well.
+     
+          case←'for singleton scalar boolean' ⍝ edge case for when a singleton scalar boolean is passed as rarg to magnitude.
+          desc←testDesc ⍬
+          r,←'tb3'desc quadparams RunVariations(∧/1 0 1 0)(|∧/1 0 1 0) ⍝ | is applied here becuase of type conversion when argument is passed to RunVariations
+     
             ⍝ tests for known errors
-            :For case :In 'char0' 'char1' 'char2' 'char3' 'charptr'
-                :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'charptr') 
-                    :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
-                :EndIf
-                data←⍎case
-                desc←testDesc⍬
-                c1←data[?≢data]
-
-                f←0 ⍝ flag
-                :Trap 11 ⍝ 11: Domain error
-                    |c1
-                :Else
-                    f←1
-                :EndTrap
-                r,← 'TDomainE1' desc Assert (f ∧ ⎕dmx.Message≡'')
-            :EndFor
-        :EndFor
+          :For case :In 'char0' 'char1' 'char2' 'char3' 'charptr'
+              :If (isDyalogClassic)∧(case≢'char0')∧(case≢'charptr')
+                  :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+              :EndIf
+              data←⍎case
+              desc←testDesc ⍬
+              c1←data[?≢data]
+     
+              f←0 ⍝ flag
+              :Trap 11 ⍝ 11: Domain error
+                  |c1
+              :Else
+                  f←1
+              :EndTrap
+              r,←'TDomainE1'desc Assert(f∧⎕DMX.Message≡'')
+          :EndFor
+      :EndFor
     ∇
 
 
-    ∇ {r}←test_magnitude_cmplx ;RunVariations;cmplx;Hcmplx;d;case;data;testDesc;desc;i1;fr_dbl;fr_decf;fr;⎕FR
+    ∇ {r}←test_magnitude_cmplx;RunVariations;cmplx;Hcmplx;d;case;data;testDesc;desc;i1;fr_dbl;fr_decf;fr;⎕FR
         ⍝ use RunVariations operator and modify it for cmplx magnitude
-        RunVariations←(modelMagCmplx #.testfns._RunVariations_ |)
-
-        i1←{⍵}⍳120                                    ⍝ 83: 8 bits signed integer
-        cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
-        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E13J1E13×⍳20)     ⍝ 1289 but larger numbers
+      RunVariations←(modelMagCmplx #.testfns._RunVariations_|)
+     
+      i1←{⍵}⍳120                                    ⍝ 83: 8 bits signed integer
+      cmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
+      Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(10000000000000J10000000000000×⍳20)     ⍝ 1289 but larger numbers
         ⍝ DECF in cmplx numbers are not recommended to be used by the docs
-        fr_dbl←645
-        fr_decf←1287
-
-        r←⍬
-        testDesc←{'for ',case}
-
-        :For fr :In 2 1
-            ⎕FR←fr⊃fr_dbl fr_decf
-            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
-            case←'cmplx with non-cmplx nums with ⎕fr', ⎕FR  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
-            desc←testDesc⍬
-            r,←'TcI1' desc quadparams RunVariations (,5,i1) (,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
-        :EndFor
-
-        :For case :In 'cmplx' 'Hcmplx'
-            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
-            data←⍎case
-            desc←testDesc⍬
-            r,←'Tc1' desc quadparams RunVariations (modelMagCmplx¨data) data
-            r,←'Tc2' desc Assert (modelMagCmplx¨¨ (data data))≡(|data data) ⍝ test on pointer array
-            :For d :In data
-                case←d
-                desc←testDesc⍬
-                r,←'Tc2' desc quadparams RunVariations (modelMagCmplx d) d
-            :EndFor
-        :EndFor
+      fr_dbl←645
+      fr_decf←1287
+     
+      r←⍬
+      testDesc←{'for ',case}
+     
+      :For fr :In 2 1
+          ⎕FR←fr⊃fr_dbl fr_decf
+          quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+          case←'cmplx with non-cmplx nums with ⎕fr',⎕FR  ⍝ Z (complex) argument and DF (DECF float) result. Magnitude, when applied to complex, gives a non-complex result.
+          desc←testDesc ⍬
+          r,←'TcI1'desc quadparams RunVariations(,5,i1)(,3J4,i1) ⍝ using a fixed number because DECF in cmplx numbers are not recommended to be used by the docs and produced uncertain results
+      :EndFor
+     
+      :For case :In 'cmplx' 'Hcmplx'
+          quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+          data←⍎case
+          desc←testDesc ⍬
+          r,←'Tc1'desc quadparams RunVariations(modelMagCmplx¨data)data
+          r,←'Tc2'desc Assert(modelMagCmplx¨¨(data data))≡(|data data) ⍝ test on pointer array
+          :For d :In data
+              case←d
+              desc←testDesc ⍬
+              r,←'Tc2'desc quadparams RunVariations(modelMagCmplx d)d
+          :EndFor
+      :EndFor
     ∇
 :EndNamespace
