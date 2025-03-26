@@ -13,17 +13,8 @@ Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests spe
 ## 🎿 Coverage
 
 ### 💪  Available Tests
-- add (dyadic +)
-- divide (dyadic ÷)
-- floor (monadic ⌊)
-- index of (dyadic ⍳) (Not tested for coverage)
-- magnitude (monadic |)
-- membership (dyadic ∊) (Not tested for coverage)
-- multiply (dyadic ×)
-- residue (dyadic |)
-- subtract (dyadic -)
-- unique (monadic ∪)
-- unique mask (monadic ≠)
+
+Check the tests in the [tests](./tests/) folder
 
 ### 🧱 In progress and Next up
 
@@ -38,7 +29,9 @@ Just as the owl represents both wisdom and foolishness the QA also has a dual na
 ### 🔗 Contrituting guide
 
 - [contributing.md](contributing.md): Guide on how to contribute to the codebase
-- [Decision docs](docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
+- [How to add tests?](docs/how-to-add-tests.md): Detailed guide on how to add tests
+- [Coverage Docs](docs/code-coverage.md): Guide on how to generate code coverage reports
+- [Decision docs](docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users
 
 ## ⬇ Usage
 
