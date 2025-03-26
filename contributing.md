@@ -4,13 +4,23 @@ We welcome contributions from anyone, even if you are new to open source. We wil
 
 Every small change of refactoring, documentation, code commenting, questions, suggestions, adding a test, adding a primitive makes the project better and will help making Dyalog APL bug free. 𓆣
 
+## Rules followed
+
+### File formatting
+
+Reformat settings in ride should be "handle formatting: through the interpreter" which can be found under the Trace/Edit section of the preferences.
+
+## Code coverage checks
+
+All PRs that introduce tests for a new primitives should ensure that they have checked for Code Coverage. (This is something people from Dyalog will be able to see, you can let the maintainers know if you have written tests and want somebody else to look at the code coverage)
+
 ## Basic Setup
 
 To contribute, make sure you set up:
 
 - Your username + email
 - Your ~/.gitconfig
-- Dyalog (preferably version >18.2 unicode)
+- Dyalog (preferably version >v18.2)
 
 ### Fork ullu
 

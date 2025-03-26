@@ -9,157 +9,157 @@
     model←{⍵-⍺×⌊⍵÷⍺+⍺=0} ⍝ Generator function for residue
 
 
-    ∇ {r}←test_residue ;RunVariations;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char0;char1;char2;char3;charptr;halfLen;case3;data3;c1;c2;f;Message
+    ∇ {r}←test_residue;RunVariations;r;data;case;data2;case2;type;bool;i1;i2;i3;ptr;dbl;fl;cmplx;Hdbl;Hfl;Hcmplx;d1;d2;almostd1;ct;fr;⎕CT;⎕DCT;⎕FR;ct_default;dct_default;fr_dbl;fr_decf;testDesc;desc;char0;char1;char2;char3;charptr;halfLen;case3;data3;c1;c2;f;Message
         ⍝ use RunVariations operator and modify it for residue
-        RunVariations←(model #.testfns._RunVariations_ |)
-
-        ct_default←#.utils.ct_default
-        dct_default←#.utils.dct_default
-        fr_dbl←#.utils.fr_dbl
-        fr_decf←#.utils.fr_decf
-
-        bool←0 1                                        ⍝ 11: 1 bit Boolean type arrays
-        i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
-        i2←{⍵,0,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
-        i3←{⍵,0,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
-
-        char0←⎕AV                                       ⍝ 82: DyalogAPL classic char set
-        :If ~isDyalogClassic
-            char1←⎕UCS ⍳255                             ⍝ 80: 8 bits character
-            char2←⎕UCS (1000+⍳100)                      ⍝ 160: 16 bits character
-            char3←⎕UCS (100000+⍳100)                    ⍝ 320: 32 bits character
-        :EndIf
-        charptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
-
-        dbl←{⍵,0,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
+      RunVariations←(model #.testfns._RunVariations_|)
+     
+      ct_default←#.utils.ct_default
+      dct_default←#.utils.dct_default
+      fr_dbl←#.utils.fr_dbl
+      fr_decf←#.utils.fr_decf
+     
+      bool←0 1                                        ⍝ 11: 1 bit Boolean type arrays
+      i1←{⍵,0,-⍵}⍳120                                 ⍝ 83: 8 bits signed integer
+      i2←{⍵,0,-⍵}10000+⍳1000                          ⍝ 163: 16 bits signed integer
+      i3←{⍵,0,-⍵}100000+⍳100                          ⍝ 323: 32 bits signed  integer
+     
+      char0←⎕AV                                       ⍝ 82: DyalogAPL classic char set
+      :If ~isDyalogClassic
+          char1←⎕UCS⍳255                             ⍝ 80: 8 bits character
+          char2←⎕UCS(1000+⍳100)                      ⍝ 160: 16 bits character
+          char3←⎕UCS(100000+⍳100)                    ⍝ 320: 32 bits character
+      :EndIf
+      charptr←2,/⎕A                                     ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+     
+      dbl←{⍵,0,-⍵}1000.5+⍳100                         ⍝ 645: 64 bits Floating
         ⍝ Hdbl is 645 but larger numbers
-        Hdbl←{⍵,-⍵}1E14+(2×⍳50)
-
+      Hdbl←{⍵,-⍵}100000000000000+(2×⍳50)
+     
         ⍝ Hfl is 1287 but larger numbers
-        ⎕FR←fr_decf                                     ⍝ use ⎕FR=1287
-        fl←{⍵,0,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
-        Hfl←{⍵,-⍵}2E29+(1E16×⍳10)                       ⍝ 1287 but larger numbers
-        ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
-
-        cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
-        Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(1E14J1E14×⍳20)       ⍝ 1289 but larger numbers
-
-        r←⍬
-        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
-
-        :For ct :In 0 1
-            (⎕CT ⎕DCT)←ct × ct_default dct_default ⍝ set comparison tolerance
-            :For fr :In 2 1
-                ⎕FR←fr⊃fr_dbl fr_decf
-
-                quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
-
+      ⎕FR←fr_decf                                     ⍝ use ⎕FR=1287
+      fl←{⍵,0,-⍵}1000.5+⍳100                          ⍝ 1287: 128 bits Decimal
+      Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)                       ⍝ 1287 but larger numbers
+      ⎕FR←fr_dbl                                      ⍝ revert ⎕FR=645
+     
+      cmplx←{(-⍵),⍵,0,(+⍵),(-+⍵)}(0J1×⍳100)+⌽⍳100     ⍝ 1289: 128 bits Complex
+      Hcmplx←{(-⍵),⍵,(+⍵),(-+⍵)}(100000000000000J100000000000000×⍳20)       ⍝ 1289 but larger numbers
+     
+      r←⍬
+      testDesc←{'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT,'& ⎕FR:',⎕FR}
+     
+      :For ct :In 0 1
+          (⎕CT ⎕DCT)←ct×ct_default dct_default ⍝ set comparison tolerance
+          :For fr :In 2 1
+              ⎕FR←fr⊃fr_dbl fr_decf
+     
+              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+     
                 ⍝ Tests added to achieve complete code coverage
-                case←'independant'
-                case2←⍬
-                desc←testDesc⍬
-                r,← 'Ti1' desc quadparams RunVariations (0 model 11) 0 11        ⍝ Special optimization for scalar 0 from iresidue at apl/allos/src/scalarscalar.cpp#L518
-                r,← 'Ti2' desc quadparams RunVariations (¯1 model 11) ¯1 11      ⍝ Special optimization for scalar ¯1 from iresidue at apl/allos/src/scalarscalar.cpp#L518
-                r,← 'Ti3' desc Assert (2/(2 model 1J1))≡(2|2/1J1)     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
-                r,← 'Ti4' desc Assert (2/0)≡(2|2/1E40)                     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
-
-                :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 
-                    data←⍎case
+              case←'independant'
+              case2←⍬
+              desc←testDesc ⍬
+              r,←'Ti1'desc quadparams RunVariations(0 model 11)0 11        ⍝ Special optimization for scalar 0 from iresidue at apl/allos/src/scalarscalar.cpp#L518
+              r,←'Ti2'desc quadparams RunVariations(¯1 model 11)¯1 11      ⍝ Special optimization for scalar ¯1 from iresidue at apl/allos/src/scalarscalar.cpp#L518
+              r,←'Ti3'desc Assert(2/(2 model 1J1))≡(2|2/1J1)     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
+              r,←'Ti4'desc Assert(2/0)≡(2|2/1E40)                     ⍝ Special optimization for scans from code around apl/allos/src/arith_su.c#L1241
+     
+              :For case :In 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx'
+                  data←⍎case
                     ⍝ Cross type tests
-                    :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl'
-                        data2←⍎case2
-                        :If (⊂data)∊cmplx Hdbl Hfl Hcmplx
-                            :Continue
-                        :EndIf
-                        desc←testDesc⍬
-                        :If (data≡data2)
-                            r,←'TCross0' desc quadparams RunVariations (0⍨¨data) data data2
-                            :Continue
-                        :EndIf
-                        data2←(≢data)↑data2                                                             ⍝ strip data2 to be equal length to data
-                        r,← 'TCross1' desc quadparams RunVariations (data model data2) data data2
-                        r,← 'TCross2' desc quadparams RunVariations (data2 model data) data2 data
-                        r,← 'TCross3' desc Assert (((data2 data) model (data data2))≡(data2 data)|(data data2)) ⍝ merge two different arrays creating a pointer array
-                    :EndFor
-
-                    case2←⍬ ⍝ disposing case2 for testDesc
-                    desc←testDesc⍬
-
-                    r,← 'T1' desc quadparams RunVariations (data model ⌽data) data (⌽data)                    ⍝ generator func finds results on array
-                    d1←data[?≢data]
-                    d2←data[?≢(data~d1)]
-                    r,← 'T2' desc quadparams RunVariations (d1 model d2) d1 d2                                ⍝ generator func finds results on single element
-                    r,← 'T3' desc quadparams RunVariations (0⍨¨data) 1 (⌊data)                                ⍝ check remainder with 1 result is a defined output
-
-                    :If (⊂data)∊i1 i2 i3
-                        halfLen←(¯1+≢data)÷2
-                        r,← 'TSeq2' desc quadparams RunVariations ({⍵,(⌽⍵),0}halfLen⍴(⍳9), 0) 10 data         ⍝ sequences to test functionality of residue
-                        r,← 'TSeq1' desc quadparams RunVariations ({⍵,(⌽⍵),0}halfLen⍴1 2 3 0) 4 data          ⍝ remainder sequence is ⍳(N-1), 0
-                    :EndIf
-
-                    :If case≡'dbl'
-                        halfLen←(¯1+≢data)÷2
-                        r,← 'TSeqDbl1' desc quadparams RunVariations ({⍵,0,(2↓⌽⍵),0.5,3.5}halfLen⍴(1.5 2.5 3.5 0.5)) 4 data    ⍝ sequences to test functionality of residue
-                        r,← 'TSeqDbl2' desc quadparams RunVariations ({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9), 0.5) 10 data       ⍝ sequences to test functionality of residue
-                    :EndIf
-
+                  :For case2 :In 'i1' 'i2' 'i3' 'dbl' 'fl'
+                      data2←⍎case2
+                      :If (⊂data)∊cmplx Hdbl Hfl Hcmplx
+                          :Continue
+                      :EndIf
+                      desc←testDesc ⍬
+                      :If (data≡data2)
+                          r,←'TCross0'desc quadparams RunVariations(0⍨¨data)data data2
+                          :Continue
+                      :EndIf
+                      data2←(≢data)↑data2                                                             ⍝ strip data2 to be equal length to data
+                      r,←'TCross1'desc quadparams RunVariations(data model data2)data data2
+                      r,←'TCross2'desc quadparams RunVariations(data2 model data)data2 data
+                      r,←'TCross3'desc Assert(((data2 data)model(data data2))≡(data2 data)|(data data2)) ⍝ merge two different arrays creating a pointer array
+                  :EndFor
+     
+                  case2←⍬ ⍝ disposing case2 for testDesc
+                  desc←testDesc ⍬
+     
+                  r,←'T1'desc quadparams RunVariations(data model⌽data)data(⌽data)                    ⍝ generator func finds results on array
+                  d1←data[?≢data]
+                  d2←data[?≢(data~d1)]
+                  r,←'T2'desc quadparams RunVariations(d1 model d2)d1 d2                                ⍝ generator func finds results on single element
+                  r,←'T3'desc quadparams RunVariations(0⍨¨data)1(⌊data)                                ⍝ check remainder with 1 result is a defined output
+     
+                  :If (⊂data)∊i1 i2 i3
+                      halfLen←(¯1+≢data)÷2
+                      r,←'TSeq2'desc quadparams RunVariations({⍵,(⌽⍵),0}halfLen⍴(⍳9),0)10 data         ⍝ sequences to test functionality of residue
+                      r,←'TSeq1'desc quadparams RunVariations({⍵,(⌽⍵),0}halfLen⍴1 2 3 0)4 data          ⍝ remainder sequence is ⍳(N-1), 0
+                  :EndIf
+     
+                  :If case≡'dbl'
+                      halfLen←(¯1+≢data)÷2
+                      r,←'TSeqDbl1'desc quadparams RunVariations({⍵,0,(2↓⌽⍵),0.5,3.5}halfLen⍴(1.5 2.5 3.5 0.5))4 data    ⍝ sequences to test functionality of residue
+                      r,←'TSeqDbl2'desc quadparams RunVariations({⍵,0,(2↓⌽⍵),0.5,9.5}halfLen⍴(0.5+⍳9),0.5)10 data       ⍝ sequences to test functionality of residue
+                  :EndIf
+     
                     ⍝ tests with comparison tolerance
-                    almostd1←d1×1-fr⊃1E¯2×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
-                    :If ct ⍝ tolerant
-                        :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
+                  almostd1←d1×1-fr⊃0.01×ct_default dct_default ⍝ infinitesimally close to d1 but smaller
+                  :If ct ⍝ tolerant
+                      :If (⊂data)∊Hdbl Hfl Hcmplx ⍝ bigger numbers
                             ⍝ Hdbl=Hdbl+1 with default CT, but not for DECF (similar for Hcmplx)
-                            r,← 'CTDefault' desc Assert ((0≡(d1|d1+1)) ∨ (fr=2 ∧ (case≡'Hdbl') ∨ (case≡'Hcmplx')))
-                        :Else ⍝ other than bigger numbers
-                            r,← 'CTDefaultAlmost1' desc Assert 0≡d1|almostd1 ⍝ No difference because tolerantly equal
-                            r,← 'CTDefaultAlmost2' desc Assert 0≡almostd1|d1 ⍝ Same as above but flipped
-                        :EndIf
-                    :Else ⍝ exact
+                          r,←'CTDefault'desc Assert((0≡(d1|d1+1))∨(fr=2∧(case≡'Hdbl')∨(case≡'Hcmplx')))
+                      :Else ⍝ other than bigger numbers
+                          r,←'CTDefaultAlmost1'desc Assert 0≡d1|almostd1 ⍝ No difference because tolerantly equal
+                          r,←'CTDefaultAlmost2'desc Assert 0≡almostd1|d1 ⍝ Same as above but flipped
+                      :EndIf
+                  :Else ⍝ exact
                         ⍝ d≠d+1 for all numeric types, except when Hfl represented as DOUB
                         ⍝ if cmplx then generator function elseif negative then ⍵+1 else 1 because of 0 tolerance
-                        r,← 'CTZero' desc Assert (({⊢≠+⍵:d1 model d1+1⋄1+0≤⍵⊃⍵+1 1}d1)≡d1|d1+1) ∨ (fr=1 ∧ case≡'Hfl')
-
+                      r,←'CTZero'desc Assert(({⊢≠+⍵:d1 model d1+1 ⋄ 1+0≤⍵⊃⍵+1 1}d1)≡d1|d1+1)∨(fr=1∧case≡'Hfl')
+     
                         ⍝ |, ⌈ and ⌊ are added to it for getting a fixed result
-                        r,← 'CTZeroAlmost1' desc Assert (0≡⌊|almostd1|d1) ∨ (fr=1 ∧ case≡'Hfl')
-                        r,← 'CTZeroAlmost2' desc Assert ((⌈|d1)≡⌈|d1|almostd1) ∨ (fr=1 ∧ case≡'Hfl') ∨ (1289≡⎕dr data)
-                    :EndIf
-
+                      r,←'CTZeroAlmost1'desc Assert(0≡⌊|almostd1|d1)∨(fr=1∧case≡'Hfl')
+                      r,←'CTZeroAlmost2'desc Assert((⌈|d1)≡⌈|d1|almostd1)∨(fr=1∧case≡'Hfl')∨(1289≡⎕DR data)
+                  :EndIf
+     
                     ⍝ tests for known errors
-                    :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
-                        :If (isDyalogClassic) ∧ (case≢'char0') ∧ (case≢'ptr') 
-                            :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
-                        :EndIf
-                        data3←⍎case3
-                        desc←testDesc⍬
-                        c1←data3[?≢data3]
-                        c2←(data3~c1)[?¯1+≢data3]
-
-                        f←0 ⍝ flag
-                        :Trap 11 ⍝ 11: Domain error
-                            c1|c2 ⍝ N/A type ÷ N/A type
-                        :Else
-                            f←1
-                            r,← 'TDomainE2' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
-                        :EndTrap
-                        
-                        f←0 ⍝ flag
-                        :Trap 11 ⍝ 11: Domain error
-                            d1÷c2 ⍝ Number type ÷ N/A type
-                        :Else
-                            f←1
-                            r,← 'TDomainE3' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
-                        :EndTrap
-                        
-                        f←0 ⍝ flag
-                        :Trap 11 ⍝ 11: Domain error
-                            c1÷d1 ⍝ N/A type ÷ number type
-                        :Else
-                            f←1
-                            r,← 'TDomainE4' desc Assert (f ∧ ⎕dmx.Message≡'') ⍝ check for error and dmx message
-                        :EndTrap
-                    :EndFor
-                :EndFor
-            :EndFor
-        :EndFor
+                  :For case3 :In 'char1' 'char2' 'char3' 'char0' 'charptr'
+                      :If (isDyalogClassic)∧(case≢'char0')∧(case≢'ptr')
+                          :Continue ⍝ Skip tests for unicode character sets in DyalogAPL classic
+                      :EndIf
+                      data3←⍎case3
+                      desc←testDesc ⍬
+                      c1←data3[?≢data3]
+                      c2←(data3~c1)[?¯1+≢data3]
+     
+                      f←0 ⍝ flag
+                      :Trap 11 ⍝ 11: Domain error
+                          c1|c2 ⍝ N/A type ÷ N/A type
+                      :Else
+                          f←1
+                          r,←'TDomainE2'desc Assert(f∧⎕DMX.Message≡'') ⍝ check for error and dmx message
+                      :EndTrap
+     
+                      f←0 ⍝ flag
+                      :Trap 11 ⍝ 11: Domain error
+                          d1÷c2 ⍝ Number type ÷ N/A type
+                      :Else
+                          f←1
+                          r,←'TDomainE3'desc Assert(f∧⎕DMX.Message≡'') ⍝ check for error and dmx message
+                      :EndTrap
+     
+                      f←0 ⍝ flag
+                      :Trap 11 ⍝ 11: Domain error
+                          c1÷d1 ⍝ N/A type ÷ number type
+                      :Else
+                          f←1
+                          r,←'TDomainE4'desc Assert(f∧⎕DMX.Message≡'') ⍝ check for error and dmx message
+                      :EndTrap
+                  :EndFor
+              :EndFor
+          :EndFor
+      :EndFor
     ∇
 
 :EndNamespace

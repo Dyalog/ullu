@@ -35,6 +35,11 @@ Pronounced as `/ˈulːluː/`, The name comes from the Hindi word for owl. The ow
 
 Just as the owl represents both wisdom and foolishness the QA also has a dual nature of being wise and dumb at the same time.
 
+### 🔗 Contrituting guide
+
+- [contributing.md](contributing.md): Guide on how to contribute to the codebase
+- [Decision docs](docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
+
 ## ⬇ Usage
 
 You can use ullu in a dyalog session on any supported operating system.
@@ -83,10 +88,6 @@ or
 unittest.RunTests tests.membership
 ```
 
-### 🔗 More documentation
-
-- [contributing.md](contributing.md): Guide on how to contribute to the codebase
-- [Decision docs](docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
 
 
 ### 🔗 Suggestions/Questions

@@ -65,7 +65,7 @@
     ⍝ - membership
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
-    ∇ {tRes}←tData(model _RunVariations_ op)exp;⎕CT;⎕DCT;⎕FR;⎕IO;⎕DIV;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg
+    ∇ {tRes}←tData(model _RunVariations_ op)exp;⎕CT;⎕DCT;⎕FR;⎕IO;⎕DIV;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg;nrarg;nlarg
       :If 3≡≢exp ⍝ dyadic op
           val←2 ⍝ valence
           (expectedR larg rarg)←exp
@@ -146,7 +146,7 @@
       tRes←⍬
       (tID tCmt quadparams)←spec
       ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams
-
+     
       ⍝ Run the operand function and return either (1 Rslt) or (0 (⎕DMX.EN Message))
       runOrErr←{
           0::⊂0 ⎕DMX.(EN Message)
@@ -161,7 +161,7 @@
           1=≢args:⍺⍺ ⍵
           ⎕SIGNAL 5 ⍝ length error
       }
-
+     
       ⍝ run a transformation function (⍺⍺) on both arguments,
       ⍝ and then compare the result produced by the model and
       ⍝ the primitive, when the transformed arguments are applied.
