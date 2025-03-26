@@ -1,0 +1,21 @@
+:Namespace union
+    Assert←#.unittest.Assert
+
+    model←{⍺,(∧/⍺≢¨⍵)/⍵}
+
+    ∇ {r}←test_union
+        ct_default←#.utils.ct_default
+        dct_default←#.utils.dct_default
+        fr_dbl←#.utils.fr_dbl
+        fr_decf←#.utils.fr_decf
+        
+        r←⍬
+        testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR}
+        
+        case←⍬
+        case2←⍬
+        desc←testDesc⍬
+
+        r,←'TI1' desc Assert (1 0 ≡ (1 0)∪ 0 0 )
+    ∇
+:EndNamespace
