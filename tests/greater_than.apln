@@ -1,0 +1,13 @@
+:Namespace greater_than
+    ∇ {r}←test_greater_than;test
+      test←⎕NS ⍬
+      test.primitive←>
+      test.description←'Greater than'
+      test.error←1
+     
+      test.patterns←⍬
+      test.patterns,←⊂0 0 1 ⍝ Numeric less than
+     
+      r←#.tests._relational.test_relational test
+    ∇
+:EndNamespace

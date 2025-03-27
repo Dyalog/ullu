@@ -1,0 +1,90 @@
+:Namespace _relational
+    ⎕IO←0
+    ⍝ Shared code between the relational primitives: dyadic <≤≥>=≠
+
+    ∇ r←x model_equal y
+      :Trap 0
+          :Select #.iso_defs.Type¨x y
+          :Case 'numeric' 'numeric'
+              r←x #.iso_defs.(ComparisonTolerance TolerantlyEqual)y
+          :Case 'character' 'character'
+              r←x≡y
+          :Else
+              r←0
+          :EndSelect
+      :Else
+          r←¯1
+      :EndTrap
+    ∇
+
+    ∇ r←x model_less_than y
+      :Trap 0
+          x←#.iso_defs.NearestRealNumber x
+          y←#.iso_defs.NearestRealNumber y
+          :If x model_equal y
+              r←0
+          :ElseIf x #.iso_defs.LessThan y
+              r←1
+          :Else
+              r←0
+          :EndIf
+      :Else
+          r←¯1
+      :EndTrap
+    ∇
+
+    ∇ r←x model_greater_than y
+      :Trap 0
+          x←#.iso_defs.NearestRealNumber x
+          y←#.iso_defs.NearestRealNumber y
+          :If x model_equal y
+              r←0
+          :ElseIf x #.iso_defs.GreaterThan y
+              r←1
+          :Else
+              r←0
+          :EndIf
+      :Else
+          r←¯1
+      :EndTrap
+    ∇
+
+    ∇ r←x(ns relational_model)y;max;min
+      :If 0<x⌈⍥≡y
+          r←x(ns relational_model)¨y
+          :Return
+      :EndIf
+     
+      #.iso_defs.SetupSysvars ⎕THIS
+      r←x(model_less_than,model_equal,model_greater_than)y
+     
+      (min max)←1
+      :If ¯1∊r
+          min←0
+      :EndIf
+     
+      ⍝ Check that the computed results make sense
+      :If {(⍵<min)∨⍵>max}+⌿1=r
+          ⎕←x
+          ⎕←y
+          ⎕←r
+          ⎕SIGNAL 16 ⍝ NONCE ERROR
+      :EndIf
+      r←(⊂r)∊ns.patterns
+     
+      :If ns.error∧(min=0)∧~r ⍝ there was an error
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndIf
+    ∇
+
+    ∇ {r}←test_relational ns;model;prim;primSymb
+      r←⍬
+      model←(ns relational_model)#.testfns.runOrErr
+      prim←ns.primitive #.testfns.runOrErr
+      primSymb←⍕⎕OR'ns.primitive'
+      :For (x y) :In ,∘.,⍨¯10+⍳21
+          r,←ns.description(⍕x primSymb y)#.testfns.Assert(x model y)≡(x prim y)
+      :EndFor
+     
+    ∇
+:EndNamespace

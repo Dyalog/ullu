@@ -7,9 +7,40 @@
     ⍝ which makes it easier to find what we are looking
     ⍝ for.
 
+    :Section Utils
+    ∇ SetupSysvars ns
+    ⍝ Set system variables in the iso_defs namespace, to their
+    ⍝ values in the argument namespace.
+    ⍝ This function MUST be called before using any of the
+    ⍝ iso_defs functions, as some of them depend on the current
+    ⍝ system variable values.
+      (⎕CT ⎕DCT ⎕FR ⎕IO)←ns.(⎕CT ⎕DCT ⎕FR ⎕IO)
+    ∇
+    :EndSection
+
     :Section 5.2.3
     ∇ r←IsBoolean A
       r←∨/A∘.Equals 0 1
+    ∇
+
+    ∇ r←RealPart n
+      r←9○n
+    ∇
+
+    ∇ r←ImaginaryPart n
+      r←11○n
+    ∇
+
+    ∇ r←x SameHalfPlane y;imaginary_parts;real_parts
+      real_parts←×RealPart¨x y
+      imaginary_parts←×ImaginaryPart¨x y
+      :If (0≠⊃real_parts)∧=⌿real_parts
+          r←1
+      :ElseIf (0≠⊃imaginary_parts)∧=⌿imaginary_parts
+          r←1
+      :Else
+          r←0
+      :EndIf
     ∇
     :EndSection
 
@@ -17,6 +48,63 @@
 
     ∇ r←A Equals B
       r←A≡⍥(11∘⎕DR)B
+    ∇
+
+    ∇ r←A GreaterThan B;⎕CT;⎕DCT
+      (⎕CT ⎕DCT)←0
+      :If (A>0)∧(B<0)
+          r←1
+      :ElseIf (A-B)>0
+          r←1
+      :Else
+          r←0
+      :EndIf
+    ∇
+
+    ∇ r←A LessThan B
+      r←B GreaterThan A
+    ∇
+
+    ∇ r←Magnitude A
+      r←|A
+    ∇
+
+    ∇ r←A LargerMagnitude B
+      A←Magnitude A
+      B←Magnitude B
+      :If A GreaterThan B
+          r←A
+      :Else
+          r←B
+      :EndIf
+    ∇
+
+    ∇ r←A DistanceBetween B
+      r←Magnitude A-B
+    ∇
+
+    ∇ r←A(C TolerantlyEqual)B;distance;max_distance
+      :If C<0
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndIf
+     
+      :If A Equals B
+          r←1
+          :Return
+      :EndIf
+     
+      :If ~A SameHalfPlane B
+          r←0
+          :Return
+      :EndIf
+     
+      distance←A DistanceBetween B
+      max_distance←C×A LargerMagnitude B
+      :If (distance LessThan max_distance)∨distance Equals max_distance
+          r←1
+      :Else
+          r←0
+      :EndIf
     ∇
 
     ∇ r←B TolerantFloor A;⎕CT
@@ -50,9 +138,54 @@
     ∇ r←IntegerNearestTo data
       r←IntegerTolerance TolerantFloor data
     ∇
+
+    ∇ r←A RealWithin B;I;R
+      R←Magnitude RealPart A
+      I←Magnitude ImaginaryPart A
+      r←∨⌿I(LessThan∨Equals)¨B(R×B)
+    ∇
+
+    ∇ r←NearReal A
+      r←A RealWithin RealTolerance
+    ∇
+
+    ∇ r←NearestRealNumber A
+      :If NearReal A
+          r←RealPart A
+      :Else
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndIf
+    ∇
     :EndSection
+
+    :Section 5.3.2
+    ∇ r←Type array
+      :Select ⎕DR array
+      :CaseList 11 83 163 323 645 1287 1289
+          r←'numeric'
+      :CaseList 80 160 320
+          r←'character'
+      :Else
+          r←'mixed'
+      :EndSelect
+    ∇
+    :EndSection
+
+    :Section 5.3.8
+    ∇ r←ComparisonTolerance
+    ⍝ The iso standard doesn't have ⎕DCT, but we do.
+      :Select ⎕FR
+      :Case 645
+          r←⎕CT
+      :Case 1287
+          r←⎕DCT
+      :Else
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndSelect
+    ∇
 
     :Section 5.3.10
     IntegerTolerance←1E¯14 ⍝ aka SYSFUZZ
+    RealTolerance←1E¯14    ⍝ aka SYSFUZZ
     :EndSection
 :EndNamespace
