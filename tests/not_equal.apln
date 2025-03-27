@@ -1,0 +1,15 @@
+:Namespace not_equal
+    ∇ {r}←test_not_equal;test
+      test←⎕NS ⍬
+      test.primitive←≠
+      test.description←'Not equal'
+      test.error←0
+     
+      test.patterns←⍬
+      test.patterns,←⊂1 0 0   ⍝ less than
+      test.patterns,←⊂0 0 1   ⍝ greater than
+      test.patterns,←⊂¯1 0 ¯1 ⍝ Not equal
+     
+      r←#.tests._relational.test_relational test
+    ∇
+:EndNamespace
