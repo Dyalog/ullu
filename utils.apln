@@ -2,13 +2,13 @@
     ⍝ constants
     ct_default←1E¯14    ⍝ ⎕CT values
     dct_default←1E¯28
-    
+
     fr_dbl←645          ⍝ ⎕FR values
     fr_decf←1287
-    
+
     io_default←1        ⍝ ⎕IO values
     io_0←0
-    
+
     div_0←0             ⍝ ⎕DIV values
     div_1←1
 
@@ -18,7 +18,7 @@
     hashArray←1500⌶                 ⍝ pre-hash array
     stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array
     numOrChar←{326(=-⍨2|⊢)⎕DR ⍵}    ⍝ Type of ⍵ (¯1:mixed, 0:character, 1:numeric)
-    change0sto1←{1⊢+⊣×0=⊢}          ⍝ Replacing zeroes in ⍵ with 1
+    change0sto1←{1@(0∘=)⍵}          ⍝ Replacing zeroes in ⍵ with 1
 
     ⍝ Interpreter version information
     isClassic←82=⎕dr''

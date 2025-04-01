@@ -4,13 +4,23 @@ We welcome contributions from anyone, even if you are new to open source. We wil
 
 Every small change of refactoring, documentation, code commenting, questions, suggestions, adding a test, adding a primitive makes the project better and will help making Dyalog APL bug free. 𓆣
 
+## Rules followed
+
+### File formatting
+
+Reformat settings in ride should be "handle formatting: through the interpreter" which can be found under the Trace/Edit section of the preferences.
+
+## Code coverage checks
+
+All PRs that introduce tests for a new primitives should ensure that they have checked for Code Coverage. (This is something people from Dyalog will be able to see, you can let the maintainers know if you have written tests and want somebody else to look at the code coverage)
+
 ## Basic Setup
 
 To contribute, make sure you set up:
 
 - Your username + email
 - Your ~/.gitconfig
-- Dyalog (preferably version >18.2 unicode)
+- Dyalog (preferably version >v18.2)
 
 ### Fork ullu
 
@@ -69,10 +79,10 @@ Yay! Now, you are all set. ٩(ˊᗜˋ*)و
 
 A primitive is a built-in function or operator which is a core part of the language. It is represented by a glyph, which it may share with another primitive. More information [here](https://aplwiki.com/wiki/Primitive)
 
-Ullu tests the primitives one by one, covering all the code written in the sources of Dyalog APL, all possible cases, including edge cases, and all types of inputs it can receive. 
+Ullu tests the primitives one by one, covering all the code written in the sources of Dyalog APL, all possible cases, including edge cases, and all types of inputs it can receive.
 
 <!-- demo for a primitive (blog) -->
-A workflow demonstration blog on how to write tests is present in [docs/how-to-add-tests.md](https://github.com/Dyalog/ullu/blob/main/docs/how-to-add-tests.md)
+A workflow demonstration blog on how to write tests is present in [docs/how-to-add-tests.md](docs/how-to-add-tests.md)
 
 ## Contributing Docs
 
@@ -81,14 +91,14 @@ A workflow demonstration blog on how to write tests is present in [docs/how-to-a
 <!-- what it is -->
 Decision Docs are records for detailing key decisions, fostering transparency and aiding future collaboration by providing a structured account of the decision-making process. Documenting why certain decisions were taken in the codebase, they explain the mindset of the developer writing the tests and also help document any anomalies in the codebase.
 
-It can be found [here](https://github.com/Dyalog/ullu/tree/docs-revamp/docs/decision)
+It can be found [here](docs/decision)
 
 <!-- how to write -->
 In the decision docs, you need to mention the types of test cases included in the tests, a description of all the variations of the tests, and all the edge cases that were faced/handled. It needs to have all the information that a person in the future would need to expand on the same tests or write new related ones.
 
 <!-- example -->
-Decision docs for the primitive Magnitude are a good example of this. They can be found [here](https://github.com/Dyalog/ullu/blob/docs-revamp/docs/decision/primitive-functions/scalar-monadic.md#magnitude-rydocs)
+Decision docs for the primitive Magnitude are a good example of this. They can be found [here](docs/decision/primitive-functions/scalar-monadic.md#magnitude-rydocs)
 
 ---
 
-Note: By submitting a PR you agree to license your contribution under the ullu’s MIT [license](https://github.com/Dyalog/ullu/blob/main/LICENSE) unless explicitly noted otherwise.
+Note: By submitting a PR you agree to license your contribution under the ullu’s MIT [license](LICENSE) unless explicitly noted otherwise.

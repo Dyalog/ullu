@@ -1,6 +1,6 @@
 ![ullu Banner](assets/ullu-cover.png)
 
-[![GitHub Licence](https://img.shields.io/github/license/sloorush/ullu)](https://github.com/sloorush/ullu/blob/master/LICENSE)
+[![GitHub Licence](https://img.shields.io/github/license/sloorush/ullu)](LICENSE)
 
 # ullu
 
@@ -8,31 +8,30 @@
 
 ## 🤔 What is ullu?
 
-Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests specifically the functionality of primitives one by one. This test suite's main focus is finding bugs, irregularities, edge cases and code coverage.  
+Ullu is a QA for DyalogAPL (can be used to test any APL ideally) which tests specifically the functionality of primitives one by one. This test suite's main focus is finding bugs, irregularities, edge cases and code coverage.
 
 ## 🎿 Coverage
 
 ### 💪  Available Tests
-- add (dyadic +)
-- divide (dyadic ÷)
-- floor (monadic ⌊)
-- index of (dyadic ⍳) (Not tested for coverage)
-- magnitude (monadic |)
-- membership (dyadic ∊) (Not tested for coverage)
-- residue (dyadic |)
-- subtract (dyadic -)
-- unique (monadic ∪)
-- unique mask (monadic ≠)
 
-### 🧱 In progress
+Check the tests in the [tests](./tests/) folder
+
+### 🧱 In progress and Next up
 
 All details about upcoming tests can be found in the [project board](https://github.com/orgs/Dyalog/projects/4/views/1)
 
 ## ✍ The name
 
-Pronounced as `/ˈulːluː/`, The name comes from the Hindi word for owl.
+Pronounced as `/ˈulːluː/`, The name comes from the Hindi word for owl. The owl looks over Dyalog APL when everyone else is asleep.
 
 Just as the owl represents both wisdom and foolishness the QA also has a dual nature of being wise and dumb at the same time.
+
+### 🔗 Contrituting guide
+
+- [contributing.md](contributing.md): Guide on how to contribute to the codebase
+- [How to add tests?](docs/how-to-add-tests.md): Detailed guide on how to add tests
+- [Coverage Docs](docs/code-coverage.md): Guide on how to generate code coverage reports
+- [Decision docs](docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users
 
 ## ⬇ Usage
 
@@ -82,10 +81,6 @@ or
 unittest.RunTests tests.membership
 ```
 
-### 🔗 More documentation
-
-- [Contributing.md](https://github.com/Dyalog/ullu/blob/main/contributing.md): Guide on how to contribute to the codebase
-- [Decision docs](https://github.com/Dyalog/ullu/tree/main/docs/decision): Explains the decisions taken with each step of the codebase and also documents anomalies for future users.
 
 
 ### 🔗 Suggestions/Questions

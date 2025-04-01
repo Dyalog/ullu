@@ -1,0 +1,4 @@
+:Namespace errors
+    DMX_NODMX←''
+    DMX_FR645LIMIT←'⎕FR=645 limits arithmetic to the range +/-1.79E308 (approx)'
+:EndNamespace

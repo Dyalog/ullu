@@ -1,101 +1,101 @@
 :Namespace unittest
-    GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
-        tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
-        tests←('.', ⍨⍕⍵)∘, ¨tests
-        tests
-    }
+      GetTests←{ ⍝ ⍵ is a ref to a namespace containing functions called test_*
+          tests←'test_.+'⎕S'&'⍵.⎕NL ¯3
+          tests←('.',⍨⍕⍵)∘,¨tests
+          tests
+      }
 
     FAIL_OK←'[FAIL]' '[OK]' ⍝ 1+bool will give fail and ok on 0 and 1
 
     ⍝ Pretty print test result
     PPTestResult←{⍵[2], ⍵[3], ': ', FAIL_OK[1+⍵[1]]}
 
-    ∇ r←tData Assert r ;r;tID;tCmt ⍝ to output result of tests
-        (tID tCmt)←tData
-        :If (~r)∧stop
-            PPTestResult r tID tCmt
-            'Stopping on failure of:' ⎕SIGNAL 500
-        :EndIf
-        :If verbose
-            PPTestResult r tID tCmt
-        :ElseIf ~r∨stop
-            PPTestResult r tID tCmt
-        :EndIf
+    ∇ r←tData Assert r;r;tID;tCmt ⍝ to output result of tests
+      (tID tCmt)←tData
+      :If (~r)∧stop
+          PPTestResult r tID tCmt
+          'Stopping on failure of:'⎕SIGNAL 500
+      :EndIf
+      :If verbose
+          PPTestResult r tID tCmt
+      :ElseIf ~r∨stop
+          PPTestResult r tID tCmt
+      :EndIf
     ∇
 
-    ∇ r←rep ExecuteTests tests ;r;tests;i;expr;t;nPass;nFail;time
-        time←⎕AI[2]
-        :Section ExecuteTests
-            tList←⍳≢tests
-            r←⍬
-            :For i :In tList
-                :If ~prod
-                    ⎕←''⋄tests[i]⋄⎕←''
-                :EndIf
-                t←i⊃tests
-                r,←⍎expr←t
-            :EndFor
-        :EndSection
-
-        :Section EvalRepeatResult            
-            nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-            :If ~prod ∧ (nPass≡≢r) 
-                ⎕←'Repetition:',rep, 'with Option:'
-                ⎕←(6⍴' '),'⎕RL is set to:', {0∊⍴⍵:' ⍬'⋄⍵}rl
-                ⎕←''⋄⎕←'Repetition',rep, 'tests completed: ', (≢r), 'ran,', nFail, 'failed test,', nPass, 'successes', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
-            :EndIf
-        :EndSection
+    ∇ r←rep ExecuteTests tests;r;tests;i;expr;t;nPass;nFail;time
+      time←⎕AI[2]
+      :Section ExecuteTests
+          tList←⍳≢tests
+          r←⍬
+          :For i :In tList
+              :If ~prod
+                  ⎕←'' ⋄ tests[i] ⋄ ⎕←''
+              :EndIf
+              t←i⊃tests
+              r,←⍎expr←t
+          :EndFor
+      :EndSection
+     
+      :Section EvalRepeatResult
+          nPass←(+/,)r ⋄ nFail←(≢r)-nPass
+          :If ~prod∧(nPass≡≢r)
+              ⎕←'Repetition:',rep,'with Option:'
+              ⎕←(6⍴' '),'⎕RL is set to:',{0∊⍴⍵:' ⍬' ⋄ ⍵}rl
+              ⎕←'' ⋄ ⎕←'Repetition',rep,'tests completed: ',(≢r),'ran,',nFail,'failed test,',nPass,'successes',((⎕AI[2]-time)÷1000),'s' ⋄ ⎕←''
+          :EndIf
+      :EndSection
     ∇
 
     ⍝ This function runs the tests
     ⍝ It takes 1 mandatory and 3 optional arguments [test_namespace] [prod=1|0] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value] (0 default)
-    ∇ {z}←RunTests args ;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep;versionInfo
-        time←⎕AI[2] ⍝ Start time of execution of tests
-        ⎕pw←1000
-        :Section parseArguments ⍝ This section parses and verifies input arguments
-            'missing or extra arguments. Correct usage is: [test_namespace] [prod=1|0] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL ((≢args)∊⍳6)↓11
-            (testNS prod verbose stop reps randLink)←6↑args,0 0 0 0 0 0
-            'Prod can only be 0 or 1'⎕SIGNAL (prod ∊ 0 1)↓11
-            'Verbose can only be 0 or 1'⎕SIGNAL (verbose ∊ 0 1)↓11
-            'Stop can only be 0 or 1'⎕SIGNAL (stop ∊ 0 1)↓11
-            reps←{reps<1:1⋄reps}reps
-            :If prod
-                verbose←0
-            :Else
-                ⎕←''
-                ⎕←'Version information:'
-                versionInfo←⎕SE.UCMD 'tools.version'
-                ⎕←versionInfo
-            :EndIf
-
-            :If verbose
-                ⎕←'Options:'
-                ⎕←(6⍴' '),'verbose:', verbose
-                ⎕←(6⍴' '),'stop:', stop ⋄ ⎕←''
-            :EndIf
-        :EndSection
-
+    ∇ {z}←RunTests args;time;testNS;tests;i;tList;r;nPass;nFail;reps;rep;versionInfo
+      time←⎕AI[2] ⍝ Start time of execution of tests
+      ⎕PW←1000
+      :Section parseArguments ⍝ This section parses and verifies input arguments
+          'missing or extra arguments. Correct usage is: [test_namespace] [prod=1|0] [verbose= 1|0] [stop=1|0] [repetitions=any num] [⎕RL=any seed value(0 for random)] (0 default)'⎕SIGNAL((≢args)∊⍳6)↓11
+          (testNS prod verbose stop reps randLink)←6↑args,0 0 0 0 0 0
+          'Prod can only be 0 or 1'⎕SIGNAL(prod∊0 1)↓11
+          'Verbose can only be 0 or 1'⎕SIGNAL(verbose∊0 1)↓11
+          'Stop can only be 0 or 1'⎕SIGNAL(stop∊0 1)↓11
+          reps←{reps<1:1 ⋄ reps}reps
+          :If prod
+              verbose←0
+          :Else
+              ⎕←''
+              ⎕←'Version information:'
+              versionInfo←⎕SE.UCMD'tools.version'
+              ⎕←versionInfo
+          :EndIf
+     
+          :If verbose
+              ⎕←'Options:'
+              ⎕←(6⍴' '),'verbose:',verbose
+              ⎕←(6⍴' '),'stop:',stop ⋄ ⎕←''
+          :EndIf
+      :EndSection
+     
         ⍝ 0 is used to generate a random seed value and the random value is the noted in the logs
         ⍝ all test namespaces have the same ⎕RL value supplied at the start of the tests
-        (#.testfns ({⍎'#.tests.',⍵}¨#.tests.⎕NL ¯9.1)).⎕RL←rl←{⍵≡0:?¯2+2*31⋄⍵} randLink
-
-        :Section FetchTests
-            tests←GetTests testNS
-            'no tests found'⎕SIGNAL (~(0=≢tests))↓11
-        :EndSection
-
-        r←⍬
-        :For rep :In ⍳reps
-            r,←rep ExecuteTests tests
-        :EndFor
-        
-        :Section EvalResult            
-            nPass←(+/,)r ⋄ nFail←(≢r)-nPass
-            :If ~prod ∧ (nPass≡≢r) 
-                ⎕←''⋄⎕←'All tests completed for',testNS,':', reps 'repetitions,', 'total tests:',(≢r), 'ran,', nFail, 'failed test,', nPass, 'successes in', ((⎕AI[2]-time)÷1000), 's'⋄⎕←''
-            :EndIf
-            z←nPass≡≢r
-        :EndSection
+      (#.testfns({⍎'#.tests.',⍵}¨#.tests.⎕NL ¯9.1)).⎕RL←rl←{⍵≡0:?¯2+2*31 ⋄ ⍵}randLink
+     
+      :Section FetchTests
+          tests←GetTests testNS
+          'no tests found'⎕SIGNAL(~(0=≢tests))↓11
+      :EndSection
+     
+      r←⍬
+      :For rep :In ⍳reps
+          r,←rep ExecuteTests tests
+      :EndFor
+     
+      :Section EvalResult
+          nPass←(+/,)r ⋄ nFail←(≢r)-nPass
+          :If ~prod∧(nPass≡≢r)
+              ⎕←'' ⋄ ⎕←'All tests completed for',testNS,':',reps'repetitions,','total tests:',(≢r),'ran,',nFail,'failed test,',nPass,'successes in',((⎕AI[2]-time)÷1000),'s' ⋄ ⎕←''
+          :EndIf
+          z←nPass≡≢r
+      :EndSection
     ∇
 
 :EndNamespace
