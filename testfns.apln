@@ -57,6 +57,14 @@
     ⍝ Generating Random Numbers End
     ⍝ -----------------------------
 
+    ⍝ Run the operand function and return either (1 Rslt) or (0 (⎕DMX.EN Message))
+      runOrErr←{
+          0::⊂0 ⎕DMX.(EN Message)
+          ⍺←⊢
+          ⊂1(⍺ ⍺⍺ ⍵)
+      }
+
+
     ⍝ tests that don't use this are:
     ⍝ use a different runvariations:
     ⍝ - unique
@@ -146,13 +154,6 @@
       tRes←⍬
       (tID tCmt quadparams)←spec
       ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams
-     
-      ⍝ Run the operand function and return either (1 Rslt) or (0 (⎕DMX.EN Message))
-      runOrErr←{
-          0::⊂0 ⎕DMX.(EN Message)
-          ⍺←⊢
-          ⊂1(⍺ ⍺⍺ ⍵)
-      }
      
       ⍝ Run the operand function either monadically or dyadically, depending on the
       ⍝ argument to _RunVariationsWithModel_
