@@ -1,0 +1,87 @@
+:Namespace union
+    Assert←#.unittest.Assert
+    ints←#.utils.ints
+
+    ⍝ model←{⍺,(∧/⍺≢¨⍵)/⍵}
+    model←{⍺,(~⍵∊⍺)/⍵}
+
+    ∇ r←testDesc
+      r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+    ∇
+
+    ∇ {r}←test_union
+      r←⍬
+      RunVariations←model #.testfns._RunVariationsWithModel_∪
+      ints←{ ⍝ ⍺ integers of size ⍵ (bits), excluding the booleans
+          ⎕IO←0
+          ⍺⍴0 1~⍨(2*⍵-1)-⍨?⍺⍴2*⍵
+      }
+     
+      :For ct :In 0 1 10 0.1
+          (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
+          :For fr :In 1 2
+              ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
+              ⎕IO←1
+     
+              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+     
+              data_single_bool_0←∧/1 0 1 0                      ⍝ singleton boolean
+              data_single_bool_1←∧/1 1 1 1                      ⍝ singleton boolean
+              data_bool←1 0
+              data_i1←100 ints 8
+              data_i2←100 ints 16
+              data_i4←100 ints 32
+              data_char0←⎕AV                              ⍝ 82: DyalogAPL classic char set
+              :If ~#.utils.isClassic
+                  data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
+                  data_char2←⎕UCS(1000+⍳100)                    ⍝ 160: 16 bits character
+                  data_char3←⎕UCS(100000+⍳100)                  ⍝ 320: 32 bits character
+              :EndIf
+              data_ptr←data_i1 data_i2 data_i4
+              data_char_ptr←data_char1 data_char2 data_char3
+     
+              caselist←⎕NL ¯2
+              caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+     
+              :For case :In caselist
+                  data←⍎case
+                  desc←testDesc
+     
+                  r,←'Union (∪)'desc quadparams RunVariations data(data,data)
+     
+                  ⍝ General tests to test the basic rules of union
+                  r,←'Union (∪) Gen1'desc Assert(≢data)≡≢data∪data                        ⍝ union cannot return a result that is exceding the number of elements than the input
+                  r,←'Union (∪) Gen2'desc Assert(⎕DR data)≡⎕DR data∪data  ⍝ datatype of the data will not change under union
+     
+                  :For case2 :In caselist
+                      data2←⍎case2
+                      desc←testDesc
+                      :If (data≡data2)
+                          :Continue
+                      :EndIf
+                      r,←'Union (∪) Cross'desc quadparams RunVariations data data2
+                      r,←'Union (∪) Cross2'desc quadparams RunVariations(data,data)data2
+                      r,←'Union (∪) Cross3'desc quadparams RunVariations data(data2,data2)
+                      r,←'Union (∪) Cross4'desc quadparams RunVariations(data,data)(data2,data2)
+     
+                      ⍝ General tests to test the basic rules of union
+                      r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union cannot return a result that is exceding the number of elements than the input
+     
+                      :If 1<(≢data)⌊≢data2
+                          d1←data[?≢data]
+                          d2←data[?≢(data~d1)]
+                          r,←'Union (∪) Cross5'desc quadparams RunVariations d1 d2
+                      :EndIf
+     
+                      ⍝ datatype of the data will not change under union
+                      ⍝ 326 stays 326
+                      ⍝ char + num becomes 326
+                      ⍝ char + char and num + num becomes the greater sized type
+                      r,←'Union (∪) CrossGen2'desc Assert((data){(⎕DR ⍺){326∊(⍺ ⍵):326 ⋄ 0∊≠0 2∊⍨10|(⍺ ⍵):⍺⌈⍵ ⋄ 326}⎕DR ⍵}(data2))≡⎕DR data∪data2
+                  :EndFor
+              :EndFor
+     
+          :EndFor
+      :EndFor
+    ∇
+:EndNamespace
