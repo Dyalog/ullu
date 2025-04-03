@@ -23,12 +23,14 @@
      
               quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
      
+              data_single_bool_0←∧/1 0 1 0 ⍝ singleton boolean
+              data_single_bool_1←∧/1 1 1 1
               data_bool←1 0
               data_i1←100 ints 8
               data_i2←100 ints 16
               data_i4←100 ints 32
-            ⍝   data_char1←'apl'
-            ⍝   data_char2←'⍺⍵÷'
+              data_char1←'apl'
+              data_char2←'⍺⍵÷'
      
               caselist←⎕NL ¯2
               caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
@@ -54,6 +56,12 @@
      
                       ⍝ General tests to test the basic rules of union
                       r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union cannot return a result that is exceding the number of elements than the input
+
+                      :If 1<(≢data)⌊≢data2
+                        d1←data[?≢data]
+                        d2←data[?≢(data~d1)]
+                        r,←'Union (∪) Cross'desc quadparams RunVariations d1 d2
+                      :EndIf
      
                       ⍝ datatype of the data will not change under union
                       ⍝ 326 stays 326
