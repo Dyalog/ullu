@@ -14,7 +14,7 @@
           ⎕IO←0
           ⍺⍴0 1~⍨(2*⍵-1)-⍨?⍺⍴2*⍵
       }
-
+     
       :For ct :In 0 1 10 0.1
           (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
           :For fr :In 1 2
@@ -29,39 +29,40 @@
               data_i4←100 ints 32
             ⍝   data_char1←'apl'
             ⍝   data_char2←'⍺⍵÷'
-
+     
               caselist←⎕NL ¯2
               caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
      
               :For case :In caselist
                   data←⍎case
                   desc←testDesc
-
-                  r,←'Union (∪)' desc #.testfns.Assert((data model data)≡(data ∪ data))
-                  r,←'Union (∪)' desc quadparams RunVariations data data
-
+     
+                  r,←'Union (∪)'desc #.testfns.Assert((data model data)≡(data∪data))
+                  r,←'Union (∪)'desc quadparams RunVariations data data
+     
                   ⍝ General tests to test the basic rules of union
                   r,←'Union (∪) Gen1'desc Assert(≢data)≡≢data∪data                        ⍝ union cannot return a result that is exceding the number of elements than the input
                   r,←'Union (∪) Gen2'desc Assert(⎕DR data)≡⎕DR data∪data  ⍝ datatype of the data will not change under union
-
+     
                   :For case2 :In caselist
-                    data2←⍎case2
-                    desc←testDesc
+                      data2←⍎case2
+                      desc←testDesc
                       :If (data≡data2)
                           :Continue
                       :EndIf
-                    r,←'Union (∪) Cross' desc quadparams RunVariations data data2
-                  ⍝ General tests to test the basic rules of union
-                  r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union cannot return a result that is exceding the number of elements than the input
-                  
+                      r,←'Union (∪) Cross'desc quadparams RunVariations data data2
+     
+                      ⍝ General tests to test the basic rules of union
+                      r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union cannot return a result that is exceding the number of elements than the input
+     
                       ⍝ datatype of the data will not change under union
                       ⍝ 326 stays 326
                       ⍝ char + num becomes 326
                       ⍝ char + char and num + num becomes the greater sized type
-                      r,←'TGen3'desc Assert((data){(⎕DR ⍺){326∊(⍺ ⍵):326 ⋄ 0∊≠0 2∊⍨10|(⍺ ⍵):⍺⌈⍵ ⋄ 326}⎕DR ⍵}(data2))≡⎕DR data ∪ data2
+                      r,←'TGen3'desc Assert((data){(⎕DR ⍺){326∊(⍺ ⍵):326 ⋄ 0∊≠0 2∊⍨10|(⍺ ⍵):⍺⌈⍵ ⋄ 326}⎕DR ⍵}(data2))≡⎕DR data∪data2
                   :EndFor
               :EndFor
-
+     
           :EndFor
       :EndFor
     ∇
