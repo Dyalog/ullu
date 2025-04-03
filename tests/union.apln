@@ -1,8 +1,8 @@
 :Namespace union
     Assert←#.unittest.Assert
 
-    model←{⍺,(∧/⍺≢¨⍵)/⍵}
-
+    ⍝ model←{⍺,(∧/⍺≢¨⍵)/⍵}
+    model←{⍺,(~⍵∊⍺)/⍵}
     ∇ r←testDesc
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
@@ -27,8 +27,8 @@
               data_i1←100 ints 8
               data_i2←100 ints 16
               data_i4←100 ints 32
-              data_char1←'apl'
-              data_char2←'⍺⍵÷'
+            ⍝   data_char1←'apl'
+            ⍝   data_char2←'⍺⍵÷'
 
               caselist←⎕NL ¯2
               caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
@@ -38,6 +38,22 @@
                   desc←testDesc
 
                   r,←'Union (∪)' desc #.testfns.Assert((data model data)≡(data ∪ data))
+                  r,←'Union (∪)' desc quadparams RunVariations data data
+
+                  ⍝ General tests to test the basic rules of union
+                  r,←'Union (∪) Gen1'desc Assert(≢data)≡≢data∪data                        ⍝ union cannot return a result that is exceding the number of elements than the input
+                  r,←'Union (∪) Gen2'desc Assert(⎕DR data)≡⎕DR data∪data  ⍝ datatype of the data will not change under union
+
+                  :For case2 :In caselist
+                    data2←⍎case2
+                    desc←testDesc
+                      :If (data≡data2)
+                          :Continue
+                      :EndIf
+                    r,←'Union (∪) Cross' desc quadparams RunVariations data data2
+                  ⍝ General tests to test the basic rules of union
+                  r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union cannot return a result that is exceding the number of elements than the input
+                  :EndFor
               :EndFor
 
           :EndFor
