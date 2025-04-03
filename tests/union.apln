@@ -31,12 +31,14 @@
               data_i1←100 ints 8
               data_i2←100 ints 16
               data_i4←100 ints 32
-              data_char0←char0←⎕AV                              ⍝ 82: DyalogAPL classic char set
+              data_char0←⎕AV                              ⍝ 82: DyalogAPL classic char set
               :If ~#.utils.isClassic
                   data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
                   data_char2←⎕UCS(1000+⍳100)                    ⍝ 160: 16 bits character
                   data_char3←⎕UCS(100000+⍳100)                  ⍝ 320: 32 bits character
               :EndIf
+              data_ptr←data_i1 data_i2 data_i4
+              data_char_ptr←data_char1 data_char2 data_char3
      
               caselist←⎕NL ¯2
               caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
@@ -45,8 +47,7 @@
                   data←⍎case
                   desc←testDesc
      
-                  r,←'Union (∪)'desc #.testfns.Assert((data model data)≡(data∪data))
-                  r,←'Union (∪)'desc quadparams RunVariations data data
+                  r,←'Union (∪)'desc quadparams RunVariations data(data,data)
      
                   ⍝ General tests to test the basic rules of union
                   r,←'Union (∪) Gen1'desc Assert(≢data)≡≢data∪data                        ⍝ union cannot return a result that is exceding the number of elements than the input
@@ -59,6 +60,9 @@
                           :Continue
                       :EndIf
                       r,←'Union (∪) Cross'desc quadparams RunVariations data data2
+                      r,←'Union (∪) Cross'desc quadparams RunVariations(data,data)data2
+                      r,←'Union (∪) Cross'desc quadparams RunVariations data(data2,data2)
+                      r,←'Union (∪) Cross'desc quadparams RunVariations(data,data)(data2,data2)
      
                       ⍝ General tests to test the basic rules of union
                       r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union cannot return a result that is exceding the number of elements than the input

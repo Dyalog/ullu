@@ -65,6 +65,7 @@
     ⍝ - membership
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
+
     ∇ {tRes}←tData(model _RunVariations_ op)exp;⎕CT;⎕DCT;⎕FR;⎕IO;⎕DIV;expectedR;larg;rarg;tID;tCmt;actualR;actualRE;shape;actualRS;shapeW0;actualRSW0;val;randr;trimmedrarg;nrarg;nlarg
       :If 3≡≢exp ⍝ dyadic op
           val←2 ⍝ valence
@@ -199,9 +200,11 @@
       ⍝ The purpose of this test is to use the entire range of the datatype so a dataset
       ⍝ is generated in the longer run to test more data.
      
+      :If 326≢⎕DR args
       ⍝ skipping big rand test for mentioned primitives because of issues with the model
-      :If ~isCurrentlyRunning'residue' 'floor' 'multiply'
-          {⎕FR←645 ⋄ ⍵ getRand giveBound ⍵}ChkEqual'RandModelTest'
+          :If ~isCurrentlyRunning'residue' 'floor' 'multiply'
+              {⎕FR←645 ⋄ ⍵ getRand giveBound ⍵}ChkEqual'RandModelTest'
+          :EndIf
       :EndIf
      
         ⍝ todo:
