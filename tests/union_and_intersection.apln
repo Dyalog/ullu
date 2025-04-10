@@ -3,24 +3,56 @@
     ints←#.utils.ints
 
     ⍝ model←{⍺,(∧/⍺≢¨⍵)/⍵}
-    model←{⍺,(~⍵∊⍺)/⍵}
-    modelint←{(⍺∊⍵)/⍺}
+    ⍝ modelUnion←{⍺,(~⍵∊⍺)/⍵}
+    modelUnion←{⍺,⍵~⍺}
+    modelIntersection←{(⍺∊⍵)/⍺}
 
     ∇ r←testDesc
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_union_and_intersection;op
+    ∇ {r}←test_union_and_intersection;RunVariations;case;case2;caselist;ct;d1;d2;data;data2;data_Hcmplx;data_Hdbl;data_Hfl;data_Sdbl;data_bool;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_cmplx;data_dbl;data_fl;data_i1;data_i2;data_i4;data_ptr;data_single_bool_0;data_single_bool_1;desc;fr;op;quadparams
       r←⍬
-      ints←{ ⍝ ⍺ integers of size ⍵ (bits), excluding the booleans
-          ⎕IO←0
-          ⍺⍴0 1~⍨(2*⍵-1)-⍨?⍺⍴2*⍵
-          }
-          :For op :In '∪' '∩'
+      data_single_bool_0←∧/1 0 1 0                      ⍝ singleton boolean
+      data_single_bool_1←∧/1 1 1 1                      ⍝ singleton boolean
+      data_bool←1 0
+      data_i1←100 ints 8
+      data_i2←100 ints 16
+      data_i4←100 ints 32
+      data_char0←⎕AV                                    ⍝ 82: DyalogAPL classic char set
+      :If ~#.utils.isClassic
+          data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
+          data_char2←⎕UCS(1000+⍳100)                    ⍝ 160: 16 bits character
+          data_char3←⎕UCS(100000+⍳100)                  ⍝ 320: 32 bits character
+      :EndIf
+      data_ptr←data_i1 data_i2 data_i4
+      data_char_ptr←data_char1 data_char2 data_char3
+      data_dbl←{⍵,-⍵}data_i4+0.1                        ⍝ 645: 64 bits Floating
+      data_cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                 ⍝ 1289: 128 bits Complex
+      data_Hcmplx←{⍵,-⍵}(100000000000000J100000000000000×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+      ⍝ Hdbl is 645 but larger numbers to test for CT value
+      ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
+      ⍝ come under the region of tolerant equality
+      data_Hdbl←{⍵,-⍵}100000000000000+(2×⍳50)
+     
+      ⍝ This is needed for a case that can be hit if we have a lot of small numbers
+      ⍝ which produce a hash collision
+      ⍝ Occurrence: same.c.html#L1153
+      data_Sdbl←{⍵,-⍵}(⍳500)÷1000
+     
+      ⍝ Hfl is 1287 but larger numbers to test for CT value
+      ⍝ far intervals are chosen for non overlap
+      ⍝ with region of tolerant equality
+      ⎕FR←#.utils.fr_decf
+      data_fl←{⍵,-⍵}data_i4+0.01                        ⍝ 1287: 128 bits Decimal
+      data_Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)
+      ⎕FR←#.utils.fr_dbl
+     
+      :For op :In '∪' '∩'
           :If op≡'∪'
-              RunVariations←model #.testfns._RunVariationsWithModel_(⍎op)
+              RunVariations←modelUnion #.testfns._RunVariationsWithModel_(⍎op)
           :Else
-              RunVariations←modelint #.testfns._RunVariationsWithModel_(⍎op)
+              RunVariations←modelIntersection #.testfns._RunVariationsWithModel_(⍎op)
           :EndIf
      
           :For ct :In 0 1 10 0.1
@@ -31,33 +63,21 @@
      
                   quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
      
-                  data_single_bool_0←∧/1 0 1 0                      ⍝ singleton boolean
-                  data_single_bool_1←∧/1 1 1 1                      ⍝ singleton boolean
-                  data_bool←1 0
-                  data_i1←100 ints 8
-                  data_i2←100 ints 16
-                  data_i4←100 ints 32
-                  data_char0←⎕AV                              ⍝ 82: DyalogAPL classic char set
-                  :If ~#.utils.isClassic
-                      data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
-                      data_char2←⎕UCS(1000+⍳100)                    ⍝ 160: 16 bits character
-                      data_char3←⎕UCS(100000+⍳100)                  ⍝ 320: 32 bits character
-                  :EndIf
-                  data_ptr←data_i1 data_i2 data_i4
-                  data_char_ptr←data_char1 data_char2 data_char3
-     
                   caselist←⎕NL ¯2
                   caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
      
                   :For case :In caselist
                       data←⍎case
                       desc←testDesc
+                      :If (1287≡⎕DR data)∧645≡⎕FR
+                      :Else
+                          r,←({⍵≡'∪':'Union (∪)' ⋄ 'Intersection (∩)'}op)desc quadparams RunVariations data(data,data)
+                      :EndIf
+                      ⍝ General tests to test the basic rules of union
+                      r,←'Union (∪) Gen1'desc Assert(≢data)≤≢data∪data                        ⍝ union returns a result that has less number of elements than the input
+                      r,←'Intersection (∩) Gen1'desc Assert(≢data)≥≢data∩data                 ⍝ intersection returns a result that is exceding the number of elements than the input
      
-                      r,←({⍵≡'∪':'Union (∪)' ⋄ 'Intersection (∩)'}op)desc quadparams RunVariations data(data,data)
-     
-                  ⍝ General tests to test the basic rules of union
-                      r,←({⍵≡'∪':'Union (∪) Gen1' ⋄ 'Intersection (∩) Gen1'}op)desc Assert(≢data)≡≢data∪data                        ⍝ union cannot return a result that is exceding the number of elements than the input
-                      r,←({⍵≡'∪':'Union (∪) Gen2' ⋄ 'Intersection (∩) Gen2'}op)desc Assert(⎕DR data)≡⎕DR data∪data  ⍝ datatype of the data will not change under union
+                      r,←({⍵≡'∪':'Union (∪) Gen2' ⋄ 'Intersection (∩) Gen2'}op)desc Assert(⎕DR data)≡⎕DR data(⍎op)data                  ⍝ datatype of the data will not change under union or intersection
      
                       :For case2 :In caselist
                           data2←⍎case2
@@ -70,8 +90,9 @@
                           r,←({⍵≡'∪':'Union (∪) Cross3' ⋄ 'Intersection (∩) Cross3'}op)desc quadparams RunVariations data(data2,data2)
                           r,←({⍵≡'∪':'Union (∪) Cross4' ⋄ 'Intersection (∩) Cross4'}op)desc quadparams RunVariations(data,data)(data2,data2)
      
-                      ⍝ General tests to test the basic rules of union
-                          r,←({⍵≡'∪':'Union (∪) CrossGen1' ⋄ 'Intersection (∩) CrossGen1'}op)desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union cannot return a result that is exceding the number of elements than the input
+                          ⍝ General tests to test the basic rules of union
+                          r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union returns a result that has less number of elements than the input
+                          r,←'Intersection (∩) CrossGen1'desc Assert((≢data)⌈≢data2)≥≢data∩data2                 ⍝ intersection returns a result that is exceding the number of elements than the input
      
                           :If 1<(≢data)⌊≢data2
                               d1←data[?≢data]
@@ -79,11 +100,11 @@
                               r,←({⍵≡'∪':'Union (∪) Cross5' ⋄ 'Intersection (∩) Cross5'}op)desc quadparams RunVariations d1 d2
                           :EndIf
      
-                      ⍝ datatype of the data will not change under union
-                      ⍝ 326 stays 326
-                      ⍝ char + num becomes 326
-                      ⍝ char + char and num + num becomes the greater sized type
-                          r,←({⍵≡'∪':'Union (∪) CrossGen2' ⋄ 'Intersection (∩) CrossGen2'}op)desc Assert((data){(⎕DR ⍺){326∊(⍺ ⍵):326 ⋄ 0∊≠0 2∊⍨10|(⍺ ⍵):⍺⌈⍵ ⋄ 326}⎕DR ⍵}(data2))≡⎕DR data∪data2
+                          ⍝ datatype of the data will not change under union
+                          ⍝ 326 stays 326
+                          ⍝ char + num becomes 326
+                          ⍝ char + char and num + num becomes the greater sized type
+                          r,←'Union (∪) CrossGen2'desc Assert((data){(⎕DR ⍺){326∊(⍺ ⍵):326 ⋄ 0∊≠0 2∊⍨10|(⍺ ⍵):⍺⌈⍵ ⋄ 326}⎕DR ⍵}(data2))≡⎕DR data∪data2
                       :EndFor
                   :EndFor
               :EndFor
