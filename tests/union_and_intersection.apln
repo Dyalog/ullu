@@ -72,13 +72,13 @@
                       :If (1287≡⎕DR data)∧645≡⎕FR
                       :Else
                           r,←({⍵≡'∪':'Union (∪)' ⋄ 'Intersection (∩)'}op)desc quadparams RunVariations data(data,data)
+                          r,←({⍵≡'∪':'Union (∪) Hash1' ⋄ 'Intersection (∩) hash1'}op)desc quadparams RunVariations data (#.utils.hashArray data)
                       :EndIf
                       ⍝ General tests to test the basic rules of union
                       r,←'Union (∪) Gen1'desc Assert(≢data)≤≢data∪data                        ⍝ union returns a result that has less number of elements than the input
                       r,←'Intersection (∩) Gen1'desc Assert(≢data)≥≢data∩data                 ⍝ intersection returns a result that is exceding the number of elements than the input
      
                       r,←({⍵≡'∪':'Union (∪) Gen2' ⋄ 'Intersection (∩) Gen2'}op)desc Assert(⎕DR data)≡⎕DR data(⍎op)data                  ⍝ datatype of the data will not change under union or intersection
-     
                       :For case2 :In caselist
                           data2←⍎case2
                           desc←testDesc
@@ -89,7 +89,9 @@
                           r,←({⍵≡'∪':'Union (∪) Cross2' ⋄ 'Intersection (∩) Cross2'}op)desc quadparams RunVariations(data,data)data2
                           r,←({⍵≡'∪':'Union (∪) Cross3' ⋄ 'Intersection (∩) Cross3'}op)desc quadparams RunVariations data(data2,data2)
                           r,←({⍵≡'∪':'Union (∪) Cross4' ⋄ 'Intersection (∩) Cross4'}op)desc quadparams RunVariations(data,data)(data2,data2)
-     
+
+                          r,←({⍵≡'∪':'Union (∪) Hash2' ⋄ 'Intersection (∩) Hash2'}op)desc quadparams RunVariations(data,data) (#.utils.hashArray data2,data2)
+                          
                           ⍝ General tests to test the basic rules of union
                           r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union returns a result that has less number of elements than the input
                           r,←'Intersection (∩) CrossGen1'desc Assert((≢data)⌈≢data2)≥≢data∩data2                 ⍝ intersection returns a result that is exceding the number of elements than the input
