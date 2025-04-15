@@ -8,17 +8,24 @@
     modelIntersection←{(⍺∊⍵)/⍺}
 
     ∇ r←testDesc
-      r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+      r←'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵},' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_union_and_intersection;RunVariations;case;case2;caselist;ct;d1;d2;data;data2;data_Hcmplx;data_Hdbl;data_Hfl;data_Sdbl;data_bool;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_cmplx;data_dbl;data_fl;data_i1;data_i2;data_i4;data_ptr;data_single_bool_0;data_single_bool_1;desc;fr;op;quadparams
+    ∇ {r}←test_union_and_intersection;RunVariations;case;case2;caselist;ct;d1;d2;data;data2;data_Hcmplx;data_Hdbl;data_Hfl;data_Sdbl;data_bool;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_cmplx;data_dbl;data_fl;data_i1;data_i2;data_i4;data_ptr;data_single_bool_0;data_single_bool_1;desc;fr;len;op;quadparams
       r←⍬
+      case←⍬
+      case2←⍬
       data_single_bool_0←∧/1 0 1 0                      ⍝ singleton boolean
       data_single_bool_1←∧/1 1 1 1                      ⍝ singleton boolean
       data_bool←1 0
       data_i1←100 ints 8
       data_i2←100 ints 16
       data_i4←100 ints 32
+      :For len :In 8 16 32 64 128
+          ⍎'data_i1_',⍕len'←len ints 8'
+          ⍎'data_i2_',⍕len'←len ints 16'
+          ⍎'data_i4_',⍕len'←len ints 32'
+      :EndFor
       data_char0←⎕AV                                    ⍝ 82: DyalogAPL classic char set
       :If ~#.utils.isClassic
           data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
@@ -72,7 +79,7 @@
                       :If (1287≡⎕DR data)∧645≡⎕FR
                       :Else
                           r,←({⍵≡'∪':'Union (∪)' ⋄ 'Intersection (∩)'}op)desc quadparams RunVariations data(data,data)
-                          r,←({⍵≡'∪':'Union (∪) Hash1' ⋄ 'Intersection (∩) hash1'}op)desc quadparams RunVariations data (#.utils.hashArray data)
+                          r,←({⍵≡'∪':'Union (∪) Hash1' ⋄ 'Intersection (∩) hash1'}op)desc quadparams RunVariations data(#.utils.hashArray data)
                       :EndIf
                       ⍝ General tests to test the basic rules of union
                       r,←'Union (∪) Gen1'desc Assert(≢data)≤≢data∪data                        ⍝ union returns a result that has less number of elements than the input
@@ -89,9 +96,9 @@
                           r,←({⍵≡'∪':'Union (∪) Cross2' ⋄ 'Intersection (∩) Cross2'}op)desc quadparams RunVariations(data,data)data2
                           r,←({⍵≡'∪':'Union (∪) Cross3' ⋄ 'Intersection (∩) Cross3'}op)desc quadparams RunVariations data(data2,data2)
                           r,←({⍵≡'∪':'Union (∪) Cross4' ⋄ 'Intersection (∩) Cross4'}op)desc quadparams RunVariations(data,data)(data2,data2)
-
-                          r,←({⍵≡'∪':'Union (∪) Hash2' ⋄ 'Intersection (∩) Hash2'}op)desc quadparams RunVariations(data,data) (#.utils.hashArray data2,data2)
-                          
+     
+                          r,←({⍵≡'∪':'Union (∪) Hash2' ⋄ 'Intersection (∩) Hash2'}op)desc quadparams RunVariations(data,data)(#.utils.hashArray data2,data2)
+     
                           ⍝ General tests to test the basic rules of union
                           r,←'Union (∪) CrossGen1'desc Assert((≢data)⌈≢data2)≤≢data∪data2                        ⍝ union returns a result that has less number of elements than the input
                           r,←'Intersection (∩) CrossGen1'desc Assert((≢data)⌈≢data2)≥≢data∩data2                 ⍝ intersection returns a result that is exceding the number of elements than the input
