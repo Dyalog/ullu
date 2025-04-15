@@ -11,7 +11,7 @@
       r←'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵},' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_union_and_intersection;RunVariations;case;case2;caselist;ct;d1;d2;data;data2;data_Hcmplx;data_Hdbl;data_Hfl;data_Sdbl;data_bool;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_cmplx;data_dbl;data_fl;data_i1;data_i2;data_i4;data_ptr;data_single_bool_0;data_single_bool_1;desc;fr;len;op;quadparams
+    ∇ {r}←test_union_and_intersection;RunVariations;case;case2;caselist;ct;d1;d2;d3;data;data2;data_Hcmplx;data_Hdbl;data_Hfl;data_Sdbl;data_bool;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_cmplx;data_dbl;data_fl;data_i1;data_i2;data_i4;data_ptr;data_single_bool_0;data_single_bool_1;desc;fr;len;op;quadparams
       r←⍬
       case←⍬
       case2←⍬
@@ -106,7 +106,12 @@
                           :If 1<(≢data)⌊≢data2
                               d1←data[?≢data]
                               d2←data[?≢(data~d1)]
+                              d3←data2[?≢data2]
                               r,←({⍵≡'∪':'Union (∪) Cross5' ⋄ 'Intersection (∩) Cross5'}op)desc quadparams RunVariations d1 d2
+                              r,←({⍵≡'∪':'Union (∪) Cross6' ⋄ 'Intersection (∩) Cross6'}op)desc quadparams RunVariations d1 data
+                              r,←({⍵≡'∪':'Union (∪) Cross7' ⋄ 'Intersection (∩) Cross7'}op)desc quadparams RunVariations d1 data2
+                              r,←({⍵≡'∪':'Union (∪) Cross8' ⋄ 'Intersection (∩) Cross8'}op)desc quadparams RunVariations d1 d3
+
                           :EndIf
      
                           ⍝ datatype of the data will not change under union
