@@ -188,4 +188,62 @@
     IntegerTolerance←1E¯14 ⍝ aka SYSFUZZ
     RealTolerance←1E¯14    ⍝ aka SYSFUZZ
     :EndSection
+
+    :Section 7
+    ∇ r←{x}(primFn ScalarExtensionOperator)y;a;b;fn;ix;ranks;shape;shapes
+      :If 0=⎕NC'x'
+          x←y
+          fn←{primFn ⍵} ⍝ ambivalent function which ignores left argument
+      :Else
+          fn←primFn
+      :EndIf
+     
+      shapes←⍴¨x y
+      ranks←≢¨shapes
+      :If ≡⌿shapes
+        ⍝ Shapes match, so loop over each element and apply the function
+          :If ⍬ ⍬≡shapes ⍝ Scalars
+              r←x fn y
+          :Else
+              shape←⊃shapes
+              r←⍬
+              :For a b :InEach x y
+                  r,←⊂a fn ScalarExtensionOperator b
+              :EndFor
+              r←shape⍴r
+          :EndIf
+     
+      :ElseIf 1∊×⌿¨shapes
+        ⍝ Shapes do not match, but one argument is a singleton.
+        ⍝ NOTE: singleton extension is defined more strictly in
+        ⍝ the ISO standard than in Dyalog APL, but this definition
+        ⍝ follows the Dyalog APL one.
+          :Select 1=×⌿¨shapes
+          :Case 0 1
+              shape←⍴x
+          :Case 1 0
+              shape←⍴y
+          :Case 1 1
+              :If <⌿ranks
+                  shape←⍴y
+              :Else
+                  shape←⍴x
+              :EndIf
+          :EndSelect
+          x←shape⍴x
+          y←shape⍴y
+     
+          r←x fn ScalarExtensionOperator y
+      :ElseIf =⌿ranks
+        ⍝ Shapes do not match, but the ranks do.
+        ⍝ ⎕SIGNAL 5 ⍝ LENGTH ERROR
+          1 2+3 4 5 ⍝ use + to get the correct DMX message
+      :Else
+        ⍝ Shapes do not match, and the ranks differ.
+        ⍝ ⎕SIGNAL 4 ⍝ RANK ERROR
+          1 2+(3 3⍴0) ⍝ use + to get the correct DMX message
+      :EndIf
+    ∇
+    :EndSection
+
 :EndNamespace

@@ -51,7 +51,11 @@
 
     ⍝ uses the appropriate random number generator for mixed, numeric or char arrays
     ⍝          ⍝ mixed array         ⍝ numeric             ⍝ char
-    getRand←{¯1≡numOrChar ⍺:⍺ ⋄ ⍺{numOrChar ⍵: ⍺ bigRand 2⊃⍵ ⋄ ⍺}⍵}
+      getRand←{
+          ⎕IO←1
+          1≡numOrChar ⍺:⍺ bigRand 2⊃⍵ ⍝ numeric
+          ⍺ ⍝ mixed array or char (TODO)
+      }
 
     ⍝ -----------------------------
     ⍝ Generating Random Numbers End
@@ -150,7 +154,7 @@
     ⍝ Run Variations of each test with normal, empty and multiple shaped data.
     ⍝ This operator is similar to _RunVariations_, but runs the model function and compares
     ⍝ the produced result/error messages with the primitive.
-    ∇ {tRes}←spec(rawModel _RunVariationsWithModel_ rawOp)args;ChkEqual;Eval;quadparams;runOrErr;shape;tCmt;tID;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
+    ∇ {tRes}←spec(rawModel _RunVariationsWithModel_ rawOp)args;ChkEqual;Eval;quadparams;shape;tCmt;tID;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
       tRes←⍬
       (tID tCmt quadparams)←spec
       ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams

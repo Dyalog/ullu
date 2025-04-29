@@ -49,12 +49,7 @@
       :EndTrap
     ∇
 
-    ∇ r←x(ns relational_model)y;max;min
-      :If 0<x⌈⍥≡y
-          r←x(ns relational_model)¨y
-          :Return
-      :EndIf
-     
+    ∇ r←x(ns relational_model)y;empty;max;min;sameShape;shapes;single
       #.iso_defs.SetupSysvars ⎕THIS
       r←x(model_less_than,model_equal,model_greater_than)y
      
@@ -65,9 +60,6 @@
      
       ⍝ Check that the computed results make sense
       :If {(⍵<min)∨⍵>max}+⌿1=r
-          ⎕←x
-          ⎕←y
-          ⎕←r
           ⎕SIGNAL 16 ⍝ NONCE ERROR
       :EndIf
       r←(⊂r)∊ns.patterns
@@ -77,14 +69,41 @@
       :EndIf
     ∇
 
-    ∇ {r}←test_relational ns;model;prim;primSymb
+    ∇ {r}←test_relational ns;caselist;ct;data;data_bool;data_char1;data_char2;data_complex;data_float;data_i1;data_i2;data_i4;data_real;fr;ints;model;prim;primSymb;quadparams;runVariations;testDesc;testName;x;y
       r←⍬
-      model←(ns relational_model)#.testfns.runOrErr
-      prim←ns.primitive #.testfns.runOrErr
+      model←(ns relational_model)#.iso_defs.ScalarExtensionOperator
+      prim←ns.primitive
       primSymb←⍕⎕OR'ns.primitive'
-      :For (x y) :In ,∘.,⍨¯10+⍳21
-          r,←ns.description(⍕x primSymb y)#.testfns.Assert(x model y)≡(x prim y)
-      :EndFor
+      runVariations←model #.testfns._RunVariationsWithModel_ prim
+      testName←ns.description,' (',primSymb,')'
+      ints←#.utils.ints
+      :For fr :In #.utils.(fr_dbl fr_decf)
+          ns.⎕FR←⎕FR←fr
+          :For ct :In 0 1 10 0.1
+              ns.(⎕CT ⎕DCT)←(⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
      
+              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+              testDesc←'with (⎕FR ⎕CT ⎕DCT)≡(',(⍕⎕FR ⎕CT ⎕DCT),')'
+     
+              data_i1←100 ints 8
+              data_i2←100 ints 16
+              data_i4←100 ints 32
+              data_char1←'apl'
+              data_char2←'⍺⍵÷'
+              data_real←?100⍴0
+              data_complex←(?100⍴0){⍺+0J1×⍵}?100⍴0
+     
+              caselist←⎕NL ¯2
+              caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+     
+              :For x :In caselist
+                  x←⎕VGET x
+                  :For y :In caselist
+                      y←⎕VGET y
+                      r,←testName testDesc quadparams runVariations x y
+                  :EndFor
+              :EndFor
+          :EndFor
+      :EndFor
     ∇
 :EndNamespace

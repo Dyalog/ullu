@@ -20,10 +20,7 @@
     ∇ {r}←test_not;RunVariations;case;caselist;ct;data;data_bool;data_char1;data_char2;data_i1;data_i2;data_i4;data_largercomplex;data_nearbool;data_notnearbool;data_smallcomplex;desc;expected;fr;id;ints;ok;quadparams;static_rslt;static_tests
       r←⍬
       RunVariations←model #.testfns._RunVariationsWithModel_~
-      ints←{ ⍝ ⍺ integers of size ⍵ (bits), excluding the booleans
-          ⎕IO←0
-          ⍺⍴0 1~⍨(2*⍵-1)-⍨?2*⍵
-      }
+      ints←#.utils.ints
      
       :For ct :In 0 1 10 0.1
           (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
