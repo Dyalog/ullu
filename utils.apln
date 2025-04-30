@@ -18,7 +18,6 @@
     hashArray←1500⌶                 ⍝ pre-hash array
     stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array
     numOrChar←{326(=-⍨2|⊢)⎕DR ⍵}    ⍝ Type of ⍵ (¯1:mixed, 0:character, 1:numeric)
-    change0sto1←{1@(0∘=)⍵}          ⍝ Replacing zeroes in ⍵ with 1
 
     ⍝ Interpreter version information
     isClassic←82=⎕dr''
@@ -27,4 +26,28 @@
     version←{⍎(2>+\⍵='.')/⍵}⊃1↓'.'⎕wg'APLVersion'
     verifyDotNetInterface←(2250⌶)0
     doSlowTests←((,'1')≡ 2 ⎕NQ #'GetEnvironment' 'DYALOG_QA_SLOW_TESTS')
+
+    ∇ (min max)←NumericMinMax type;RealMinMax;bits
+    ⍝ Return the min and max value of a number with element
+    ⍝ type 'type'
+      RealMinMax←{
+          ⎕FR←⍵
+          (⌈⌿,⌊⌿)⍬
+      }
+      :Select type
+      :Case 11
+          (min max)←0 1
+      :CaseList 83 163 323
+          bits←⌊type÷10
+          min←-2*bits-1
+          max←¯1+2*bits-1
+      :CaseList 645 1287
+          (min max)←RealMinMax type
+      :Case 1289
+          (min max)←{⍵+¯11○⍵}RealMinMax 645
+      :Else
+          'Missing case'⎕SIGNAL 11
+      :EndSelect
+     
+    ∇
 :EndNamespace
