@@ -163,7 +163,7 @@
       :Select ⎕DR array
       :CaseList 11 83 163 323 645 1287 1289
           r←'numeric'
-      :CaseList 80 160 320
+     :CaseList 82 80 160 320
           r←'character'
       :Else
           r←'mixed'
