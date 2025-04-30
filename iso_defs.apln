@@ -52,6 +52,19 @@
     ∇
     :EndSection
 
+    :Section 5.3.2
+    ∇ r←Type array
+      :Select ⎕DR array
+      :CaseList 11 83 163 323 645 1287 1289
+          r←'numeric'
+      :CaseList 80 160 320
+          r←'character'
+      :Else
+          r←'mixed'
+      :EndSelect
+    ∇
+    :EndSection
+
     :Section 5.3.10
     IntegerTolerance←1E¯14 ⍝ aka SYSFUZZ
     :EndSection

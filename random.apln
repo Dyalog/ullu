@@ -1,0 +1,123 @@
+:Namespace random
+⍝ This namespace contains functions for generating random
+⍝ data of different APL types.
+
+    ∇ r←{bounds}VariationOf data;IntBounds;type
+    ⍝ Generate an array of the same structure and element type as 'data',
+    ⍝ but with random elements. The optional left argument can be used
+    ⍝ to specify a lower and upper bound for the generated data, but
+    ⍝ it only works when the data is numeric.
+    ⍝ For nested arrays, the function will generate random variations
+    ⍝ of the nested elements as well.
+    ⍝ Note that ⎕DR of the result array might show a different
+    ⍝ type than expected, if all the random values happen to be small enough
+    ⍝ to fit into a smaller element type.
+     
+      type←#.iso_defs.Type data
+      :If (type≢'numeric')∧0≠⎕NC'bounds'
+          'Bounds can only be specified for numeric arrays'⎕SIGNAL 11
+      :EndIf
+     
+      :Select type
+      :Case 'numeric'
+          :If 0=⎕NC'bounds'
+              bounds←#.utils.NumericMinMax ⎕DR data
+          :EndIf
+          r←(⍴data)BoundedNumeric bounds
+      :Case 'character'
+          r←(⍴data)Character ⎕DR data
+      :Case 'mixed'
+          r←VariationOf¨data
+      :Else
+          'Missing case'⎕SIGNAL 11
+      :EndSelect
+    ∇
+
+    ∇ r←shape BoundedNumeric(min max);imaginaryParts;neg;negMask;negPct;pos;range;realParts;scaledMax;scaledMin;smallFloats;type;⎕FR;⎕IO
+      ⎕IO←0
+      type←⎕DR min max
+      :Select type
+      :CaseList 11 83 163 323
+          r←min+?shape⍴1+max-min
+      :CaseList 645 1287
+          ⎕FR←type
+          smallFloats←?shape⍴0 ⍝ small floats in the range 0 to 1
+          :Select ×min max
+          :CaseList (¯1 ¯1)(0 1)(1 1) ⍝ Either all negative, or all non-negative
+              r←min+smallFloats×max-min
+          :CaseList (¯1 0)(¯1 1) ⍝ from negative to non-negative
+          ⍝ Since the calculation of max-min might fail due to the size
+          ⍝ of the numbers, compute the negative and positive parts separately
+              (scaledMin scaledMax)←min max÷10
+              negPct←(|scaledMin)÷scaledMax-scaledMin
+              negMask←negPct>?shape⍴0
+              r←0
+              r+←min×smallFloats×negMask
+              r+←max×smallFloats×~negMask
+          :Else
+              'Missing case'⎕SIGNAL 11
+          :EndSelect
+      :Case 1289
+          ⍝ Generate the real and imaginary parts independently
+          ⍝ NOTE: this might not be the best way to generate
+          ⍝ complext number within some bound.
+          realParts←shape BoundedNumeric 9○min max
+          imaginaryParts←shape BoundedNumeric 11○min max
+          r←realParts+¯11○imaginaryParts
+      :Else
+          'Missing case'⎕SIGNAL 11
+      :EndSelect
+     
+      ⍝ Since some of the calculations above might be incorrect
+      ⍝ due to rounding, remove the elements out of range, and
+      ⍝ reshape the remaining elements
+      :If 1289≠⎕DR r ⍝ don't do it for complex numbers
+          r←,r
+          r←r⌿⍨(r≥min)∧(r≤max)
+          r←shape⍴r
+      :EndIf
+    ∇
+
+    ∇ r←shape Character eltype;max;⎕IO
+      ⎕IO←0
+      :Select eltype
+      :CaseList 80 160 320 ⍝ unicode chars
+          max←1114111 ⍝ Maximum unicode code point value
+          max⌊←¯1+2*eltype÷10
+          r←⎕UCS shape BoundedNumeric 0 max
+      :Case 82 ⍝ Classic chars
+          r←⎕AV⌷⍨⊂shape BoundedNumeric 0 255
+      :Else
+          'Missing case'⎕SIGNAL 11
+      :EndSelect
+    ∇
+
+    ∇ r←count Chars bits;eltype;isClassic;validBits
+    ⍝ Produce a vector of 'count' random characters of bit-size 'bits'
+      isClassic←#.utils.isClassic
+      :If isClassic
+          validBits←8
+      :Else
+          validBits←8 16 32
+      :EndIf
+     
+      :If bits∊validBits
+          eltype←(2×isClassic)+bits×10
+          r←count Character eltype
+      :Else
+          'Unexpected character size'⎕SIGNAL 11
+      :EndIf
+    ∇
+
+    ∇ r←count Ints bits;type
+    ⍝ Produce a vector of 'count' random integers of bit-size 'bits'.
+      :Select bits
+      :CaseList 8 16 32
+          r←VariationOf count⍴2*bits-2
+      :Else
+          'Unexpected integer size'⎕SIGNAL 11
+      :EndSelect
+    ∇
+
+
+:EndNamespace
