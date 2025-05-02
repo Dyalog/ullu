@@ -9,6 +9,8 @@
               r←x #.iso_defs.(ComparisonTolerance TolerantlyEqual)y
           :Case 'character' 'character'
               r←x≡y
+          :Case 'object' 'object' ⍝ Not in the ISO standard
+              r←x≡y
           :Else
               r←0
           :EndSelect
@@ -69,14 +71,16 @@
       :EndIf
     ∇
 
-    ∇ {r}←test_relational ns;caselist;ct;data;data_bool;data_char1;data_char2;data_complex;data_float;data_i1;data_i2;data_i4;data_real;fr;ints;model;prim;primSymb;quadparams;runVariations;testDesc;testName;x;y
+    ∇ {r}←test_relational ns;Chars;Ints;caselist;ct;data;data_bool;data_bool_0;data_bool_0_special;data_bool_1;data_bool_1_special;data_char1;data_char2;data_char4;data_complex;data_float;data_int1;data_int2;data_int4;data_real;data_ref1;data_ref2;data_refs;fr;model;prim;primSymb;quadparams;runVariations;testDesc;testName;x;y
       r←⍬
       model←(ns relational_model)#.iso_defs.ScalarExtensionOperator
       prim←ns.primitive
       primSymb←⍕⎕OR'ns.primitive'
       runVariations←model #.testfns._RunVariationsWithModel_ prim
       testName←ns.description,' (',primSymb,')'
-      ints←#.utils.ints
+      Ints←#.random.Ints
+      Chars←#.random.Chars
+     
       :For fr :In #.utils.(fr_dbl fr_decf)
           ns.⎕FR←⎕FR←fr
           :For ct :In 0 1 10 0.1
@@ -85,13 +89,28 @@
               quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
               testDesc←'with (⎕FR ⎕CT ⎕DCT)≡(',(⍕⎕FR ⎕CT ⎕DCT),')'
      
-              data_i1←100 ints 8
-              data_i2←100 ints 16
-              data_i4←100 ints 32
-              data_char1←'apl'
-              data_char2←'⍺⍵÷'
+              data_int1←100 Ints 8
+              data_int2←100 Ints 16
+              data_int4←100 Ints 32
+              data_char1←100 Chars 8
+              :If ~#.utils.isClassic
+                  data_char2←100 Chars 16
+                  data_char4←100 Chars 32
+              :EndIf
+     
               data_real←?100⍴0
+     
               data_complex←(?100⍴0){⍺+0J1×⍵}?100⍴0
+     
+              data_ref1←#
+              data_ref2←⎕DMX
+              data_refs←⎕NS¨⍬ ⍬ ⍬
+     
+              data_bool←0 1
+              data_bool_1←1
+              data_bool_0←0
+              data_bool_1_special←=⌿0 0
+              data_bool_0_special←≠⌿0 0
      
               caselist←⎕NL ¯2
               caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist

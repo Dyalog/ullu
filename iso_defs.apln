@@ -54,10 +54,18 @@
       (⎕CT ⎕DCT)←0
       :If (A>0)∧(B<0)
           r←1
-      :ElseIf (A-B)>0
-          r←1
       :Else
-          r←0
+          :Trap 11
+              :If (A-B)>0
+                  r←1
+              :Else
+                  r←0
+              :EndIf
+          :Else
+            ⍝ Getting a DOMAIN ERROR from A-B means
+            ⍝ their difference isn't representable.
+              r←0
+          :EndTrap
       :EndIf
     ∇
 
@@ -83,7 +91,7 @@
       r←Magnitude A-B
     ∇
 
-    ∇ r←A(C TolerantlyEqual)B;distance;max_distance
+    ∇ r←A(C TolerantlyEqual)B;_;distance;max_distance
       :If C<0
           ⎕SIGNAL 11 ⍝ DOMAIN ERROR
       :EndIf
@@ -98,8 +106,17 @@
           :Return
       :EndIf
      
-      distance←A DistanceBetween B
-      max_distance←C×A LargerMagnitude B
+      :Trap 11
+          distance←A DistanceBetween B
+      :Else
+        ⍝ If the distance calculation failed with a DOMAIN ERROR, they
+        ⍝ must be so far apart that their differences is not representable.
+        ⍝ Therefore, they are not equal. -- This is not in the ISO standard.
+          r←0
+          :Return
+      :EndTrap
+     
+      max_distance←(C×A)LargerMagnitude(C×B)
       :If (distance LessThan max_distance)∨distance Equals max_distance
           r←1
       :Else
@@ -163,10 +180,14 @@
       :Select ⎕DR array
       :CaseList 11 83 163 323 645 1287 1289
           r←'numeric'
-     :CaseList 82 80 160 320
+      :CaseList 82 80 160 320
           r←'character'
       :Else
-          r←'mixed'
+          :If 9=⎕NC'array'
+              r←'object' ⍝ Not in the ISO standard
+          :Else
+              r←'mixed'
+          :EndIf
       :EndSelect
     ∇
     :EndSection
@@ -210,6 +231,9 @@
               :For a b :InEach x y
                   r,←⊂a fn ScalarExtensionOperator b
               :EndFor
+              :If ((⊂'object')∊Type⍤⊃¨x y)∧0=×⌿shape
+                  ⎕SIGNAL 16
+              :EndIf
               r←shape⍴r
           :EndIf
      

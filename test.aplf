@@ -1,7 +1,7 @@
- test _;x
+ test stop;x
  :For x :In tests.(not_equal less_than greater_than equal less_than_or_equal greater_than_or_equal)
      ⎕←⍕x
-     unittest.RunTests x 1 0 1
+     unittest.RunTests x 1 0 stop
  :EndFor
 
  ⎕←'done'
