@@ -64,6 +64,9 @@
       :If {(⍵<min)∨⍵>max}+⌿1=r
           ⎕SIGNAL 16 ⍝ NONCE ERROR
       :EndIf
+
+      ⍝ Check if the results from the less_than, equal and greater_than tests match the expected pattern
+      ⍝ for the given primitive. See the tests that use this module for examples.
       r←(⊂r)∊ns.patterns
      
       :If ns.error∧(min=0)∧~r ⍝ there was an error
