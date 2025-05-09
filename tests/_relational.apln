@@ -1,0 +1,131 @@
+:Namespace _relational
+    ⎕IO←0
+    ⍝ Shared code between the relational primitives: dyadic <≤≥>=≠
+
+    ∇ r←x model_equal y
+      :Trap 0
+          :Select #.iso_defs.Type¨x y
+          :Case 'numeric' 'numeric'
+              r←x #.iso_defs.(ComparisonTolerance TolerantlyEqual)y
+          :Case 'character' 'character'
+              r←x≡y
+          :Case 'object' 'object' ⍝ Not in the ISO standard
+              r←x≡y
+          :Else
+              r←0
+          :EndSelect
+      :Else
+          r←¯1
+      :EndTrap
+    ∇
+
+    ∇ r←x model_less_than y
+      :Trap 0
+          x←#.iso_defs.NearestRealNumber x
+          y←#.iso_defs.NearestRealNumber y
+          :If x model_equal y
+              r←0
+          :ElseIf x #.iso_defs.LessThan y
+              r←1
+          :Else
+              r←0
+          :EndIf
+      :Else
+          r←¯1
+      :EndTrap
+    ∇
+
+    ∇ r←x model_greater_than y
+      :Trap 0
+          x←#.iso_defs.NearestRealNumber x
+          y←#.iso_defs.NearestRealNumber y
+          :If x model_equal y
+              r←0
+          :ElseIf x #.iso_defs.GreaterThan y
+              r←1
+          :Else
+              r←0
+          :EndIf
+      :Else
+          r←¯1
+      :EndTrap
+    ∇
+
+    ∇ r←x(ns relational_model)y;empty;max;min;sameShape;shapes;single
+      #.iso_defs.SetupSysvars ⎕THIS
+      r←x(model_less_than,model_equal,model_greater_than)y
+     
+      (min max)←1
+      :If ¯1∊r
+          min←0
+      :EndIf
+     
+      ⍝ Check that the computed results make sense
+      :If {(⍵<min)∨⍵>max}+⌿1=r
+          ⎕SIGNAL 16 ⍝ NONCE ERROR
+      :EndIf
+
+      ⍝ Check if the results from the less_than, equal and greater_than tests match the expected pattern
+      ⍝ for the given primitive. See the tests that use this module for examples.
+      r←(⊂r)∊ns.patterns
+     
+      :If ns.error∧(min=0)∧~r ⍝ there was an error
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndIf
+    ∇
+
+    ∇ {r}←test_relational ns;Chars;Ints;caselist;ct;data;data_bool;data_bool_0;data_bool_0_special;data_bool_1;data_bool_1_special;data_char1;data_char2;data_char4;data_complex;data_float;data_int1;data_int2;data_int4;data_real;data_ref1;data_ref2;data_refs;fr;model;prim;primSymb;quadparams;runVariations;testDesc;testName;x;y
+      r←⍬
+      model←(ns relational_model)#.iso_defs.ScalarExtensionOperator
+      prim←ns.primitive
+      primSymb←⍕⎕OR'ns.primitive'
+      runVariations←model #.testfns._RunVariationsWithModel_ prim
+      testName←ns.description,' (',primSymb,')'
+      Ints←#.random.Ints
+      Chars←#.random.Chars
+     
+      :For fr :In #.utils.(fr_dbl fr_decf)
+          ns.⎕FR←⎕FR←fr
+          :For ct :In 0 1 10 0.1
+              ns.(⎕CT ⎕DCT)←(⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
+     
+              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+              testDesc←'with (⎕FR ⎕CT ⎕DCT)≡(',(⍕⎕FR ⎕CT ⎕DCT),')'
+     
+              data_int1←100 Ints 8
+              data_int2←100 Ints 16
+              data_int4←100 Ints 32
+              data_char1←100 Chars 8
+              :If ~#.utils.isClassic
+                  data_char2←100 Chars 16
+                  data_char4←100 Chars 32
+              :EndIf
+     
+              data_real←?100⍴0
+     
+              data_complex←(?100⍴0){⍺+0J1×⍵}?100⍴0
+     
+              data_ref1←#
+              data_ref2←⎕DMX
+              data_refs←⎕NS¨⍬ ⍬ ⍬
+     
+              data_bool←0 1
+              data_bool_1←1
+              data_bool_0←0
+              data_bool_1_special←=⌿0 0
+              data_bool_0_special←≠⌿0 0
+     
+              caselist←⎕NL ¯2
+              caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+     
+              :For x :In caselist
+                  x←⎕VGET x
+                  :For y :In caselist
+                      y←⎕VGET y
+                      r,←testName testDesc quadparams runVariations x y
+                  :EndFor
+              :EndFor
+          :EndFor
+      :EndFor
+    ∇
+:EndNamespace

@@ -1,0 +1,14 @@
+:Namespace less_than_or_equal
+    ∇ {r}←test_less_than_or_equal;test
+      test←⎕NS ⍬
+      test.primitive←≤
+      test.description←'Less than or equal'
+      test.error←1
+     
+      test.patterns←⍬
+      test.patterns,←⊂1 0 0 ⍝ Numeric less than
+      test.patterns,←⊂0 1 0 ⍝ Numeric equal to
+     
+      r←#.tests._relational.test_relational test
+    ∇
+:EndNamespace

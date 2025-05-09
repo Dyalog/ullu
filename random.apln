@@ -28,6 +28,8 @@
           r←(⍴data)Character ⎕DR data
       :Case 'mixed'
           r←VariationOf¨data
+      :Case 'object'
+          r←data ⍝ We don't generate random objects
       :Else
           'Missing case'⎕SIGNAL 11
       :EndSelect
