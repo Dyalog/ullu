@@ -2,10 +2,12 @@
     Assert←#.unittest.Assert
     NearBoolean←#.iso_defs.NearBoolean
     IntegerNearestTo←#.iso_defs.IntegerNearestTo
+    SetupSysvars←#.iso_defs.SetupSysvars
 
     ∇ r←model data
       ⍝ ISO 7.1.12
      
+      SetupSysvars ⎕THIS
       :If ∧⌿∊NearBoolean data
           r←1≠IntegerNearestTo data
       :Else

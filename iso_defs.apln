@@ -124,8 +124,8 @@
       :EndIf
     ∇
 
-    ∇ r←B TolerantFloor A;⎕CT
-      ⎕CT←B
+    ∇ r←B TolerantFloor A;⎕CT;⎕DCT
+      (⎕CT ⎕DCT)←B
       r←⌊A
     ∇
 
