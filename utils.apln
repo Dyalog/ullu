@@ -18,6 +18,7 @@
     hashArray←1500⌶                 ⍝ pre-hash array
     stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array
     numOrChar←{326(=-⍨2|⊢)⎕DR ⍵}    ⍝ Type of ⍵ (¯1:mixed, 0:character, 1:numeric)
+    subsets←{⌿∘⍵¨↓⌽⍉2⊥⍣¯1⊢¯1+⍳2*≢⍵} ⍝ (From APLCart) Powerset: All subsets of ⍵, including the empty set (0⌿⍵) and ⍵ itself
 
     ⍝ Interpreter version information
     isClassic←82=⎕dr''
@@ -50,4 +51,31 @@
       :EndSelect
      
     ∇
+
+    :Namespace Simd
+        ⎕IO←1
+        ∇ r←Category c;m
+          m←(⊂c)≡¨⊃21165⌶0
+          :If 1≠+⌿m
+              ('No such SIMD category: ',c)⎕SIGNAL 11
+          :EndIf
+          r←⍸m
+        ∇
+
+        ∇ which Enable id;m
+          m←6⊃21165⌶0
+          m[id;]←0 ⍝ Disable all in the category
+          m[id;which]←1 ⍝ Enable those we want
+          m(21165⌶)1
+        ∇
+
+        ∇ Reset;m
+          m←5⊃21165⌶0 ⍝ Reset the enabled optimisations to the defaults
+          m(21165⌶)1
+        ∇
+
+        ∇ r←AllCombinations id;all
+          r←##.subsets⍸,(5⊃21165⌶0)[id;]
+        ∇
+    :EndNamespace
 :EndNamespace

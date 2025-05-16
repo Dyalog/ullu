@@ -64,7 +64,7 @@
       :If {(⍵<min)∨⍵>max}+⌿1=r
           ⎕SIGNAL 16 ⍝ NONCE ERROR
       :EndIf
-
+     
       ⍝ Check if the results from the less_than, equal and greater_than tests match the expected pattern
       ⍝ for the given primitive. See the tests that use this module for examples.
       r←(⊂r)∊ns.patterns
@@ -74,7 +74,7 @@
       :EndIf
     ∇
 
-    ∇ {r}←test_relational ns;Chars;Ints;caselist;ct;data;data_bool;data_bool_0;data_bool_0_special;data_bool_1;data_bool_1_special;data_char1;data_char2;data_char4;data_complex;data_float;data_int1;data_int2;data_int4;data_real;data_ref1;data_ref2;data_refs;fr;model;prim;primSymb;quadparams;runVariations;testDesc;testName;x;y
+    ∇ {r}←test_relational ns;Chars;Ints;caselist;ct;data;data_bool;data_bool_0;data_bool_0_special;data_bool_1;data_bool_1_special;data_char1;data_char2;data_char4;data_complex;data_float;data_int1;data_int2;data_int4;data_real;data_ref1;data_ref2;data_refs;fr;model;prim;primSymb;quadparams;runVariations;simdCombination;simdId;testDesc;testName;x;y
       r←⍬
       model←(ns relational_model)#.iso_defs.ScalarExtensionOperator
       prim←ns.primitive
@@ -84,48 +84,53 @@
       Ints←#.random.Ints
       Chars←#.random.Chars
      
-      :For fr :In #.utils.(fr_dbl fr_decf)
-          ns.⎕FR←⎕FR←fr
-          :For ct :In 0 1 10 0.1
-              ns.(⎕CT ⎕DCT)←(⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
+      simdId←#.utils.Simd.Category'arithfns'
      
-              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
-              testDesc←'with (⎕FR ⎕CT ⎕DCT)≡(',(⍕⎕FR ⎕CT ⎕DCT),')'
+      :For simdCombination :In #.utils.Simd.AllCombinations simdId
+          :For fr :In #.utils.(fr_dbl fr_decf)
+              ns.⎕FR←⎕FR←fr
+              :For ct :In 0 1 10 0.1
+                  ns.(⎕CT ⎕DCT)←(⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
      
-              data_int1←100 Ints 8
-              data_int2←100 Ints 16
-              data_int4←100 Ints 32
-              data_char1←100 Chars 8
-              :If ~#.utils.isClassic
-                  data_char2←100 Chars 16
-                  data_char4←100 Chars 32
-              :EndIf
+                  quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+                  testDesc←'with (⎕FR ⎕CT ⎕DCT)≡(',(⍕⎕FR ⎕CT ⎕DCT),')'
      
-              data_real←?100⍴0
+                  data_int1←100 Ints 8
+                  data_int2←100 Ints 16
+                  data_int4←100 Ints 32
+                  data_char1←100 Chars 8
+                  :If ~#.utils.isClassic
+                      data_char2←100 Chars 16
+                      data_char4←100 Chars 32
+                  :EndIf
      
-              data_complex←(?100⍴0){⍺+0J1×⍵}?100⍴0
+                  data_real←?100⍴0
      
-              data_ref1←#
-              data_ref2←⎕DMX
-              data_refs←⎕NS¨⍬ ⍬ ⍬
+                  data_complex←(?100⍴0){⍺+0J1×⍵}?100⍴0
      
-              data_bool←0 1
-              data_bool_1←1
-              data_bool_0←0
-              data_bool_1_special←=⌿0 0
-              data_bool_0_special←≠⌿0 0
+                  data_ref1←#
+                  data_ref2←⎕DMX
+                  data_refs←⎕NS¨⍬ ⍬ ⍬
      
-              caselist←⎕NL ¯2
-              caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+                  data_bool←0 1
+                  data_bool_1←1
+                  data_bool_0←0
+                  data_bool_1_special←=⌿0 0
+                  data_bool_0_special←≠⌿0 0
      
-              :For x :In caselist
-                  x←⎕VGET x
-                  :For y :In caselist
-                      y←⎕VGET y
-                      r,←testName testDesc quadparams runVariations x y
+                  caselist←⎕NL ¯2
+                  caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+     
+                  :For x :In caselist
+                      x←⎕VGET x
+                      :For y :In caselist
+                          y←⎕VGET y
+                          r,←testName testDesc quadparams runVariations x y
+                      :EndFor
                   :EndFor
               :EndFor
           :EndFor
       :EndFor
+      #.utils.Simd.Reset
     ∇
 :EndNamespace
