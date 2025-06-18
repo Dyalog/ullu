@@ -18,6 +18,11 @@
     hashArray←1500⌶                 ⍝ pre-hash array
     stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array
     numOrChar←{326(=-⍨2|⊢)⎕DR ⍵}    ⍝ Type of ⍵ (¯1:mixed, 0:character, 1:numeric)
+    change0sto1←{1@(0∘=)⍵}          ⍝ Replacing zeroes in ⍵ with 1
+      ints←{ ⍝ ⍺ integers of size ⍵ (bits), excluding the booleans
+          ⎕IO←0
+          ⍺⍴0 1~⍨(2*⍵-1)-⍨?⍺⍴2*⍵
+      }
 
     ⍝ Interpreter version information
     isClassic←82=⎕dr''
