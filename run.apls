@@ -13,6 +13,7 @@ retry←{
 }
 
 testnames←tests.⎕NL ¯9
+testnames⌿⍨←'_'≠⊃⍤1⊢testnames
 
 ⎕←'Available tests:'
 ⎕←'∘ ',⍤1⊢↑testnames

@@ -2,11 +2,13 @@
     Assert←#.unittest.Assert
     NearBoolean←#.iso_defs.NearBoolean
     IntegerNearestTo←#.iso_defs.IntegerNearestTo
-    ints←#.utils.ints
+
+    SetupSysvars←#.iso_defs.SetupSysvars
 
     ∇ r←model data
       ⍝ ISO 7.1.12
      
+      SetupSysvars ⎕THIS
       :If ∧⌿∊NearBoolean data
           r←1≠IntegerNearestTo data
       :Else
@@ -18,9 +20,11 @@
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_not;RunVariations;case;caselist;ct;data;data_bool;data_char1;data_char2;data_i1;data_i2;data_i4;data_largercomplex;data_nearbool;data_notnearbool;data_smallcomplex;desc;expected;fr;id;ok;quadparams;static_rslt;static_tests
+    ∇ {r}←test_not;Chars;Ints;RunVariations;case;caselist;ct;data;data_bool;data_char;data_char1;data_char2;data_char4;data_int1;data_int2;data_int4;data_largercomplex;data_nearbool;data_notnearbool;data_smallcomplex;desc;expected;fr;id;ok;quadparams;static_rslt;static_tests
       r←⍬
       RunVariations←model #.testfns._RunVariationsWithModel_~
+      Ints←#.random.Ints
+      Chars←#.random.Chars
      
       :For ct :In 0 1 10 0.1
           (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
@@ -40,11 +44,15 @@
                   data_largercomplex,←,∘.{⍺+¯11○⍵}⍨,data_notnearbool
               :EndIf
      
-              data_i1←100 ints 8
-              data_i2←100 ints 16
-              data_i4←100 ints 32
-              data_char1←'apl'
-              data_char2←'⍺⍵÷'
+              data_int1←100 Ints 8
+              data_int2←100 Ints 16
+              data_int4←100 Ints 32
+              data_char1←100 Chars 8
+     
+              :If ~#.utils.isClassic
+                  data_char2←100 Chars 16
+                  data_char4←100 Chars 32
+              :EndIf
      
               caselist←⎕NL ¯2
               caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist

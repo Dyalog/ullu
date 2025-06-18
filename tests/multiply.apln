@@ -8,7 +8,7 @@
       complexMultiplyModel←{
           (⎕FR≡1287)∧case≡'Hcmplx':⍺×⍵ ⍝ Skipping cmplx for ⎕FR←1287
           a c b d←∊(9 11○⊂)⍺ ⍵
-        ⍝ using formula (a+bi)(c+di)=(ac−bd)+(ad+bc)i
+        ⍝ using formula (a+bi)(c+di)=(ac-bd)+(ad+bc)i
           x←((a model c)-(b model d))
           y←((a model d)+(b model c))
           x(⊣+¯11○⊢)y

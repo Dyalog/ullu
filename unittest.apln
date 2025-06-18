@@ -33,7 +33,9 @@
                   ⎕←'' ⋄ tests[i] ⋄ ⎕←''
               :EndIf
               t←i⊃tests
-              r,←⍎expr←t
+              :If 0=11 ⎕ATX t ⍝ Skip if the function isn't niladic. It is probably a helper function and not a test on its own.
+                  r,←⍎expr←t
+              :EndIf
           :EndFor
       :EndSection
      

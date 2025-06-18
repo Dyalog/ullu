@@ -7,9 +7,40 @@
     ⍝ which makes it easier to find what we are looking
     ⍝ for.
 
+    :Section Utils
+    ∇ SetupSysvars ns
+    ⍝ Set system variables in the iso_defs namespace, to their
+    ⍝ values in the argument namespace.
+    ⍝ This function MUST be called before using any of the
+    ⍝ iso_defs functions, as some of them depend on the current
+    ⍝ system variable values.
+      (⎕CT ⎕DCT ⎕FR ⎕IO)←ns.(⎕CT ⎕DCT ⎕FR ⎕IO)
+    ∇
+    :EndSection
+
     :Section 5.2.3
     ∇ r←IsBoolean A
       r←∨/A∘.Equals 0 1
+    ∇
+
+    ∇ r←RealPart n
+      r←9○n
+    ∇
+
+    ∇ r←ImaginaryPart n
+      r←11○n
+    ∇
+
+    ∇ r←x SameHalfPlane y;imaginary_parts;real_parts
+      real_parts←×RealPart¨x y
+      imaginary_parts←×ImaginaryPart¨x y
+      :If (0≠⊃real_parts)∧=⌿real_parts
+          r←1
+      :ElseIf (0≠⊃imaginary_parts)∧=⌿imaginary_parts
+          r←1
+      :Else
+          r←0
+      :EndIf
     ∇
     :EndSection
 
@@ -19,8 +50,82 @@
       r←A≡⍥(11∘⎕DR)B
     ∇
 
-    ∇ r←B TolerantFloor A;⎕CT
-      ⎕CT←B
+    ∇ r←A GreaterThan B;⎕CT;⎕DCT
+      (⎕CT ⎕DCT)←0
+      :If (A>0)∧(B<0)
+          r←1
+      :Else
+          :Trap 11
+              :If (A-B)>0
+                  r←1
+              :Else
+                  r←0
+              :EndIf
+          :Else
+            ⍝ Getting a DOMAIN ERROR from A-B means
+            ⍝ their difference isn't representable.
+              r←0
+          :EndTrap
+      :EndIf
+    ∇
+
+    ∇ r←A LessThan B
+      r←B GreaterThan A
+    ∇
+
+    ∇ r←Magnitude A
+      r←|A
+    ∇
+
+    ∇ r←A LargerMagnitude B
+      A←Magnitude A
+      B←Magnitude B
+      :If A GreaterThan B
+          r←A
+      :Else
+          r←B
+      :EndIf
+    ∇
+
+    ∇ r←A DistanceBetween B
+      r←Magnitude A-B
+    ∇
+
+    ∇ r←A(C TolerantlyEqual)B;_;distance;max_distance
+      :If C<0
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndIf
+     
+      :If A Equals B
+          r←1
+          :Return
+      :EndIf
+     
+      :If ~A SameHalfPlane B
+          r←0
+          :Return
+      :EndIf
+     
+      :Trap 11
+          distance←A DistanceBetween B
+      :Else
+        ⍝ If the distance calculation failed with a DOMAIN ERROR, they
+        ⍝ must be so far apart that their differences is not representable.
+        ⍝ Therefore, they are not equal. -- This is not in the ISO standard.
+          r←0
+          :Return
+      :EndTrap
+     
+      max_distance←(C×A)LargerMagnitude(C×B)
+      :If (distance LessThan max_distance)∨distance Equals max_distance
+          r←1
+      :Else
+          r←0
+      :EndIf
+    ∇
+
+    ∇ r←B TolerantFloor A;⎕CT;⎕DCT
+      (⎕CT ⎕DCT)←B
       r←⌊A
     ∇
 
@@ -50,9 +155,119 @@
     ∇ r←IntegerNearestTo data
       r←IntegerTolerance TolerantFloor data
     ∇
+
+    ∇ r←A RealWithin B;I;R
+      R←Magnitude RealPart A
+      I←Magnitude ImaginaryPart A
+      r←∨⌿I(LessThan∨Equals)¨B(R×B)
+    ∇
+
+    ∇ r←NearReal A
+      r←A RealWithin RealTolerance
+    ∇
+
+    ∇ r←NearestRealNumber A
+      :If NearReal A
+          r←RealPart A
+      :Else
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndIf
+    ∇
     :EndSection
+
+    :Section 5.3.2
+    ∇ r←Type array
+      :Select ⎕DR array
+      :CaseList 11 83 163 323 645 1287 1289
+          r←'numeric'
+      :CaseList 82 80 160 320
+          r←'character'
+      :Else
+          :If 9=⎕NC'array'
+              r←'object' ⍝ Not in the ISO standard
+          :Else
+              r←'mixed'
+          :EndIf
+      :EndSelect
+    ∇
+    :EndSection
+
+    :Section 5.3.8
+    ∇ r←ComparisonTolerance
+    ⍝ The iso standard doesn't have ⎕DCT, but we do.
+      :Select ⎕FR
+      :Case 645
+          r←⎕CT
+      :Case 1287
+          r←⎕DCT
+      :Else
+          ⎕SIGNAL 11 ⍝ DOMAIN ERROR
+      :EndSelect
+    ∇
 
     :Section 5.3.10
     IntegerTolerance←1E¯14 ⍝ aka SYSFUZZ
+    RealTolerance←1E¯14    ⍝ aka SYSFUZZ
     :EndSection
+
+    :Section 7
+    ∇ r←{x}(primFn ScalarExtensionOperator)y;a;b;fn;ix;ranks;shape;shapes
+      :If 0=⎕NC'x'
+          x←y
+          fn←{primFn ⍵} ⍝ ambivalent function which ignores left argument
+      :Else
+          fn←primFn
+      :EndIf
+     
+      shapes←⍴¨x y
+      ranks←≢¨shapes
+      :If ≡⌿shapes
+        ⍝ Shapes match, so loop over each element and apply the function
+          :If ⍬ ⍬≡shapes ⍝ Scalars
+              r←x fn y
+          :Else
+              shape←⊃shapes
+              r←⍬
+              :For a b :InEach x y
+                  r,←⊂a fn ScalarExtensionOperator b
+              :EndFor
+              :If ((⊂'object')∊Type⍤⊃¨x y)∧0=×⌿shape
+                  ⎕SIGNAL 16
+              :EndIf
+              r←shape⍴r
+          :EndIf
+     
+      :ElseIf 1∊×⌿¨shapes
+        ⍝ Shapes do not match, but one argument is a singleton.
+        ⍝ NOTE: singleton extension is defined more strictly in
+        ⍝ the ISO standard than in Dyalog APL, but this definition
+        ⍝ follows the Dyalog APL one.
+          :Select 1=×⌿¨shapes
+          :Case 0 1
+              shape←⍴x
+          :Case 1 0
+              shape←⍴y
+          :Case 1 1
+              :If <⌿ranks
+                  shape←⍴y
+              :Else
+                  shape←⍴x
+              :EndIf
+          :EndSelect
+          x←shape⍴x
+          y←shape⍴y
+     
+          r←x fn ScalarExtensionOperator y
+      :ElseIf =⌿ranks
+        ⍝ Shapes do not match, but the ranks do.
+        ⍝ ⎕SIGNAL 5 ⍝ LENGTH ERROR
+          1 2+3 4 5 ⍝ use + to get the correct DMX message
+      :Else
+        ⍝ Shapes do not match, and the ranks differ.
+        ⍝ ⎕SIGNAL 4 ⍝ RANK ERROR
+          1 2+(3 3⍴0) ⍝ use + to get the correct DMX message
+      :EndIf
+    ∇
+    :EndSection
+
 :EndNamespace
