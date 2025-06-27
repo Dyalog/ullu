@@ -204,6 +204,7 @@
           ⎕SIGNAL 11 ⍝ DOMAIN ERROR
       :EndSelect
     ∇
+    :EndSection
 
     :Section 5.3.10
     IntegerTolerance←1E¯14 ⍝ aka SYSFUZZ
