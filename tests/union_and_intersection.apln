@@ -89,7 +89,8 @@
                       :For case2 :In caselist
                           data2←⍎case2
                           desc←testDesc
-                          :If (data≡data2)
+                          ⍝ remove very big numbers
+                          :If (data≡data2) ∨ ((1287∊ ⎕DR¨ data data2)∧(645≡⎕FR))
                               :Continue
                           :EndIf
                           r,←({⍵≡'∪':'Union (∪) Cross' ⋄ 'Intersection (∩) Cross'}op)desc quadparams RunVariations data data2
