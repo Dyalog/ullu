@@ -2,7 +2,6 @@
     Assert←#.unittest.Assert
     NearBoolean←#.iso_defs.NearBoolean
     IntegerNearestTo←#.iso_defs.IntegerNearestTo
-
     SetupSysvars←#.iso_defs.SetupSysvars
 
     ∇ r←model data

@@ -112,7 +112,6 @@
                               r,←({⍵≡'∪':'Union (∪) Cross6' ⋄ 'Intersection (∩) Cross6'}op)desc quadparams RunVariations d1 data
                               r,←({⍵≡'∪':'Union (∪) Cross7' ⋄ 'Intersection (∩) Cross7'}op)desc quadparams RunVariations d1 data2
                               r,←({⍵≡'∪':'Union (∪) Cross8' ⋄ 'Intersection (∩) Cross8'}op)desc quadparams RunVariations d1 d3
-
                           :EndIf
      
                           ⍝ datatype of the data will not change under union
