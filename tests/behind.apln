@@ -1,7 +1,10 @@
 :Namespace behind
     Assert←#.unittest.Assert
 
-    model←{⍛}
+      model←{
+          ⍺←⍵
+          (⍺⍺ ⍺)⍵⍵ ⍵
+      }
 
     ∇ r←testDesc
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
@@ -9,7 +12,10 @@
 
     ∇ {r}←test_behind
       r←⍬
-      RunVariations←model #.testfns._RunVariationsWithModel_⌽⍛≡
+      ⍝ making a palindrome function with behind
+      ⍝ TODO: change this so the operator can change functions dynamically
+      f←⌽ ⋄ g←≡
+      RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
         ⍝ Ints←#.random.Ints
         ⍝ Chars←#.random.Chars
       :For ct :In 0 1 10 0.1
@@ -17,11 +23,13 @@
           :For fr :In 1 2
               ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
               ⎕IO←1
-
+     
               case←'setup'
+              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
               desc←testDesc
               r,←'T1'desc Assert 0≡⌽⍛≡'Dyalog'
-              r,←'T1'desc Assert 1≡⌽⍛≡'racecar'
+              r,←'T2'desc Assert 1≡⌽⍛≡'racecar'
+              r,←'T3'desc quadparams RunVariations'racecar'
           :EndFor
       :EndFor
     ∇
