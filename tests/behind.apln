@@ -1,0 +1,28 @@
+:Namespace behind
+    Assert←#.unittest.Assert
+
+    model←{⍛}
+
+    ∇ r←testDesc
+      r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+    ∇
+
+    ∇ {r}←test_behind
+      r←⍬
+      RunVariations←model #.testfns._RunVariationsWithModel_⌽⍛≡
+        ⍝ Ints←#.random.Ints
+        ⍝ Chars←#.random.Chars
+      :For ct :In 0 1 10 0.1
+          (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
+          :For fr :In 1 2
+              ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
+              ⎕IO←1
+
+              case←'setup'
+              desc←testDesc
+              r,←'T1'desc Assert 0≡⌽⍛≡'Dyalog'
+              r,←'T1'desc Assert 1≡⌽⍛≡'racecar'
+          :EndFor
+      :EndFor
+    ∇
+:EndNamespace
