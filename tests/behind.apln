@@ -12,25 +12,27 @@
 
     ∇ {r}←test_behind
       r←⍬
+     
+      ⍝ Monadic behind
       ⍝ making a palindrome function with behind
-      ⍝ TODO: change this so the operator can change functions dynamically
       f←⌽ ⋄ g←≡
       RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
-        ⍝ Ints←#.random.Ints
-        ⍝ Chars←#.random.Chars
-      :For ct :In 0 1 10 0.1
-          (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
-          :For fr :In 1 2
-              ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
-              ⎕IO←1
+      case←'mondaic'
+      quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+      desc←testDesc
      
-              case←'setup'
-              quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
-              desc←testDesc
-              r,←'T1'desc Assert 0≡⌽⍛≡'Dyalog'
-              r,←'T2'desc Assert 1≡⌽⍛≡'racecar'
-              r,←'T3'desc quadparams RunVariations'racecar'
-          :EndFor
-      :EndFor
+      r,←'T1'desc quadparams RunVariations⊂'dyalog'
+      r,←'T2'desc quadparams RunVariations⊂'racecar'
+     
+    ⍝ Dyadic behind
+      ⍝ strip from the back
+      f←- ⋄ g←↓
+      RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
+      case←'mondaic'
+      quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+      desc←testDesc
+     
+      r,←'T3'desc quadparams RunVariations 4 'Dyalog APL'
+      r,←'T4'desc quadparams RunVariations 4 'racecar'
     ∇
 :EndNamespace
