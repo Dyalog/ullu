@@ -24,7 +24,7 @@
       r,←'T1'desc quadparams RunVariations⊂'dyalog'
       r,←'T2'desc quadparams RunVariations⊂'racecar'
      
-    ⍝ Dyadic behind
+      ⍝ Dyadic behind
       ⍝ strip from the back
       f←- ⋄ g←↓
       RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
@@ -33,6 +33,6 @@
       desc←testDesc
      
       r,←'T3'desc quadparams RunVariations 4 'Dyalog APL'
-      r,←'T4'desc quadparams RunVariations 4 'racecar'
+      r,←'T4'desc quadparams RunVariations 3 'racecar'
     ∇
 :EndNamespace
