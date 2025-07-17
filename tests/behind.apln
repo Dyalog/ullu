@@ -1,0 +1,38 @@
+:Namespace behind
+    Assert←#.unittest.Assert
+
+      model←{
+          ⍺←⍵
+          (⍺⍺ ⍺)⍵⍵ ⍵
+      }
+
+    ∇ r←testDesc
+      r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+    ∇
+
+    ∇ {r}←test_behind
+      r←⍬
+     
+      ⍝ Monadic behind
+      ⍝ making a palindrome function with behind
+      f←⌽ ⋄ g←≡
+      RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
+      case←'mondaic'
+      quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+      desc←testDesc
+     
+      r,←'T1'desc quadparams RunVariations⊂'dyalog'
+      r,←'T2'desc quadparams RunVariations⊂'racecar'
+     
+      ⍝ Dyadic behind
+      ⍝ strip from the back
+      f←- ⋄ g←↓
+      RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
+      case←'mondaic'
+      quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+      desc←testDesc
+     
+      r,←'T3'desc quadparams RunVariations 4 'Dyalog APL'
+      r,←'T4'desc quadparams RunVariations 3 'racecar'
+    ∇
+:EndNamespace
