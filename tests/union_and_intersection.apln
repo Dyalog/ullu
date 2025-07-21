@@ -91,20 +91,20 @@
                           data2←⍎case2
                           desc←testDesc
                           ⍝ remove very big numbers
-                          :If (data≡data2) ∨ ((1287∊ ⎕DR¨ data data2)∧(645≡⎕FR))
+                          :If (data≡data2)∨((1287∊⎕DR¨data data2)∧(645≡⎕FR))
                               :Continue
                           :EndIf
                           r,←({⍵≡'∪':'Union (∪) Cross' ⋄ 'Intersection (∩) Cross'}op)desc quadparams RunVariations data data2
                           r,←({⍵≡'∪':'Union (∪) Cross2' ⋄ 'Intersection (∩) Cross2'}op)desc quadparams RunVariations(data,data)data2
                           r,←({⍵≡'∪':'Union (∪) Cross3' ⋄ 'Intersection (∩) Cross3'}op)desc quadparams RunVariations data(data2,data2)
                           r,←({⍵≡'∪':'Union (∪) Cross4' ⋄ 'Intersection (∩) Cross4'}op)desc quadparams RunVariations(data,data)(data2,data2)
-
-                        :For len :In 1 10 100 1000 10000
-                            :If (~doSlowTests)∧(len≡10000)
-                                :Continue ⍝ Skip one case because it takes 30 minutes with len 10000
-                            :EndIf
-                            r,←({⍵≡'∪':'Union (∪) Cross5' ⋄ 'Intersection (∩) Cross5'}op)desc quadparams RunVariations ((?len)⍴data,data2) ((?len)⍴data2,data)
-                        :EndFor
+     
+                          :For len :In 1 10 100 1000 10000
+                              :If (~doSlowTests)∧(len≡10000)
+                                  :Continue ⍝ Skip one case because it takes 30 minutes with len 10000
+                              :EndIf
+                              r,←({⍵≡'∪':'Union (∪) Cross5' ⋄ 'Intersection (∩) Cross5'}op)desc quadparams RunVariations((?len)⍴data,data2)((?len)⍴data2,data)
+                          :EndFor
      
                           r,←({⍵≡'∪':'Union (∪) Hash2' ⋄ 'Intersection (∩) Hash2'}op)desc quadparams RunVariations(data,data)(#.utils.hashArray data2,data2)
      
@@ -130,7 +130,6 @@
                       :EndFor
                   :EndFor
               :EndFor
-     
           :EndFor
       :EndFor
     ∇
