@@ -3,6 +3,7 @@
     ints←#.utils.ints
     doSlowTests←#.utils.doSlowTests
 
+    ⍝ Models are not in use but kept for reference
     ⍝ model←{⍺,(∧/⍺≢¨⍵)/⍵}
     ⍝ modelUnion←{⍺,(~⍵∊⍺)/⍵}
     modelUnion←{⍺,⍵~⍺}
@@ -55,6 +56,11 @@
       data_fl←{⍵,-⍵}data_i4+0.01                        ⍝ 1287: 128 bits Decimal
       data_Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)
       ⎕FR←#.utils.fr_dbl
+     
+      ⍝ Namespaces as args
+      desc←testDesc
+      r,←'Union (∪) ns'desc Assert((#)modelUnion(# ⎕SE))≡(#)∪(# ⎕SE)
+      r,←'Intersection (∩) ns'desc Assert((#)modelIntersection(# ⎕SE))≡(#)∩(# ⎕SE)
      
       :For op :In '∪' '∩'
           :If op≡'∪'
