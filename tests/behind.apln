@@ -1,0 +1,56 @@
+:Namespace behind
+    Assert←#.unittest.Assert
+    runOrErr←#.testfns.runOrErr
+
+      model←{
+          ⍺←⍵
+          (⍺⍺ ⍺)⍵⍵ ⍵
+      }
+
+    ∇ r←testDesc
+      r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+    ∇
+
+    ∇ {r}←test_behind;flag;m;f;g;case;quadparams;desc
+      r←⍬
+     
+      ⍝ Monadic behind
+      ⍝ making a palindrome function with behind
+      f←⌽ ⋄ g←≡
+      RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
+      case←'mondaic'
+      quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+      desc←testDesc
+     
+      r,←'T1'desc quadparams RunVariations⊂'dyalog'
+      r,←'T2'desc quadparams RunVariations⊂'racecar'
+     
+      ⍝ Dyadic behind
+      ⍝ strip from the back
+      f←- ⋄ g←↓
+      RunVariations←(f model g)#.testfns._RunVariationsWithModel_(f⍛g)
+      case←'dyadic'
+      desc←testDesc
+     
+      r,←'T3'desc quadparams RunVariations 4 'Dyalog APL'
+      r,←'T4'desc quadparams RunVariations 3 'racecar'
+     
+      ⍝ Error cases
+      ⍝ 2: Syntax Error
+      ⍝ Non-function as operands
+      :For x :In ⎕NULL ⍬''# 123 'xyz'(⊂1 2 3)(2 3⍴⍳6)
+          r,←'TE1'desc Assert((⊂0 2)≡((x⍛+runOrErr)'Dyalog APL'))
+          r,←'TE2'desc Assert((⊂0 2)≡((+⍛x runOrErr)123))
+      :EndFor
+
+      ⍝ Missing Right Argument
+      flag←0 ⍝ flag
+      :Trap 2 ⍝ 2: Syntax error
+          (123(+⍛×))
+      :Else
+          m←⎕DMX.Message
+          flag←1
+      :EndTrap
+      r,←'TE3'desc Assert(flag∧m≡'Missing right argument')
+    ∇
+:EndNamespace
