@@ -79,6 +79,8 @@
           ⍎'data_i2_',⍕len'←len Ints 16'
           ⍎'data_i4_',⍕len'←len Ints 32'
       :EndFor
+      ⍝ todo: shadow data_i1_8 type data
+      ⍝ ⎕SHADOW'data_'∘,⍤⍕¨⍳n
       data_char0←⎕AV                                    ⍝ 82: DyalogAPL classic char set
       :If ~#.utils.isClassic
           data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
@@ -123,6 +125,18 @@
                       data←⍎case
                       desc←testDesc
                       r,←('T1: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data
+     
+                      r,←('T2: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data
+     
+                      :For case2 :In caselist
+                          data2←⍎case2
+                          desc←testDesc
+     
+                          r,←('T3: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data,data2
+                          r,←('T4: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data intertwine data2
+                          r,←('T5: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data,data2
+     
+                      :EndFor
                   :EndFor
               :EndFor
           :EndFor
