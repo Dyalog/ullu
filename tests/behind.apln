@@ -1,6 +1,9 @@
 :Namespace behind
     Assert←#.unittest.Assert
     runOrErr←#.testfns.runOrErr
+    Ints←#.random.Ints
+    shuffle←#.utils.shuffle
+    intertwine←#.utils.intertwine
 
       model←{
           ⍺←⍵
@@ -42,7 +45,7 @@
           r,←'TE1'desc Assert((⊂0 2)≡((x⍛+runOrErr)'Dyalog APL'))
           r,←'TE2'desc Assert((⊂0 2)≡((+⍛x runOrErr)123))
       :EndFor
-
+     
       ⍝ Missing Right Argument
       flag←0 ⍝ flag
       :Trap 2 ⍝ 2: Syntax error
@@ -52,5 +55,77 @@
           flag←1
       :EndTrap
       r,←'TE3'desc Assert(flag∧m≡'Missing right argument')
+    ∇
+
+    ∇ {r}←test_behind_idioms;sortAsc;sortDesc;modelSortAsc;modelSortDesc;case;case2;data_single_bool_0;data_single_bool_1;data_bool;data_i1;data_i2;data_i4;len;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_ptr;data_dbl;data_cmplx;data_Hcmplx;data_Hdbl;data_Sdbl;data_fl;data_Hfl;order;model;sort;RunVariations;ct;fr;quadparams;caselist;data;desc
+      r←⍬
+      sortAsc←⊂⍤⍋⍛⌷
+      sortDesc←⊂⍤⍒⍛⌷
+     
+      modelSortAsc←{(⊂⍋⍵)⌷⍵}
+      modelSortDesc←{(⊂⍒⍵)⌷⍵}
+     
+      ⍝ data
+      case←⍬
+      case2←⍬
+      data_single_bool_0←∧/1 0 1 0                      ⍝ singleton boolean
+      data_single_bool_1←∧/1 1 1 1                      ⍝ singleton boolean
+      data_bool←1 0
+      data_i1←100 Ints 8
+      data_i2←100 Ints 16
+      data_i4←100 Ints 32
+      :For len :In 8 16 32 64 128
+          ⍎'data_i1_',⍕len'←len Ints 8'
+          ⍎'data_i2_',⍕len'←len Ints 16'
+          ⍎'data_i4_',⍕len'←len Ints 32'
+      :EndFor
+      data_char0←⎕AV                                    ⍝ 82: DyalogAPL classic char set
+      :If ~#.utils.isClassic
+          data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
+          data_char2←⎕UCS(1000+⍳100)                    ⍝ 160: 16 bits character
+          data_char3←⎕UCS(100000+⍳100)                  ⍝ 320: 32 bits character
+          data_char_ptr←data_char1 data_char2 data_char3⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+      :EndIf
+      data_ptr←data_i1 data_i2 data_i4                  ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
+      data_dbl←{⍵,-⍵}data_i4+0.1                        ⍝ 645: 64 bits Floating
+      data_cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                 ⍝ 1289: 128 bits Complex
+      data_Hcmplx←{⍵,-⍵}(100000000000000J100000000000000×⍳20)                  ⍝ 1289 but larger numbers to test for CT value
+      ⍝ Hdbl is 645 but larger numbers to test for CT value
+      ⍝ intervals of 2 are chosen because CT for these numbers +1 and -1
+      ⍝ come under the region of tolerant equality
+      data_Hdbl←{⍵,-⍵}100000000000000+(2×⍳50)
+     
+      data_Sdbl←{⍵,-⍵}(⍳500)÷1000
+     
+      ⍝ Hfl is 1287 but larger numbers to test for CT value
+      ⍝ far intervals are chosen for non overlap
+      ⍝ with region of tolerant equality
+      ⎕FR←#.utils.fr_decf
+      data_fl←{⍵,-⍵}data_i4+0.01                        ⍝ 1287: 128 bits Decimal
+      data_Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)
+      ⎕FR←#.utils.fr_dbl
+     
+      :For order :In 1 2
+          model←⍎order⊃'modelSortAsc' 'modelSortDesc'
+          sort←⍎order⊃'sortAsc' 'sortDesc'
+          RunVariations←model #.testfns._RunVariationsWithModel_ sort
+          :For ct :In 0 1 10 0.1
+              (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
+              :For fr :In 1 2
+                  ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
+                  ⎕IO←1
+     
+                  quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+                  caselist←⎕NL ¯2
+                  caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+     
+                  :For case :In caselist
+                      data←⍎case
+                      desc←testDesc
+                      r,←('T1: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data
+                  :EndFor
+              :EndFor
+          :EndFor
+      :EndFor
     ∇
 :EndNamespace
