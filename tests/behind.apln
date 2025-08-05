@@ -75,10 +75,10 @@
       data_i2←100 Ints 16
       data_i4←100 Ints 32
       :For len :In 8 16 32 64 128
+          ⎕SHADOW(('data_i')∘,⍤⍕¨1 2 4)⍪¨⊂'_',⍕len
           ⍎'data_i1_',⍕len'←len Ints 8'
           ⍎'data_i2_',⍕len'←len Ints 16'
           ⍎'data_i4_',⍕len'←len Ints 32'
-          ⎕SHADOW(('data_i')∘,⍤⍕¨1 2 4)⍪¨⊂'_',⍕len
       :EndFor
       ⍝ todo: shadow data_i1_8 type data
       ⍝ ⎕SHADOW'data_'∘,⍤⍕¨⍳n
@@ -125,18 +125,20 @@
                   :For case :In caselist
                       data←⍎case
                       desc←testDesc
-                      r,←('T1: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data
-     
-                      r,←('T2: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data
-     
+                      r,←('TGen1: ',order⊃'Asc' 'Desc') desc Assert (≢model ⊃shuffle data)≡≢(sort ⊃shuffle data) ⍝ length of result does not change
+
+                      r,←('T1: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data ⍝ no shuffle
+                      r,←('T2: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data ⍝ shuffle data
+                      r,←('T3: ',order⊃'Asc' 'Desc') desc Assert (model ⊃shuffle data)≡(sort ⊃shuffle data) ⍝ different shuffles produce same result
+
+
                       :For case2 :In caselist
                           data2←⍎case2
                           desc←testDesc
      
-                          r,←('T3: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data,data2
-                          r,←('T4: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data intertwine data2
-                          r,←('T5: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data,data2
-     
+                          r,←('T3: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data,data2 ⍝ no shuffle
+                          r,←('T4: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data intertwine data2 ⍝ intertwine data with data2
+                          r,←('T5: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data,data2 ⍝ shuffle data and data2
                       :EndFor
                   :EndFor
               :EndFor
