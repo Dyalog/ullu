@@ -14,7 +14,7 @@
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_behind;flag;m;f;g;case;quadparams;desc
+    ∇ {r}←test_behind;flag;m;f;g;case;quadparams;desc;RunVariations
       r←⍬
      
       ⍝ Monadic behind
@@ -57,7 +57,7 @@
       r,←'TE3'desc Assert(flag∧m≡'Missing right argument')
     ∇
 
-    ∇ {r}←test_behind_idioms;sortAsc;sortDesc;modelSortAsc;modelSortDesc;case;case2;data_single_bool_0;data_single_bool_1;data_bool;data_i1;data_i2;data_i4;len;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_ptr;data_dbl;data_cmplx;data_Hcmplx;data_Hdbl;data_Sdbl;data_fl;data_Hfl;order;model;sort;RunVariations;ct;fr;quadparams;caselist;data;desc
+    ∇ {r}←test_behind_idioms;sortAsc;sortDesc;modelSortAsc;modelSortDesc;case;case2;data_single_bool_0;data_single_bool_1;data_bool;data_i1;data_i2;data_i4;len;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_ptr;data_dbl;data_cmplx;data_Hcmplx;data_Hdbl;data_Sdbl;data_fl;data_Hfl;order;model;sort;RunVariations;ct;fr;quadparams;caselist;data;desc;data2
       r←⍬
       sortAsc←⊂⍤⍋⍛⌷
       sortDesc←⊂⍤⍒⍛⌷
@@ -78,6 +78,7 @@
           ⍎'data_i1_',⍕len'←len Ints 8'
           ⍎'data_i2_',⍕len'←len Ints 16'
           ⍎'data_i4_',⍕len'←len Ints 32'
+          ⎕SHADOW(('data_i')∘,⍤⍕¨1 2 4)⍪¨⊂'_',⍕len
       :EndFor
       ⍝ todo: shadow data_i1_8 type data
       ⍝ ⎕SHADOW'data_'∘,⍤⍕¨⍳n
