@@ -38,6 +38,12 @@
       r,←'T3'desc quadparams RunVariations 4 'Dyalog APL'
       r,←'T4'desc quadparams RunVariations 3 'racecar'
      
+      ⍝ Namespace as argument
+      ⍝ Monadic
+      r,←'T5'desc Assert 4 4≡({⍵.⎕NL ¯9}⍛(⎕VGET⍨)(a:1 ⋄ b:(r:4) ⋄ c:(d:2 ⋄ r:4) ⋄ e:3)).r
+      ⍝ Dyadic
+      r,←'T6'desc Assert 1 0≡(abc:1 ⋄ def:2){⍵.⎕NL ¯2}⍛∊'abc' 'xyz'
+
       ⍝ Error cases
       ⍝ 2: Syntax Error
       ⍝ Non-function as operands
@@ -125,13 +131,13 @@
                   :For case :In caselist
                       data←⍎case
                       desc←testDesc
-                      r,←('TGen1: ',order⊃'Asc' 'Desc') desc Assert (≢model ⊃shuffle data)≡≢(sort ⊃shuffle data) ⍝ length of result does not change
-
+                      r,←('TGen1: ',order⊃'Asc' 'Desc')desc Assert(≢model⊃shuffle data)≡≢(sort⊃shuffle data) ⍝ length of result does not change
+     
                       r,←('T1: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data ⍝ no shuffle
                       r,←('T2: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data ⍝ shuffle data
-                      r,←('T3: ',order⊃'Asc' 'Desc') desc Assert (model ⊃shuffle data)≡(sort ⊃shuffle data) ⍝ different shuffles produce same result
-
-
+                      r,←('T3: ',order⊃'Asc' 'Desc')desc Assert(model⊃shuffle data)≡(sort⊃shuffle data) ⍝ different shuffles produce same result
+     
+     
                       :For case2 :In caselist
                           data2←⍎case2
                           desc←testDesc
