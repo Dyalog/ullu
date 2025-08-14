@@ -2,6 +2,7 @@
     Assert←#.unittest.Assert
     runOrErr←#.testfns.runOrErr
     Ints←#.random.Ints
+    Chars←#.random.Chars
     shuffle←#.utils.shuffle
     intertwine←#.utils.intertwine
 
@@ -86,13 +87,12 @@
           ⍎'data_i2_',⍕len'←len Ints 16'
           ⍎'data_i4_',⍕len'←len Ints 32'
       :EndFor
-      ⍝ todo: shadow data_i1_8 type data
-      ⍝ ⎕SHADOW'data_'∘,⍤⍕¨⍳n
+
       data_char0←⎕AV                                    ⍝ 82: DyalogAPL classic char set
       :If ~#.utils.isClassic
-          data_char1←⎕UCS(100+⍳100)                     ⍝ 80: 8 bits character
-          data_char2←⎕UCS(1000+⍳100)                    ⍝ 160: 16 bits character
-          data_char3←⎕UCS(100000+⍳100)                  ⍝ 320: 32 bits character
+          data_char1←100 Chars 8                        ⍝ 80: 8 bits character
+          data_char2←100 Chars 16                       ⍝ 160: 16 bits character
+          data_char3←100 Chars 32                       ⍝ 320: 32 bits character
           data_char_ptr←data_char1 data_char2 data_char3⍝ 326: Pointer (32-bit or 64-bit as appropriate)
       :EndIf
       data_ptr←data_i1 data_i2 data_i4                  ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
