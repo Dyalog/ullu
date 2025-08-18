@@ -1,0 +1,24 @@
+:Namespace modified_assignment
+    Assert←#.unittest.Assert
+      model←{
+        ⍝   ⍺←⍵
+        ⍺ ⍺⍺ ⍵
+      }
+
+    ∇ r←testDesc
+      r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+    ∇
+
+   ∇ {r}←test_modified_assignment;flag;m;f;g;case;quadparams;desc;RunVariations
+      r←⍬
+      
+      f←+
+      case←'mondaic'
+      quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+      desc←testDesc
+        
+        a b←0 0
+        r,←'T1' desc Assert (a+←5)≡(b +model 5)
+    ∇
+    
+:EndNamespace
