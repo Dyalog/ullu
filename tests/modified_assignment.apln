@@ -66,19 +66,34 @@
                   b←a←(?≢data)⊃data
                   c←(?≢data)⊃data
      
-                  ⍝ uses model to test modified assignment on all of the functions
+                ⍝ uses model to test modified assignment on all of the functions
                   r,←('T1',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
-
+     
+                  b←a←data
+                  r,←('T2',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
                   :For case2 :In caselist~case
-                    data2←⍎case
-                    desc←testDesc
-                  
-                    b←a←(?≢data)⊃data
-                    c←(?≢data2)⊃data2
+                      data2←⍎case
+                      desc←testDesc
+     
+                      b←a←(?≢data)⊃data
+                      c←(?≢data2)⊃data2
      
                     ⍝ uses model to test modified assignment on all of the functions
-                    r,←('TCross1',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
-                  
+                      r,←('TCross1',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
+     
+                      b←a←data
+                      r,←('TCross2',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b) ⍝ array w scalar
+     
+                    ⍝ array w array of same length
+                      data data2←data(#.utils.stripToSameLen)data2
+                      b←a←data
+                      c←data2
+                      r,←('TCross2',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b) ⍝ array w scalar
+     
+                    ⍝ TODO: array w array of different shape and length - should error
+     
+     
+     
                   :EndFor
               :EndFor
           :EndFor
