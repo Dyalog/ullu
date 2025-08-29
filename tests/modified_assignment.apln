@@ -58,16 +58,28 @@
           caselist←⎕NL ¯2
           caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
      
-          :For case :In caselist
-              data←⍎case
-              desc←testDesc
+          :For f :In '+' '-' '×' '÷' ','
+              :For case :In caselist
+                  data←⍎case
+                  desc←testDesc
      
-              :For f :In '+' '-' '×' '÷' ','
                   b←a←(?≢data)⊃data
                   c←(?≢data)⊃data
-                  
+     
                   ⍝ uses model to test modified assignment on all of the functions
                   r,←('T1',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
+
+                  :For case2 :In caselist~case
+                    data2←⍎case
+                    desc←testDesc
+                  
+                    b←a←(?≢data)⊃data
+                    c←(?≢data2)⊃data2
+     
+                    ⍝ uses model to test modified assignment on all of the functions
+                    r,←('TCross1',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
+                  
+                  :EndFor
               :EndFor
           :EndFor
       :EndFor
