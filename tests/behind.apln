@@ -15,6 +15,10 @@
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
+    ⍝ test function used to test for errors
+    ∇ op_fn arg
+    ∇
+
     ∇ {r}←test_behind;flag;m;f;g;case;quadparams;desc;RunVariations
       r←⍬
      
@@ -44,7 +48,7 @@
       r,←'T5'desc Assert 4 4≡({⍵.⎕NL ¯9}⍛(⎕VGET⍨)(a:1 ⋄ b:(r:4) ⋄ c:(d:2 ⋄ r:4) ⋄ e:3)).r
       ⍝ Dyadic
       r,←'T6'desc Assert 1 0≡(abc:1 ⋄ def:2){⍵.⎕NL ¯2}⍛∊'abc' 'xyz'
-
+     
       ⍝ Error cases
       ⍝ 2: Syntax Error
       ⍝ Non-function as operands
@@ -62,6 +66,48 @@
           flag←1
       :EndTrap
       r,←'TE3'desc Assert(flag∧m≡'Missing right argument')
+     
+      ⍝ operand functions don't produce a result (in all combinations below)
+      flag←0 ⍝ flag
+      :Trap 6 ⍝ 2: Value error
+          (⍳6)(op_fn⍛+)⍳10
+      :Else
+          m←⎕DMX.Message
+          flag←1
+      :EndTrap
+      r,←'TE3'desc Assert(flag∧m≡'No result was provided when the context expected one')
+     
+      ⍝ operand functions don't produce a result
+      flag←0 ⍝ flag
+      :Trap 6 ⍝ 6: Value error
+          (op_fn⍛+)⍳10
+      :Else
+          m←⎕DMX.Message
+          flag←1
+      :EndTrap
+      r,←'TE3'desc Assert(flag∧m≡'No result was provided when the context expected one')
+     
+      ⍝ operand functions don't produce a result
+      flag←0 ⍝ flag
+      :Trap 2 ⍝ 2: Syntax error
+          ⍳6(+⍛op_fn)⍳10
+      :Else
+          m←⎕DMX.Message
+          flag←1
+      :EndTrap
+      r,←'TE3'desc Assert(flag∧m≡'The function does not take a left argument')
+     
+      ⍝ operand functions don't produce a result
+      flag←0 ⍝ flag
+      :Trap 2 ⍝ 2: Syntax error
+          (+⍛op_fn)⍳10
+      :Else
+          m←⎕DMX.Message
+          flag←1
+      :EndTrap
+      r,←'TE3'desc Assert(flag∧m≡'The function does not take a left argument')
+     
+     
     ∇
 
     ∇ {r}←test_behind_idioms;sortAsc;sortDesc;modelSortAsc;modelSortDesc;case;case2;data_single_bool_0;data_single_bool_1;data_bool;data_i1;data_i2;data_i4;len;data_char0;data_char1;data_char2;data_char3;data_char_ptr;data_ptr;data_dbl;data_cmplx;data_Hcmplx;data_Hdbl;data_Sdbl;data_fl;data_Hfl;order;model;sort;RunVariations;ct;fr;quadparams;caselist;data;desc;data2
@@ -87,7 +133,7 @@
           ⍎'data_i2_',⍕len'←len Ints 16'
           ⍎'data_i4_',⍕len'←len Ints 32'
       :EndFor
-
+     
       data_char0←⎕AV                                    ⍝ 82: DyalogAPL classic char set
       :If ~#.utils.isClassic
           data_char1←100 Chars 8                        ⍝ 80: 8 bits character
