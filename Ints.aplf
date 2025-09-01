@@ -1,0 +1,8 @@
+r←count Ints bits;type
+⍝ Produce a vector of 'count' random integers of bit-size 'bits'.
+:Select bits
+:CaseList 8 16 32
+r←VariationOf count⍴2*bits-2
+:Else
+'Unexpected integer size'⎕SIGNAL 11
+:EndSelect
