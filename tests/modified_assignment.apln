@@ -1,7 +1,6 @@
 :Namespace modified_assignment
     Assert←#.unittest.Assert
       model←{
-        ⍝   ⍺←⍵
           ⍺ ⍺⍺ ⍵
       }
 
@@ -9,7 +8,7 @@
       r←'for ',case,' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
     ∇
 
-    ∇ {r}←test_modified_assignment;Ints;Chars;f;case;quadparams;desc;a;b;case2;data_bool;data_i1;data_i2;data_i4;data_char0;data_char1;data_char2;data_char3;data_dbl;data_cmplx;data_Hcmplx;data_Hdbl;data_Sdbl;data_fl;data_Hfl;fr;caselist;a1;b1;data
+    ∇ {r}←test_modified_assignment;Ints;Chars;f;case;quadparams;desc;a;b;case2;data_bool;data_i1;data_i2;data_i4;data_char0;data_char1;data_char2;data_char3;data_dbl;data_cmplx;data_Hcmplx;data_Hdbl;data_Sdbl;data_fl;data_Hfl;fr;caselist;a1;b1;data;len;c;data2;flag;m
       r←⍬
       Ints←#.random.Ints
       Chars←#.random.Chars
@@ -28,7 +27,7 @@
     ⍝   :If ~#.utils.isClassic
     ⍝       data_char1←100 Chars 8                        ⍝ 80: 8 bits character
     ⍝       data_char2←100 Chars 16                       ⍝ 160: 16 bits character
-    ⍝       data_char3←100 Chars 32                       ⍝ 320: 32 bits character
+    ⍝       data_char3←100 Cha2rs 32                       ⍝ 320: 32 bits character
     ⍝     ⍝   data_char_ptr←data_char1 data_char2 data_char3⍝ 326: Pointer (32-bit or 64-bit as appropriate)
     ⍝   :EndIf
     ⍝   data_ptr←data_i1 data_i2 data_i4                  ⍝ 326: Pointer (32-bit or 64-bit as appropriate)
@@ -80,21 +79,30 @@
      
                     ⍝ uses model to test modified assignment on all of the functions
                       r,←('TCross1',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
-     
+                      ⍝ array w scalar
                       b←a←data
-                      r,←('TCross2',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b) ⍝ array w scalar
+                      r,←('TCross2',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
      
                     ⍝ array w array of same length
                       data data2←data(#.utils.stripToSameLen)data2
                       b←a←data
                       c←data2
-                      r,←('TCross2',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b) ⍝ array w scalar
-     
-                    ⍝ TODO: array w array of different shape and length - should error
-     
-     
-     
+                      r,←('TCross2',f)desc Assert 3⊃(a(⍎f)←c ⋄ b←b(⍎f)model c ⋄ a≡b)
                   :EndFor
+     
+                  ⍝ array w array of different shape and length - should error
+                  len←(1+?≢data)
+                  a←len↑data
+                  c←(len+2)↑data
+     
+                  flag←0 ⍝ flag
+                  :Trap 5 ⍝ 5: Length error
+                      a+←c
+                  :Else
+                      flag←1
+                      m←⎕DMX.Message
+                  :EndTrap
+                  r,←'TE1'desc Assert(flag∧m≡'Mismatched left and right argument shapes')
               :EndFor
           :EndFor
       :EndFor
