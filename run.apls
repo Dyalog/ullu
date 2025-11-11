@@ -1,4 +1,4 @@
-#!/usr/local/bin/dyalogscript
+#!/usr/bin/env dyalogscript
 
 ⍝ Full session start-up
 ⎕SE.(⍎⊃2⎕FIX'/StartupSession.aplf',⍨2⎕NQ#'GetEnvironment' 'DYALOG')
@@ -13,7 +13,7 @@ retry←{
 }
 
 testnames←tests.⎕NL ¯9
-testnames⌿⍨←'_'≠⊃⍤1⊢testnames
+testnames⌿⍨←('_'≠⊃)¨testnames
 
 ⎕←'Available tests:'
 ⎕←'∘ ',⍤1⊢↑testnames
