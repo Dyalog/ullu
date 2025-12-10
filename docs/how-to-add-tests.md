@@ -35,6 +35,8 @@ Then we need to get some specific data that we can manipulate to give us expecte
 
 This can look something like this:
 
+#### Example 1: [old way] Using manually created data
+
 This is an example from [unique mask](../tests/uniquemask.apln) (≠). These values can be changed according to what you want the fundamental tests to do but general layout should remain the same covering all the data types possible.
 
 ```APL
@@ -69,9 +71,60 @@ Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
 ⎕FR←fr_dbl
 ```
 
+#### Example 2: Using utility functions
+
+This is an example from [union_and_intersection.apln](../tests/union_and_intersection.apln) (∪ and ∩). Here we use utility functions from [random.apln](../random.apln) like `Ints` to generate integer data and `Chars` for character data. We also dynamically create variables for different lengths.
+
+```APL
+data_single_bool_0←∧/1 0 1 0                      ⍝ singleton boolean
+data_single_bool_1←∧/1 1 1 1                      ⍝ singleton boolean
+data_bool←1 0
+data_i1←100 #.random.Ints 8                       ⍝ 100 random 8-bit integers
+data_i2←100 #.random.Ints 16                      ⍝ 100 random 16-bit integers
+data_i4←100 #.random.Ints 32                      ⍝ 100 random 32-bit integers
+
+⍝ Dynamically create variables for different lengths
+:For len :In 8 16 32 64 128
+    ⍎'data_i1_',⍕len'←len #.random.Ints 8'
+    ⍎'data_i2_',⍕len'←len #.random.Ints 16'
+    ⍎'data_i4_',⍕len'←len #.random.Ints 32'
+:EndFor
+
+data_char0←⎕AV                                    ⍝ 82: DyalogAPL classic char set
+:If ~#.utils.isClassic
+    data_char1←100 #.random.Chars 8               ⍝ 80: 8 bits character
+    data_char2←100 #.random.Chars 16              ⍝ 160: 16 bits character
+    data_char3←100 #.random.Chars 32              ⍝ 320: 32 bits character
+    data_char_ptr←data_char1 data_char2 data_char3⍝ 326: Pointer
+:EndIf
+data_ptr←data_i1 data_i2 data_i4                  ⍝ 326: Pointer
+data_dbl←{⍵,-⍵}data_i4+0.1                        ⍝ 645: 64 bits Floating
+data_cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                 ⍝ 1289: 128 bits Complex
+data_Hcmplx←{⍵,-⍵}(1E14J1E14×⍝20)                 ⍝ 1289 but larger numbers to test for CT value
+data_Hdbl←{⍵,-⍵}1E14+(2×⍳50)                      ⍝ 645 but larger numbers to test for CT value
+data_Sdbl←{⍵,-⍵}(⍳500)÷1000                       ⍝ Small doubles for hash collision testing
+
+⎕FR←#.utils.fr_decf
+data_fl←{⍵,-⍵}data_i4+0.01                        ⍝ 1287: 128 bits Decimal
+data_Hfl←{⍵,-⍵}2E29+(1E16×⍳10)
+⎕FR←#.utils.fr_dbl
+```
+
+Note: The `Ints` and `Chars` functions are defined in [random.apln](../random.apln) and generate random integers and characters respectively of the specified bit size.
+
 ### Initialise test description
 
 Test description gives information about the `testID`, datatypes being tested on, the [test variation](todo: add link to variation section), and the different setting values.
+
+Example from [union_and_intersection.apln](../tests/union_and_intersection.apln):
+
+```APL
+∇ r←testDesc
+  r←'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵},' & ⎕CT ⎕DCT ⎕FR:',⍕⎕CT ⎕DCT ⎕FR
+∇
+```
+
+Or as a dfn (alternative example):
 
 ```APL
 testDesc←{'for ',case,{0∊⍴case2:'',⍵⋄' , ', case2,⍵},' & ⎕CT ⎕DCT:',⎕CT,⎕DCT, '& ⎕FR:', ⎕FR, '& ⎕IO:', ⎕IO}
@@ -96,19 +149,27 @@ RunVariations is a function described in [testfns.apln](../testfns.apln) which t
 
 #### Model function
 
-A model function replicates the behavior of an existing function by employing alternative primitives or computational steps. Model functions are used to test outputs of tests that can give not very intuitively computable results. Model functions here try to use primitives that are least related to the primitive being tested(this is mainly related so that it can be easily pin pointed which primitive is failing because shared code can be difficult to deal with). Model functions look like:
+A model function replicates the behavior of an existing function by employing alternative primitives or computational steps. Model functions are used to test outputs of tests that can give not very intuitively computable results. Model functions here try to use primitives that are least related to the primitive being tested(this is mainly related so that it can be easily pin pointed which primitive is failing because shared code can be difficult to deal with).
+
+Examples from [union_and_intersection.apln](../tests/union_and_intersection.apln):
+
+```APL
+    modelUnion←{⍺,⍵~⍺}
+    modelIntersection←{(⍺∊⍵)/⍺}
+```
+
+Other examples:
 
 ```APL
     modelMagnitude←{⍵×(¯1@(∊∘0)(⍵>0))}
-```
-
-```APL
     modelUnique←{0=≢⍵:⍵ ⋄ ↑,⊃{⍺,(∧/⍺≢¨⍵)/⍵}⍨/⌽⊂¨⊂⍤¯1⊢⍵}
 ```
 
 ### The tests
 
 All tests should run with all types of ⎕CT/⎕DCT, ⎕FR, ⎕DIV and ⎕IO values depending on which settings are implicit arguments of the primitive, ie. all of the settings that they depend on.
+
+#### Example 1: Basic loop structure
 
 ```APL
 :For io :In io_default io_0
@@ -124,13 +185,42 @@ All tests should run with all types of ⎕CT/⎕DCT, ⎕FR, ⎕DIV and ⎕IO val
 :EndFor
 ```
 
+#### Example 2: Testing multiple operators with varied CT values
+
+From [union_and_intersection.apln](../tests/union_and_intersection.apln) - shows testing multiple operators (∪ and ∩) with more varied comparison tolerance values:
+
+```APL
+:For op :In '∪' '∩'
+    :If op≡'∪'
+        RunVariations←modelUnion #.testfns._RunVariationsWithModel_(⍎op)
+    :Else
+        RunVariations←modelIntersection #.testfns._RunVariationsWithModel_(⍎op)
+    :EndIf
+
+    :For ct :In 0 1 10 0.1  ⍝ Test with 0, default, 10× default, and 0.1× default
+        (⎕CT ⎕DCT)←ct×#.utils.(ct_default dct_default)
+
+        :For fr :In 1 2
+            ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
+            ⎕IO←1
+
+            quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
+            ⍝ ... tests here ...
+        :EndFor
+    :EndFor
+:EndFor
+```
+
 #### Types of tests
 
 The general structure followed with all tests is as follows:
 
 ##### General tests
 
-General tests are tests that test information other than if the primitive gives the correct output. Some examples of uniquemask:
+General tests are tests that test information other than if the primitive gives the correct output.
+
+Examples from [uniquemask](../tests/uniquemask.apln):
 
 - uniquemask cannot return a result that exceeds the number of elements of the input
     ```APL
@@ -141,6 +231,34 @@ General tests are tests that test information other than if the primitive gives 
     ```APL
     r,← 'TGen2' desc Assert 11≡⎕dr ≠data intertwine data ⍝ intertwine is a util function that intertwines the data like (1 1 1 1) intertwine (0 0 0 0) gives 1 0 1 0 1 0 1 0
     ```
+
+Examples from [union_and_intersection.apln](../tests/union_and_intersection.apln):
+
+- union returns a result that has at least the number of elements of the input
+    ```APL
+    r,← 'Union (∪) Gen1' desc Assert (≢data)≤≢data∪data
+    ```
+
+- intersection returns a result that does not exceed the number of elements of the input
+    ```APL
+    r,← 'Intersection (∩) Gen1' desc Assert (≢data)≥≢data∩data
+    ```
+
+- datatype of the data will not change under union or intersection
+    ```APL
+    r,← 'Union (∪) Gen2' desc Assert (⎕DR data)≡⎕DR data∪data
+    r,← 'Intersection (∩) Gen2' desc Assert (⎕DR data)≡⎕DR data∩data
+    ```
+
+##### Namespace tests
+
+When primitives can work with namespaces, test them explicitly:
+
+```APL
+⍝ Example from union_and_intersection.apln
+desc←testDesc
+r,← 'Union (∪) ns' desc Assert ((#)modelUnion(# ⎕SE))≡(#)∪(# ⎕SE)
+```
 
 ##### Logical/mathematical tests
 
@@ -165,13 +283,23 @@ and here: https://www.dyalog.com/uploads/documents/Papers/tolerant_comparison/to
 
 ##### Independent tests
 
-Independent tests are tests for special cases that either have optimisations in the sources or have a special need that cannot be covered in general data types and only work on certain specific values. For example:
+Independent tests are tests for special cases that either have optimisations in the sources or have a special need that cannot be covered in general data types and only work on certain specific values.
+
+Examples:
+
 - The special case can be hit if we have two 8 bit int numbers in the input: a & b, and a is b-⎕CT. That means, that when we get to element b in the loop, we will find element a and hit the case.
 Occurrence: same.c.html#L1152
     ```APL
-                d←i1[?≢i1]
-                r,←'TCTI1' desc Assert (1 0)≡(≠ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
+        d←i1[?≢i1]
+        r,←'TCTI1' desc Assert (1 0)≡(≠ (d-({fr-1:⎕dct⋄⎕ct}⍬)) d)
     ```
+
+- Testing hash collisions with specially prepared data and `1500⌶` (from [union_and_intersection.apln](../tests/union_and_intersection.apln)):
+    ```APL
+    ⍝ Test with hashed arrays to check hash collision handling
+    r,← 'Union (∪) Hash1' desc quadparams RunVariations data (#.utils.hashArray data)
+    ```
+
 ## Misc useful information
 
 Interesting things:
@@ -179,3 +307,4 @@ Interesting things:
 - isDyalog32 ← 0 or 1 for if the interpreter 64-bit ot 32-bit?
 - isDyalogClassic ← 0 or 1 for if the interpreter classic or unicode
 - [utils.apln](../utils.apln) ← This file has some widely used manipulation functions
+- [random.apln](../random.apln) ← Contains `Ints` and `Chars` functions for generating random test data
