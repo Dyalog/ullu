@@ -1,0 +1,96 @@
+⍝ questions for aarush:
+⍝ 1. unittest.PPTestResult has a bunch of enclosures, intentional?
+⍝ 2. I'm using some random data generation of my own here, could this be made available in #.random?
+⍝ 3. when is ullu run? along with the other QAs? always with the same ⎕RL?
+⍝ 4. should type IDs be grouped constants
+⍝ 5. do you have a way to generate random nested data
+⍝ 6. do you have a way to generate random shapes (possibly with a target bound)
+
+⍝ ]link.import -overwrite # /home/abhs-dyalog/ullu
+⍝ unittest.RunTests tests.stencil 0 1 1 
+
+:Namespace stencil
+	Assert←#.unittest.Assert
+	classic←#.utils.isClassic
+
+	_Stencil_←{
+		⎕IO←0
+		ERANK ELENGTH EDOMAIN←4 5 11
+		spec_rank←≢⍴⍵⍵
+		spec_rank>2:               ⎕SIGNAL ERANK    ⍝ window spec has rank at most 2
+		(spec_rank=2)∧(2≠≢⍵⍵):     ⎕SIGNAL ELENGTH  ⍝ if window spec is a matrix, it has two rows
+		rank←≢⍴⍵                                    ⍝ rank of ⍵
+		rank=0:                    ⎕SIGNAL ERANK    ⍝ can't window a scalar
+		axes←⊢/1,⍴⍵⍵                                ⍝ number of axes specified
+		axes>rank:                 ⎕SIGNAL ELENGTH  ⍝ can't specifiy more axes than there are
+		0∊⍵⍵:                      ⎕SIGNAL EDOMAIN  ⍝ windows specs can't have 0 in size or movement
+		size←axes↑,⍵⍵                               ⍝ size of the window
+		(size-size>2)∨.>(axes↑⍴⍵): ⎕SIGNAL EDOMAIN  ⍝ ⍵ axes must be long enough that we never need to pad on both sides
+		move←axes↑axes↓(,⍵⍵),axes⍴1                 ⍝ movement of the window
+		padding←⌊.5×size-1                          ⍝ padding on each axis
+		padded←⍵                                    ⍝ ⍵ with padding
+		shape←axes↑⍴⍵                               ⍝ leading shape of ⍵ that we care about
+		padded↑⍨← shape+  padding                   ⍝ pad ends   of axes
+		padded↑⍨←-shape+2×padding                   ⍝ pad starts of axes
+		jumps←move×⍳¨⌈move÷⍨shape-~2|size           ⍝ jumps from the start corner along each axis
+		drop ←0⌈padding-jumps                       ⍝ padding drop at the start of axes
+		drop-←0⌈jumps+padding+size-axes↑⍴padded     ⍝ padding drop at the end   of axes (negative)
+		drop←,¨ ⊃∘.,/drop                           ⍝ padding drops per window
+		corners←⊃∘.,/jumps                          ⍝ corners of windows
+		window←⍳¨size                               ⍝ window positioned at the start of the padded input
+		↑drop ⍺⍺¨⌷∘padded¨window∘+¨corners          ⍝ index windows and do ⍺⍺
+	}
+
+	∇ r←ct (F _Check_ spec) data;expected;actual;⎕CT
+		⎕CT←ct
+		:Trap 0 ⋄ expected←(F _Stencil_ spec) data ⋄ :Else ⋄ expected←⎕EN ⋄ :End
+		:Trap 0 ⋄ actual  ←(F ⌺         spec) data ⋄ :Else ⋄ actual  ←⎕EN ⋄ :End
+		r←expected≡actual
+	∇
+
+	∇ {r}←test_stencil;⎕IO;data_rank;window_rank;type;bound;data_shape;window_shape;window_movement;data;spec;test_id;test_comment
+		⎕IO←0
+		r←⍬
+
+		⍝ testing the general case
+		⍝ we use ⍺⍺←{⍺⍵} as it is not optimised, and gives all the information we need to check it's working correctly
+		:For data_rank :In 1+⍳15 ⋄ :For window_rank :In 1+⍳data_rank
+			bound←1+?1E4
+			data_shape←⌊.5+*¯2-/(⍟bound)×0,1,⍨{⍵[⍋⍵]}?0⍴⍨data_rank-1  ⍝ try (not very hard) to get a shape whose product is boudn
+			⍝ bound (×/data_shape)
+			window_shape←1+?data_shape
+			window_movement←1+?data_shape
+			spec←[window_shape ⋄ window_movement]
+			test_id←'Stencil general case'
+			test_comment←'{⍺⍵}⌺[,',(⍕window_shape),' ⋄ ,',(⍕window_movement),']⊢something with type '
+
+			⍝ numeric
+			:For type :In 11 83 163 323 645 1287 1289
+				data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
+				r,←(test_id (test_comment,⍕type)) Assert 0 ({⍺⍵} _Check_ spec) data
+			:End
+
+			⍝ character
+			:If classic
+				data←data_shape #.random.Character 82
+				r,←(test_id (test_comment,'82')) Assert 0 ({⍺⍵} _Check_ spec) data
+			:Else
+				:For type :In 80 160 320
+					data←data_shape #.random.Character type
+					r,←(test_id (test_comment,⍕type)) Assert 0 ({⍺⍵} _Check_ spec) data
+				:End
+			:End
+
+			⍝ pointer
+			data←,¨data ⍝ could be better
+			r,←(test_id (test_comment,'326')) Assert 0 ({⍺⍵} _Check_ spec) data
+		:End ⋄ :End
+		
+		⍝ targeted testing of special cases (TODO)
+
+		⍝ for each special case
+		⍝   generate random ⍵ shape and window shape (subject to reqs)
+		⍝   generate input (type subject to reqs)
+		⍝   check expected ≡ actual (trapping errors, big ⎕CT to cover floating point errors)
+	∇
+:EndNamespace
