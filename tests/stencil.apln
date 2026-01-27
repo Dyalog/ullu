@@ -1,11 +1,9 @@
 ⍝ questions for aarush:
-⍝ 1. unittest.PPTestResult has a bunch of enclosures, intentional?
-⍝ 2. I'm using some random data generation of my own here, could this be made available in #.random?
-⍝ 3. when is ullu run? along with the other QAs? always with the same ⎕RL?
-⍝ 4. should type IDs be grouped constants
-⍝ 5. do you have a way to generate random nested data
-⍝ 6. do you have a way to generate random shapes (possibly with a target bound)
-⍝ 7. WSFULLs aren't failures, but we don't have a result to check, how to deal with that?
+⍝ - unittest.PPTestResult has a bunch of enclosures, intentional?
+⍝ - should type IDs be grouped constants
+⍝ - do you have a way to generate random nested data
+⍝ - do you have a way to generate random shapes (possibly with a target bound)
+⍝ - WSFULLs aren't failures, but we don't have a result to check, how to deal with that?
 
 ⍝ ]link.import -overwrite # /home/abhs-dyalog/ullu
 ⍝ unittest.RunTests tests.stencil 0 1 1
@@ -51,7 +49,7 @@
 
 	∇ {r}←test_stencil
 		;⎕IO
-		;data_rank;window_rank;bound;data_shape;window_shape;window_movement;data;spec
+		;data_rank;window_rank;bound;data_shape;window_shape;window_movement;data;spec;i
 		;type;Atype
 		;test_id;test_comment
 		;A;E
@@ -213,7 +211,7 @@
 
 		⎕CT←0
 		data_shape←1+?1E2 1E2
-		spec←(~2|⊢)⍛+?data_shape ⍝ FIXME what if 0∊data_shape
+		spec←(~2|⊢)⍛+?data_shape
 		test_id←'stencil_plus_slash_ravel'
 		test_comment←'⌺',(⍕spec),'⊢',(⍕data_shape),'⍴ ⍝ type '
 
@@ -292,7 +290,7 @@
 		test_id←'stencil inline magics'
 
 		⍝ vectors
-		data_shape←?1E2
+		data_shape←1+?1E2
 		spec←(~2|⊢)⍛+?data_shape
 		test_comment←'⌺(,',(⍕spec),')⊢',(⍕data_shape),'⍴ ⍝ type 11'
 		data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax 11
@@ -306,7 +304,7 @@
 		r,←(test_id ('{≠/,⍵}',test_comment)) Assert ({≠/,⍵} _Check_ spec) data
 
 		⍝ matrices
-		data_shape←?1E2 1E2
+		data_shape←1+?1E2 1E2
 		spec←(~2|⊢)⍛+?data_shape
 		test_comment←'⌺',(⍕spec),'⊢',(⍕data_shape),'⍴ ⍝ type 11'
 		data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax 11
