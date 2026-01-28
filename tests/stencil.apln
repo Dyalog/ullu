@@ -1,13 +1,3 @@
-⍝ questions for aarush:
-⍝ - unittest.PPTestResult has a bunch of enclosures, intentional?
-⍝ - should type IDs be grouped constants
-⍝ - do you have a way to generate random nested data
-⍝ - do you have a way to generate random shapes (possibly with a target bound)
-⍝ - WSFULLs aren't failures, but we don't have a result to check, how to deal with that?
-
-⍝ ]link.import -overwrite # /home/abhs-dyalog/ullu
-⍝ unittest.RunTests tests.stencil 0 1 1
-
 :Namespace stencil
 	Assert←#.unittest.Assert
 	classic←#.utils.isClassic
@@ -75,7 +65,7 @@
 
 			⍝ optionally zero out an unspecified axis
 			⍝ (stencil allows you to implicitly, but not explicitly, have a window side length of 0)
-			:If 0.1>?0 ⋄ data_shape[i]←0 ⋄ :End
+			:If (0.1>?0)∧(data_rank≠i+1) ⋄ data_shape[i+1]←0 ⋄ :End
 
 			spec←[window_shape ⋄ window_movement]
 			test_id←'Stencil general case'
