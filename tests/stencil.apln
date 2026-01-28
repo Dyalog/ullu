@@ -51,7 +51,6 @@
 		⍝ GENERAL CASE
 
 		⍝ we use ⍺⍺←{⍺⍵} as it is not optimised, and gives all the information we need to check it's working correctly
-		⍝ temporarily, use {(,⍺)⍵} to workaround some quirks which I would like to fix once language@ signs off on it
 		:For data_rank :In 1+⍳15 ⋄ :For window_rank :In 1+⍳data_rank
 			bound←1+?1E4
 			data_shape←⌊.5+*¯2-/(⍟bound)×0,1,⍨{⍵[⍋⍵]}?0⍴⍨data_rank-1  ⍝ try (not very hard) to get a shape whose product is bound
@@ -74,23 +73,23 @@
 			⍝ numeric
 			:For type :In 11 83 163 323 645 1287 1289
 				data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
-				r,←(test_id (test_comment,⍕type)) Assert ({(,⍺)⍵} _Check_ spec) data
+				r,←(test_id (test_comment,⍕type)) Assert ({⍺⍵} _Check_ spec) data
 			:End
 
 			⍝ character
 			:If classic
 				data←data_shape #.random.Character 82
-				r,←(test_id (test_comment,'82')) Assert ({(,⍺)⍵} _Check_ spec) data
+				r,←(test_id (test_comment,'82')) Assert ({⍺⍵} _Check_ spec) data
 			:Else
 				:For type :In 80 160 320
 					data←data_shape #.random.Character type
-					r,←(test_id (test_comment,⍕type)) Assert ({(,⍺)⍵} _Check_ spec) data
+					r,←(test_id (test_comment,⍕type)) Assert ({⍺⍵} _Check_ spec) data
 				:End
 			:End
 
 			⍝ pointer
 			data←,¨data
-			r,←(test_id (test_comment,'326')) Assert ({(,⍺)⍵} _Check_ spec) data
+			r,←(test_id (test_comment,'326')) Assert ({⍺⍵} _Check_ spec) data
 		:End ⋄ :End
 		
 		⍝ SPECIAL CASES
