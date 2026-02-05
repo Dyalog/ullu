@@ -1,9 +1,11 @@
 :Namespace stencil
+	'cmpx'⎕CY'dfns'
 	Assert←#.unittest.Assert
 	classic←#.utils.isClassic
 
 	_Stencil_←{
 		⎕IO←0
+		⎕ML←1
 		ERANK ELENGTH EDOMAIN←4 5 11
 		spec_rank←≢⍴⍵⍵
 		spec_rank>2:               ⎕SIGNAL ERANK    ⍝ window spec has rank at most 2
@@ -27,19 +29,44 @@
 		drop←,¨⊃∘.,/drop                            ⍝ padding drops per window
 		corners←⊃∘.,/jumps                          ⍝ corners of windows
 		window←⍳¨size                               ⍝ window positioned at the start of the padded input
-		↑drop ⍺⍺¨⌷∘padded¨window∘+¨corners          ⍝ index windows and do ⍺⍺
+		drop ⍺⍺{(⊃⍺)⍺⍺padded⌷⍨window+⊃⍵}⍤0⊢corners  ⍝ index windows and do ⍺⍺
 	}
 
-	∇ r←{ct} (F _Check_ spec) data;⎕CT;expected;actual
-		:Trap 0 ⋄ expected←(F _Stencil_ spec) data ⋄ :Else ⋄ expected←⎕EN ⋄ :End
-		:Trap 0 ⋄ actual  ←(F ⌺         spec) data ⋄ :Else ⋄ actual  ←⎕EN ⋄ :End
-		:If 0≠⎕NC'ct' ⋄ ⎕CT←ct ⋄ :Else ⋄ ⎕CT←0 ⋄ :End
-		r←expected≡actual
+	⍝ test_id is a semi-global
+	∇ r←{config} (F _Check_ spec) data
+		;⎕CT;⎕IO;⎕ML
+		;expected;actual
+		;config;test_comment_prefix;test_comment;nonzero_ct;check_ct
+		;success
+		r←⍬
+		nonzero_ct←1
+		check_ct←0
+		:If 326=⎕DR config
+			:If 2=≢config
+				(test_comment_prefix nonzero_ct)←config
+			:Else
+				(test_comment_prefix nonzero_ct check_ct)←config
+			:End
+		:Else
+			test_comment_prefix←config
+		:End
+		:For ⎕IO ⎕ML ⎕CT :In ⊃∘.,/(0 1)(0 1 2 3)(1E¯14,⍣nonzero_ct⊢0)
+			test_comment←test_comment_prefix,' with (⎕IO ⎕ML ⎕CT)←',⍕⎕IO ⎕ML ⎕CT
+			:Trap 0 ⋄ expected←(F _Stencil_ spec) data ⋄ :Else ⋄ expected←⎕EN ⋄ :End
+			:Trap 0 ⋄ actual  ←(F ⌺         spec) data ⋄ :Else ⋄ actual  ←⎕EN ⋄ :End
+			⎕CT←check_ct
+			success←expected≡actual
+			:If 326=⎕DR expected ⋄ :AndIf 0∊⍴expected
+				success∧←expected≡⍥⊃actual ⍝ prototypes should also match
+			:End
+			r,←test_id test_comment Assert success
+		:End
 	∇
 
 	∇ {r}←test_stencil
 		;⎕IO
-		;data_rank;window_rank;bound;data_shape;window_shape;window_movement;data;spec;i
+		;data_rank;window_rank;bound;data_shape;window_shape;window_movement;data;spec
+		;i;j
 		;type;Atype
 		;test_id;test_comment
 		;A;E
@@ -73,25 +100,25 @@
 			⍝ numeric
 			:For type :In 11 83 163 323 645 1287 1289
 				data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
-				r,←(test_id (test_comment,⍕type)) Assert ({⍺⍵} _Check_ spec) data
+				r,←(test_comment,⍕type) ({⍺⍵} _Check_ spec) data
 			:End
 
 			⍝ character
 			:If classic
 				data←data_shape #.random.Character 82
-				r,←(test_id (test_comment,'82')) Assert ({⍺⍵} _Check_ spec) data
+				r,←(test_comment,'82') ({⍺⍵} _Check_ spec) data
 			:Else
 				:For type :In 80 160 320
 					data←data_shape #.random.Character type
-					r,←(test_id (test_comment,⍕type)) Assert ({⍺⍵} _Check_ spec) data
+					r,←(test_comment,⍕type) ({⍺⍵} _Check_ spec) data
 				:End
 			:End
 
 			⍝ pointer
 			data←,¨data
-			r,←(test_id (test_comment,'326')) Assert ({⍺⍵} _Check_ spec) data
+			r,←(test_comment,'326') ({⍺⍵} _Check_ spec) data
 		:End ⋄ :End
-		
+
 		⍝ SPECIAL CASES
 
 		⍝ stenvec_identity_etc
@@ -106,36 +133,36 @@
 		:For type :In 11 83 163 323 645 1287 1289
 			data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
 			:If type=1287 ⋄ ⎕FR←1287 ⋄ :End ⍝ otherwise match might domain error
-			r,←(test_id (' {⍵}',test_comment,⍕type)) Assert ( {⍵} _Check_ spec) data
-			r,←(test_id ('{⊂⍵}',test_comment,⍕type)) Assert ({⊂⍵} _Check_ spec) data
-			r,←(test_id ('{,⍵}',test_comment,⍕type)) Assert ({,⍵} _Check_ spec) data
-			r,←(test_id ('{⊢⍵}',test_comment,⍕type)) Assert ({⊢⍵} _Check_ spec) data
+			r,←(' {⍵}',test_comment,⍕type) ( {⍵} _Check_ spec) data
+			r,←('{⊂⍵}',test_comment,⍕type) ({⊂⍵} _Check_ spec) data
+			r,←('{,⍵}',test_comment,⍕type) ({,⍵} _Check_ spec) data
+			r,←('{⊢⍵}',test_comment,⍕type) ({⊢⍵} _Check_ spec) data
 			:If type=1287 ⋄ ⎕FR←645 ⋄ :End
 		:End
 
 		⍝ character
 		:If classic
 			data←data_shape #.random.Character 82
-			r,←(test_id (' {⍵}',test_comment,'82')) Assert ( {⍵} _Check_ spec) data
-			r,←(test_id ('{⊂⍵}',test_comment,'82')) Assert ({⊂⍵} _Check_ spec) data
-			r,←(test_id ('{,⍵}',test_comment,'82')) Assert ({,⍵} _Check_ spec) data
-			r,←(test_id ('{⊢⍵}',test_comment,'82')) Assert ({⊢⍵} _Check_ spec) data
+			r,←(' {⍵}',test_comment,'82') ( {⍵} _Check_ spec) data
+			r,←('{⊂⍵}',test_comment,'82') ({⊂⍵} _Check_ spec) data
+			r,←('{,⍵}',test_comment,'82') ({,⍵} _Check_ spec) data
+			r,←('{⊢⍵}',test_comment,'82') ({⊢⍵} _Check_ spec) data
 		:Else
 			:For type :In 80 160 320
 				data←data_shape #.random.Character type
-				r,←(test_id (' {⍵}',test_comment,⍕type)) Assert ( {⍵} _Check_ spec) data
-				r,←(test_id ('{⊂⍵}',test_comment,⍕type)) Assert ({⊂⍵} _Check_ spec) data
-				r,←(test_id ('{,⍵}',test_comment,⍕type)) Assert ({,⍵} _Check_ spec) data
-				r,←(test_id ('{⊢⍵}',test_comment,⍕type)) Assert ({⊢⍵} _Check_ spec) data
+				r,←(' {⍵}',test_comment,⍕type) ( {⍵} _Check_ spec) data
+				r,←('{⊂⍵}',test_comment,⍕type) ({⊂⍵} _Check_ spec) data
+				r,←('{,⍵}',test_comment,⍕type) ({,⍵} _Check_ spec) data
+				r,←('{⊢⍵}',test_comment,⍕type) ({⊢⍵} _Check_ spec) data
 			:End
 		:End
 
 		⍝ pointer
 		data←,¨data
-		r,←(test_id (' {⍵}',test_comment,'326')) Assert ( {⍵} _Check_ spec) data
-		r,←(test_id ('{⊂⍵}',test_comment,'326')) Assert ({⊂⍵} _Check_ spec) data
-		r,←(test_id ('{,⍵}',test_comment,'326')) Assert ({,⍵} _Check_ spec) data
-		r,←(test_id ('{⊢⍵}',test_comment,'326')) Assert ({⊢⍵} _Check_ spec) data
+		r,←(' {⍵}',test_comment,'326') ( {⍵} _Check_ spec) data
+		r,←('{⊂⍵}',test_comment,'326') ({⊂⍵} _Check_ spec) data
+		r,←('{,⍵}',test_comment,'326') ({,⍵} _Check_ spec) data
+		r,←('{⊢⍵}',test_comment,'326') ({⊢⍵} _Check_ spec) data
 
 		⍝ stencil_identity_etc
 		⍝ ====================
@@ -149,41 +176,40 @@
 		:For type :In 11 83 163 323 645 1287 1289
 			data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
 			:If type=1287 ⋄ ⎕FR←1287 ⋄ :End ⍝ otherwise match might domain error
-			r,←(test_id (' {⍵}',test_comment,⍕type)) Assert ( {⍵} _Check_ spec) data
-			r,←(test_id ('{⊂⍵}',test_comment,⍕type)) Assert ({⊂⍵} _Check_ spec) data
-			r,←(test_id ('{,⍵}',test_comment,⍕type)) Assert ({,⍵} _Check_ spec) data
-			r,←(test_id ('{⊢⍵}',test_comment,⍕type)) Assert ({⊢⍵} _Check_ spec) data
+			r,←(' {⍵}',test_comment,⍕type) ( {⍵} _Check_ spec) data
+			r,←('{⊂⍵}',test_comment,⍕type) ({⊂⍵} _Check_ spec) data
+			r,←('{,⍵}',test_comment,⍕type) ({,⍵} _Check_ spec) data
+			r,←('{⊢⍵}',test_comment,⍕type) ({⊢⍵} _Check_ spec) data
 			:If type=1287 ⋄ ⎕FR←645 ⋄ :End
 		:End
 
 		⍝ character
 		:If classic
 			data←data_shape #.random.Character 82
-			r,←(test_id (' {⍵}',test_comment,'82')) Assert ( {⍵} _Check_ spec) data
-			r,←(test_id ('{⊂⍵}',test_comment,'82')) Assert ({⊂⍵} _Check_ spec) data
-			r,←(test_id ('{,⍵}',test_comment,'82')) Assert ({,⍵} _Check_ spec) data
-			r,←(test_id ('{⊢⍵}',test_comment,'82')) Assert ({⊢⍵} _Check_ spec) data
+			r,←(' {⍵}',test_comment,'82') ( {⍵} _Check_ spec) data
+			r,←('{⊂⍵}',test_comment,'82') ({⊂⍵} _Check_ spec) data
+			r,←('{,⍵}',test_comment,'82') ({,⍵} _Check_ spec) data
+			r,←('{⊢⍵}',test_comment,'82') ({⊢⍵} _Check_ spec) data
 		:Else
 			:For type :In 80 160 320
 				data←data_shape #.random.Character type
-				r,←(test_id (' {⍵}',test_comment,⍕type)) Assert ( {⍵} _Check_ spec) data
-				r,←(test_id ('{⊂⍵}',test_comment,⍕type)) Assert ({⊂⍵} _Check_ spec) data
-				r,←(test_id ('{,⍵}',test_comment,⍕type)) Assert ({,⍵} _Check_ spec) data
-				r,←(test_id ('{⊢⍵}',test_comment,⍕type)) Assert ({⊢⍵} _Check_ spec) data
+				r,←(' {⍵}',test_comment,⍕type) ( {⍵} _Check_ spec) data
+				r,←('{⊂⍵}',test_comment,⍕type) ({⊂⍵} _Check_ spec) data
+				r,←('{,⍵}',test_comment,⍕type) ({,⍵} _Check_ spec) data
+				r,←('{⊢⍵}',test_comment,⍕type) ({⊢⍵} _Check_ spec) data
 			:End
 		:End
 
 		⍝ pointer
 		data←,¨data
-		r,←(test_id (' {⍵}',test_comment,'326')) Assert ( {⍵} _Check_ spec) data
-		r,←(test_id ('{⊂⍵}',test_comment,'326')) Assert ({⊂⍵} _Check_ spec) data
-		r,←(test_id ('{,⍵}',test_comment,'326')) Assert ({,⍵} _Check_ spec) data
-		r,←(test_id ('{⊢⍵}',test_comment,'326')) Assert ({⊢⍵} _Check_ spec) data
+		r,←(' {⍵}',test_comment,'326') ( {⍵} _Check_ spec) data
+		r,←('{⊂⍵}',test_comment,'326') ({⊂⍵} _Check_ spec) data
+		r,←('{,⍵}',test_comment,'326') ({,⍵} _Check_ spec) data
+		r,←('{⊢⍵}',test_comment,'326') ({⊢⍵} _Check_ spec) data
 
 		⍝ stenvec_plus_slash
 		⍝ ==================
 
-		⎕CT←0
 		data_shape←1+?1E3
 		spec←1+?data_shape
 		test_id←'stenvec_plus_slash'
@@ -191,14 +217,13 @@
 
 		:For type :In 83 163 323 645 ⍝ only hits these types
 			data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
-			r,←(test_id ('{+/ ⍵}',test_comment,⍕type)) Assert ({+/ ⍵} _Check_ spec) data
-			r,←(test_id ('{+/,⍵}',test_comment,⍕type)) Assert ({+/,⍵} _Check_ spec) data
+			r,←('{+/ ⍵}',test_comment,⍕type) ({+/ ⍵} _Check_ spec) data
+			r,←('{+/,⍵}',test_comment,⍕type) ({+/,⍵} _Check_ spec) data
 		:End
 
 		⍝ stencil_plus_slash_ravel
 		⍝ ========================
 
-		⎕CT←0
 		data_shape←1+?1E2 1E2
 		spec←(~2|⊢)⍛+?data_shape
 		test_id←'stencil_plus_slash_ravel'
@@ -206,13 +231,12 @@
 
 		:For type :In 11 83 163 323 645 ⍝ only hits these types
 			data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
-			r,←(test_id ('{+/,⍵}',test_comment,⍕type)) Assert ({+/,⍵} _Check_ spec) data
+			r,←('{+/,⍵}',test_comment,⍕type) ({+/,⍵} _Check_ spec) data
 		:End
 
 		⍝ stencil_ip
 		⍝ ==========
 
-		⎕CT←0 ⍝ necessary to hit the optimisation
 		data_shape←1+?1E2 1E2
 		spec←(~2|⊢)⍛+?data_shape
 		test_id←'stencil_ip'
@@ -222,17 +246,16 @@
 			data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
 			:For Atype :In 11 83 163 323 645
 				A←spec #.random.BoundedNumeric #.utils.NumericMinMax Atype
-				r,←(test_id ('{+/,A×   ⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert         ({+/,A×   ⍵} _Check_ spec) data
+				r,←('{+/,A×   ⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)           ({+/,A×   ⍵} _Check_ spec) data
 				A←((1+?10),spec) #.random.BoundedNumeric #.utils.NumericMinMax Atype
 				⍝ use ⎕CT←(quite big) since due to floating point operation ordering, the result will be a little different, and we need to pass the test anyway
-				r,←(test_id ('{+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert (2*¯32) ({+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 1 (2*¯32) ({+/⍪A×⍤2⊢⍵} _Check_ spec) data
 		:End ⋄ :End
 
 		⍝ stencil_ipcmp
 		⍝ =============
 
-		E←0   ⍝ necessary to hit the optimisation (yes really)
-		⎕CT←0 ⍝ necessary to hit the optimisation
+		E←0 ⍝ necessary to hit the optimisation (yes really)
 		data_shape←1+?1E2 1E2
 		spec←(~2|⊢)⍛+?data_shape
 		test_id←'stencil_ipcmp'
@@ -241,41 +264,41 @@
 			data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax type
 			:For Atype :In 11 83 163 323 645
 				A←spec #.random.BoundedNumeric #.utils.NumericMinMax Atype
-				r,←(test_id ('{E<+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E<+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{E≤+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E≤+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{E=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E=+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{E≥+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E≥+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{E>+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E>+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{E≠+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E≠+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{E=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E=+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{0<+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0<+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{0≤+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0≤+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{0=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0=+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{0≥+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0≥+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{0>+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0>+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{0≠+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0≠+/,A×⍵} _Check_ spec) data
-				r,←(test_id ('{0=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0=+/,A×⍵} _Check_ spec) data
+				⍝ need ⎕CT←0 to hit the optimisation ───────────────────────────┐
+				r,←('{E<+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E<+/,A×⍵} _Check_ spec) data
+				r,←('{E≤+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E≤+/,A×⍵} _Check_ spec) data
+				r,←('{E=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E=+/,A×⍵} _Check_ spec) data
+				r,←('{E≥+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E≥+/,A×⍵} _Check_ spec) data
+				r,←('{E>+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E>+/,A×⍵} _Check_ spec) data
+				r,←('{E≠+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E≠+/,A×⍵} _Check_ spec) data
+				r,←('{E=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E=+/,A×⍵} _Check_ spec) data
+				r,←('{0<+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0<+/,A×⍵} _Check_ spec) data
+				r,←('{0≤+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0≤+/,A×⍵} _Check_ spec) data
+				r,←('{0=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0=+/,A×⍵} _Check_ spec) data
+				r,←('{0≥+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0≥+/,A×⍵} _Check_ spec) data
+				r,←('{0>+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0>+/,A×⍵} _Check_ spec) data
+				r,←('{0≠+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0≠+/,A×⍵} _Check_ spec) data
+				r,←('{0=+/,A×⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0=+/,A×⍵} _Check_ spec) data
 				A←((1+?10),spec) #.random.BoundedNumeric #.utils.NumericMinMax Atype
-				r,←(test_id ('{E<+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E<+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{E≤+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E≤+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{E=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E=+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{E≥+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E≥+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{E>+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E>+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{E≠+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E≠+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{E=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({E=+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{0<+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0<+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{0≤+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0≤+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{0=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0=+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{0≥+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0≥+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{0>+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0>+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{0≠+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0≠+/⍪A×⍤2⊢⍵} _Check_ spec) data
-				r,←(test_id ('{0=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype)) Assert ({0=+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{E<+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E<+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{E≤+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E≤+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{E=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E=+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{E≥+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E≥+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{E>+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E>+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{E≠+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E≠+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{E=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({E=+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{0<+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0<+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{0≤+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0≤+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{0=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0=+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{0≥+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0≥+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{0>+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0>+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{0≠+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0≠+/⍪A×⍤2⊢⍵} _Check_ spec) data
+				r,←('{0=+/⍪A×⍤2⊢⍵}',test_comment,(⍕type),' and A of type ',⍕Atype) 0 ({0=+/⍪A×⍤2⊢⍵} _Check_ spec) data
 		:End ⋄ :End
 
 		⍝ inline magic cases
 		⍝ ==================
 
-		⎕CT←0
 		test_id←'stencil inline magics'
 
 		⍝ vectors
@@ -283,23 +306,34 @@
 		spec←(~2|⊢)⍛+?data_shape
 		test_comment←'⌺(,',(⍕spec),')⊢',(⍕data_shape),'⍴ ⍝ type 11'
 		data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax 11
-		r,←(test_id ('{∧/ ⍵}',test_comment)) Assert ({∧/ ⍵} _Check_ spec) data
-		r,←(test_id ('{∨/ ⍵}',test_comment)) Assert ({∨/ ⍵} _Check_ spec) data
-		r,←(test_id ('{=/ ⍵}',test_comment)) Assert ({=/ ⍵} _Check_ spec) data
-		r,←(test_id ('{≠/ ⍵}',test_comment)) Assert ({≠/ ⍵} _Check_ spec) data
-		r,←(test_id ('{∧/,⍵}',test_comment)) Assert ({∧/,⍵} _Check_ spec) data
-		r,←(test_id ('{∨/,⍵}',test_comment)) Assert ({∨/,⍵} _Check_ spec) data
-		r,←(test_id ('{=/,⍵}',test_comment)) Assert ({=/,⍵} _Check_ spec) data
-		r,←(test_id ('{≠/,⍵}',test_comment)) Assert ({≠/,⍵} _Check_ spec) data
+		r,←('{∧/ ⍵}',test_comment) ({∧/ ⍵} _Check_ spec) data
+		r,←('{∨/ ⍵}',test_comment) ({∨/ ⍵} _Check_ spec) data
+		r,←('{=/ ⍵}',test_comment) ({=/ ⍵} _Check_ spec) data
+		r,←('{≠/ ⍵}',test_comment) ({≠/ ⍵} _Check_ spec) data
+		r,←('{∧/,⍵}',test_comment) ({∧/,⍵} _Check_ spec) data
+		r,←('{∨/,⍵}',test_comment) ({∨/,⍵} _Check_ spec) data
+		r,←('{=/,⍵}',test_comment) ({=/,⍵} _Check_ spec) data
+		r,←('{≠/,⍵}',test_comment) ({≠/,⍵} _Check_ spec) data
 
 		⍝ matrices
 		data_shape←1+?1E2 1E2
 		spec←(~2|⊢)⍛+?data_shape
 		test_comment←'⌺',(⍕spec),'⊢',(⍕data_shape),'⍴ ⍝ type 11'
 		data←data_shape #.random.BoundedNumeric #.utils.NumericMinMax 11
-		r,←(test_id ('{∧/,⍵}',test_comment)) Assert ({∧/,⍵} _Check_ spec) data
-		r,←(test_id ('{∨/,⍵}',test_comment)) Assert ({∨/,⍵} _Check_ spec) data
-		r,←(test_id ('{=/,⍵}',test_comment)) Assert ({=/,⍵} _Check_ spec) data
-		r,←(test_id ('{≠/,⍵}',test_comment)) Assert ({≠/,⍵} _Check_ spec) data
+		r,←('{∧/,⍵}',test_comment) ({∧/,⍵} _Check_ spec) data
+		r,←('{∨/,⍵}',test_comment) ({∨/,⍵} _Check_ spec) data
+		r,←('{=/,⍵}',test_comment) ({=/,⍵} _Check_ spec) data
+		r,←('{≠/,⍵}',test_comment) ({≠/,⍵} _Check_ spec) data
+
+		⍝ BONUS TESTS
+		
+		⍝ execution order
+		⍝ ===============
+
+		i←⍬
+		{i,←1⊃⍵}_Stencil_ 3⊢3 1 4 1 5 9
+		j←⍬
+		{j,←1⊃⍵}⌺3⊢3 1 4 1 5 9
+		r,←('execution order' 'i←⍬ ⋄ {i,←1⊃⍵}⌺3⊢3 1 4 1 5 9 ⍝') Assert i≡j
 	∇
 :EndNamespace
