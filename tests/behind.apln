@@ -115,8 +115,8 @@
       sortAsc←⊂⍤⍋⍛⌷
       sortDesc←⊂⍤⍒⍛⌷
      
-      modelSortAsc←{(⊂⍋⍵)⌷⍵}
-      modelSortDesc←{(⊂⍒⍵)⌷⍵}
+      modelSortAsc←{(⊢⊂⍋⍵)⌷⍵}
+      modelSortDesc←{(⊢⊂⍒⍵)⌷⍵}
      
       ⍝ data
       case←⍬
