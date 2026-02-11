@@ -81,8 +81,8 @@
       r←⍬
       :For ⎕IO ⎕ML ⎕CT :In ⊃∘.,/(0 1)(0 1 2 3)(1E¯14,⍣nonzero_ct⊢0)
           test_comment←test_comment_prefix,' with (⎕IO ⎕ML ⎕CT)←',⍕⎕IO ⎕ML ⎕CT
-          :Trap 0 ⋄ expected←(F _Stencil_ spec)data ⋄ :Else ⋄ expected←⎕EN ⋄ :End
-          :Trap 0 ⋄ actual←(F⌺spec)data ⋄ :Else ⋄ actual←⎕EN ⋄ :End
+          :Trap 0 ⋄ expected←(1 ⋄ (F _Stencil_ spec)data) ⋄ :Else ⋄ expected←0 ⎕EN ⋄ :End
+          :Trap 0 ⋄ actual←(1 ⋄ (F⌺spec)data) ⋄ :Else ⋄ actual←0 ⎕EN ⋄ :End
           ⎕CT←check_ct
           success←expected≡actual
           :If 326=⎕DR expected ⋄ :AndIf 0∊⍴expected
