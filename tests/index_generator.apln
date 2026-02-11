@@ -1,0 +1,118 @@
+⍝ This Namespace includes tests for the function Index Generator (Monadic Iota ⍳)
+⍝
+⍝ Index Generator:
+⍝ R←⍳Y where Y is a non-negative integer scalar or vector.
+⍝ For scalar Y: R is a vector of the first Y integers starting from ⎕IO
+⍝ For vector Y: R is an array of shape Y containing nested index vectors
+⍝
+⍝ System variables: ⎕IO (index origin)
+⍝
+⍝ Edge cases:
+⍝ - ⍳0 produces an empty vector (zilde)
+⍝ - ⍳⍬ produces a scalar containing the empty vector (⊂⍬)
+⍝ - Vector arguments produce nested arrays of index vectors
+:Namespace index_generator
+    Assert←#.unittest.Assert
+
+    ⍝ ═══════════════════════════════════════════════════════════════════════════
+    ⍝ Model functions
+    ⍝ ═══════════════════════════════════════════════════════════════════════════
+
+    ⍝ Model for scalar argument: generates sequence ⎕IO to ⎕IO+n-1
+    ⍝ Uses +\ (plus scan) instead of ⍳ to build the sequence
+    modelScalar←{
+        n←⍵
+        n=0:⍬                    ⍝ ⍳0 gives empty vector
+        (⎕IO-1)++\n⍴1           ⍝ cumulative sum of 1s, adjusted for ⎕IO
+    }
+
+    ⍝ Model for vector argument: generates nested array of index vectors
+    ⍝ Uses ⊤ (encode) to convert linear indices to coordinate vectors
+    modelVector←{
+        shape←⍵
+        0∊shape:shape⍴⊂⍬        ⍝ zero in shape gives empty array
+        n←×/shape               ⍝ total number of elements
+        linear←(⎕IO-1)++\n⍴1    ⍝ linear indices: ⎕IO to ⎕IO+n-1
+        coords←{⎕IO+shape⊤⍵-⎕IO}¨linear  ⍝ convert to coordinate vectors
+        shape⍴coords
+    }
+
+    ⍝ Combined model: handles scalar, zilde, and vector arguments
+    modelIota←{
+        ⍬≡⍵:⊂⍬                  ⍝ ⍳⍬ gives ⊂⍬
+        0=≢⍴⍵:modelScalar ⍵     ⍝ scalar argument
+        1=≢⍵:modelScalar ⊃⍵     ⍝ 1-element vector: result is simple vector
+        modelVector ⍵           ⍝ multi-element vector: result is nested
+    }
+
+    ⍝ Constants from utils
+    io_default←#.utils.io_default  ⍝ 1
+    io_0←#.utils.io_0              ⍝ 0
+
+    ∇ r←testDesc
+      r←'for ',case,' & ⎕IO:',⍕⎕IO
+    ∇
+
+    ∇ {r}←test_index_generator;case;desc;io;quadparams
+      r←⍬
+      case←⍬
+
+      ⍝ Tests will iterate over both ⎕IO values
+      :For io :In io_default io_0
+          ⎕IO←io
+          quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
+          ⍝ ═══════════════════════════════════════════════════════════════════════
+          ⍝ Basic scalar argument tests
+          ⍝ ═══════════════════════════════════════════════════════════════════════
+          :For n :In 1 2 5 10 50 100
+              case←'scalar n=',(⍕n)
+              desc←testDesc
+
+              ⍝ Model comparison
+              r,←'TModel'desc Assert(modelScalar n)≡⍳n
+
+              ⍝ Shape: result shape equals ,n
+              r,←'TShape'desc Assert(,n)≡⍴⍳n
+
+              ⍝ Tally: result length equals n
+              r,←'TTally'desc Assert n≡≢⍳n
+
+              ⍝ First element is ⎕IO
+              r,←'TFirst'desc Assert ⎕IO≡⊃⍳n
+
+              ⍝ Last element is ⎕IO+n-1
+              r,←'TLast'desc Assert(⎕IO+n-1)≡⊃⌽⍳n
+
+              ⍝ Consecutive difference (for n≥2): each element is 1 more than previous
+              :If n≥2
+                  r,←'TDiff'desc Assert(∧/(2-/⍳n)=¯1)
+              :EndIf
+          :EndFor
+
+          ⍝ ═══════════════════════════════════════════════════════════════════════
+          ⍝ Edge case: ⍳0 produces empty vector (zilde)
+          ⍝ ═══════════════════════════════════════════════════════════════════════
+          case←'iota zero'
+          desc←testDesc
+
+          r,←'TZero1'desc Assert ⍬≡⍳0           ⍝ result is zilde
+          r,←'TZero2'desc Assert 0≡≢⍳0          ⍝ tally is 0
+          r,←'TZero3'desc Assert(,0)≡⍴⍳0        ⍝ shape is ,0
+          r,←'TZero4'desc Assert 1≡≡⍳0          ⍝ depth is 1 (simple vector)
+          r,←'TZero5'desc Assert(modelScalar 0)≡⍳0  ⍝ model comparison
+
+          ⍝ ═══════════════════════════════════════════════════════════════════════
+          ⍝ Edge case: ⍳⍬ produces ⊂⍬ (scalar containing empty vector)
+          ⍝ ═══════════════════════════════════════════════════════════════════════
+          case←'iota zilde'
+          desc←testDesc
+
+          r,←'TZilde1'desc Assert(⊂⍬)≡⍳⍬        ⍝ result is enclosed zilde
+          r,←'TZilde2'desc Assert 1≡≢⍳⍬         ⍝ tally is 1 (one element)
+          r,←'TZilde3'desc Assert ⍬≡⍴⍳⍬         ⍝ shape is ⍬ (scalar)
+          r,←'TZilde4'desc Assert 2≡≡⍳⍬         ⍝ depth is 2 (nested)
+          r,←'TZilde5'desc Assert(modelIota ⍬)≡⍳⍬  ⍝ model comparison
+      :EndFor
+    ∇
+:EndNamespace
