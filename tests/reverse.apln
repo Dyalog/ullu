@@ -1,0 +1,294 @@
+:Namespace reverse
+    Assert←#.unittest.Assert
+    isDyalogClassic←#.utils.isClassic
+    
+    modelReverse←{0=≢⍴⍵:⍵ ⋄ 0∊⍴⍵:⍵ ⋄ ⌽⍵}
+    
+    ∇ r←testDesc
+      r←'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵},' & ⎕CT ⎕DCT ⎕FR ⎕IO:',⍕⎕CT ⎕DCT ⎕FR ⎕IO
+    ∇
+    
+    ∇ {r}←test_reverse;bool;i1;i2;i3;dbl;fl;Hdbl;Hfl;cmplx;Hcmplx;char0;char1;char2;char3;case;case2;data;data2;desc;fr_dbl;fr_decf;io_default;io_0;fr;io;ct_default;dct_default;scalar;empty;matrix;d;pos;array3d;ptr;empty2d;empty3d;ct;div;div_0;div_1;d1;d2;largeData;hashedData;deepNested;mixedNested;quadparams;data_rand_i1;data_rand_i2;data_rand_i4;data_rand_char1;data_rand_char2
+      r←⍬
+      
+      ⍝ Get system defaults from utils
+      ct_default←#.utils.ct_default
+      dct_default←#.utils.dct_default
+      fr_dbl←#.utils.fr_dbl
+      fr_decf←#.utils.fr_decf
+      io_default←#.utils.io_default
+      io_0←#.utils.io_0
+      div_0←#.utils.div_0
+      div_1←#.utils.div_1
+      
+      ⍝ Generate random data for testing
+      data_rand_i1←1000 #.random.Ints 8
+      data_rand_i2←1000 #.random.Ints 16
+      data_rand_i4←1000 #.random.Ints 32
+      
+      :If ~isDyalogClassic
+          data_rand_char1←1000 #.random.Chars 8
+          data_rand_char2←1000 #.random.Chars 16
+      :EndIf
+      
+      ⍝ Loop through ⎕DIV settings
+      :For div :In div_0 div_1
+          ⎕DIV←div
+          
+          ⍝ Loop through ⎕IO settings
+          :For io :In io_default io_0
+              ⎕IO←io
+              
+              ⍝ Loop through ⎕CT settings
+              :For ct :In 0 1 10 0.1
+                  (⎕CT ⎕DCT)←ct×ct_default dct_default
+                  
+                  ⍝ Loop through ⎕FR settings
+                  :For fr :In fr_dbl fr_decf
+                      ⎕FR←fr
+                      
+                      quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+                      
+                      ⍝ Test data
+                      bool←0 1
+                      i1←{⍵,-⍵}⍳120
+                      i2←{⍵,-⍵}10000+⍳1000
+                      i3←{⍵,-⍵}100000+⍳100
+                      
+                      char0←⎕AV
+                      :If ~isDyalogClassic
+                          char1←⎕UCS⍳255
+                          char2←⎕UCS(1000+⍳100)
+                          char3←⎕UCS(100000+⍳100)
+                      :EndIf
+                      
+                      dbl←{⍵,-⍵}1000.5+⍳100
+                      Hdbl←{⍵,-⍵}100000000000000+(2×⍳50)
+                      
+                      ⎕FR←fr_decf
+                      fl←{⍵,-⍵}1000.5+⍳100
+                      Hfl←{⍵,-⍵}200000000000000000000000000000+(10000000000000000×⍳10)
+                      ⎕FR←fr
+                      
+                      cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100
+                      Hcmplx←{⍵,-⍵}(100000000000000J100000000000000×⍳20)
+                      
+                      ⍝ Main data type tests
+                      :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx'
+                          data←⍎case
+                          
+                          ⍝ ========== GENERAL TESTS (TGen) ==========
+
+                          desc←'Element count preserved for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TGen1'desc Assert (≢data)≡≢⌽data
+                          
+                          desc←'Datatype preserved for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TGen2'desc Assert (⎕DR data)≡⎕DR ⌽data
+                          
+                          desc←'Rank preserved for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TGen3'desc Assert (≢⍴data)≡≢⍴⌽data
+                          
+                          ⍝ ========== ORIGINAL TESTS ==========
+
+                          desc←'Double reverse for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'T1'desc Assert data≡⌽⌽data
+                          
+                          desc←'Shape preservation for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'T2'desc Assert (⍴data)≡⍴⌽data
+                          
+                          desc←'Model matches for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'T3'desc Assert (modelReverse data)≡⌽data
+                          
+                          desc←'Length preservation for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'T4'desc Assert (≢data)≡≢⌽data
+                          
+                          d←data[pos←?≢data]
+                          desc←'Single element for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TE1'desc Assert d≡⌽d
+                          
+                          desc←'First becomes last for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TE2'desc Assert (⊃data)≡⊃⌽⌽data
+                          
+                          desc←'Last becomes first for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TE3'desc Assert (⊃⌽data)≡⊃⌽⌽⌽data
+                          
+                          ⍝ ========== INDEPENDENT/SPECIAL CASE TESTS (TInd) ==========
+                          desc←'Single element array for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TInd1'desc Assert (1⍴data)≡⌽1⍴data
+                          
+                          desc←'Two element array for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TInd2'desc Assert (2↑data)≡⌽⌽2↑data
+                          
+                          desc←'Large array (10000) for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          largeData←10000⍴data
+                          r,←'TInd3'desc Assert largeData≡⌽⌽largeData
+                          
+                          ⍝ ========== HASH COLLISION TESTS (THash) =============
+
+                          :If 9=⎕NC'#.utils.hashArray'
+                              hashedData←#.utils.hashArray data
+                              desc←'Hashed array reverse for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                              r,←'THash1'desc Assert hashedData≡⌽⌽hashedData
+                          :EndIf
+                      :EndFor
+                      
+                      ⍝ ========== COMPARISON TOLERANCE TESTS (TCT) ==========
+
+                      :If ct>0  ⍝ Only when CT is active
+                          d1←1000.5+⍳10
+                          d2←d1+⎕CT÷2  ⍝ Within tolerance
+                          desc←'CT preserved in reverse & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TCT1'desc Assert (d1≡d2)≡((⌽d1)≡(⌽d2))
+                          
+                          desc←'CT double reverse & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TCT2'desc Assert d1≡⌽⌽d1
+                      :EndIf
+                      
+                      ⍝ Character tests
+                      :For case :In 'char0' 'char1' 'char2' 'char3'
+                          :If (isDyalogClassic)∧(case≢'char0')
+                              :Continue
+                          :EndIf
+                          data←⍎case
+                          
+                          desc←'Double reverse for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TC1'desc Assert data≡⌽⌽data
+                          
+                          desc←'Model matches for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TC2'desc Assert (modelReverse data)≡⌽data
+                          
+                          ⍝ General tests for characters
+                          desc←'Char datatype preserved for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TCGen1'desc Assert (⎕DR data)≡⎕DR ⌽data
+                      :EndFor
+                      
+                      ⍝ Random data tests
+                      :For case :In 'data_rand_i1' 'data_rand_i2' 'data_rand_i4'
+                          data←⍎case
+                          
+                          desc←'Random data double reverse for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TRand1'desc Assert data≡⌽⌽data
+                          
+                          desc←'Random data model matches for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                          r,←'TRand2'desc Assert (modelReverse data)≡⌽data
+                      :EndFor
+                      
+                      :If ~isDyalogClassic
+                          :For case :In 'data_rand_char1' 'data_rand_char2'
+                              data←⍎case
+                              
+                              desc←'Random char double reverse for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                              r,←'TRandC1'desc Assert data≡⌽⌽data
+                              
+                              desc←'Random char model matches for ',case,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                              r,←'TRandC2'desc Assert (modelReverse data)≡⌽data
+                          :EndFor
+                      :EndIf
+                      
+                      ⍝ Cross-type tests
+                      :For case :In 'i1' 'i2' 'dbl'
+                          data←⍎case
+                          :For case2 :In 'i2' 'i3' 'fl'
+                              :If case≡case2
+                                  :Continue
+                              :EndIf
+                              data2←⍎case2
+                              
+                              desc←'Cross-type ',case,' and ',case2,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                              r,←'TCross1'desc Assert (modelReverse(data,data2))≡⌽(data,data2)
+                              
+                              desc←'Cross-type reversed ',case,' and ',case2,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                              r,←'TCross2'desc Assert (modelReverse(data2,data))≡⌽(data2,data)
+                              
+                              desc←'Cross-type double reverse ',case,' and ',case2,' & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                              r,←'TCross3'desc Assert (data,data2)≡⌽⌽(data,data2)
+                          :EndFor
+                      :EndFor
+                      
+                      ⍝ Scalar edge case
+                      scalar←42
+                      desc←'Scalar unchanged & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TE4'desc Assert scalar≡⌽scalar
+                      r,←'TE5'desc Assert (modelReverse scalar)≡⌽scalar
+                      
+                      ⍝ Empty vectors
+                      empty←⍬
+                      desc←'Empty vector & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TE6'desc Assert empty≡⌽empty
+                      r,←'TE7'desc Assert (modelReverse empty)≡⌽empty
+                      
+                      ⍝ Empty arrays with different shapes
+                      empty2d←0 5⍴⍬
+                      desc←'Empty 2D array & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TEmpty1'desc Assert empty2d≡⌽empty2d
+                      r,←'TEmpty2'desc Assert (modelReverse empty2d)≡⌽empty2d
+                      r,←'TEmpty3'desc Assert (⍴empty2d)≡⍴⌽empty2d
+                      
+                      empty3d←0 0 5⍴⍬
+                      desc←'Empty 3D array & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TEmpty4'desc Assert empty3d≡⌽empty3d
+                      r,←'TEmpty5'desc Assert (modelReverse empty3d)≡⌽empty3d
+                      
+                      ⍝ 2D Matrix tests
+                      matrix←3 4⍴⍳12
+                      desc←'Matrix reverse & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TE8'desc Assert matrix≡⌽⌽matrix
+                      r,←'TE9'desc Assert (modelReverse matrix)≡⌽matrix
+                      r,←'TE10'desc Assert (⍴matrix)≡⍴⌽matrix
+                      
+                      ⍝ 3D array tests (higher rank)
+                      array3d←2 3 4⍴⍳24
+                      desc←'3D array reverse & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'T3D1'desc Assert array3d≡⌽⌽array3d
+                      r,←'T3D2'desc Assert (modelReverse array3d)≡⌽array3d
+                      r,←'T3D3'desc Assert (⍴array3d)≡⍴⌽array3d
+                      
+                      ⍝ Another 3D shape
+                      array3d←4 5 6⍴⍳120
+                      desc←'3D array (4x5x6) reverse & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'T3D4'desc Assert array3d≡⌽⌽array3d
+                      r,←'T3D5'desc Assert (modelReverse array3d)≡⌽array3d
+                      
+                      ⍝ Nested array
+                      desc←'Nested array & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TE11'desc Assert (modelReverse(i1 i1))≡⌽(i1 i1)
+                      
+                      ⍝ ========== MIXED NESTED DEPTHS (TNest) =========
+
+                      deepNested←(i1 (i2 (i3 dbl)))
+                      desc←'Deeply nested array & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TNest1'desc Assert deepNested≡⌽⌽deepNested
+                      r,←'TNest2'desc Assert (modelReverse deepNested)≡⌽deepNested
+                      
+                      mixedNested←(matrix (2 3 4⍴⍳24) (2 3⍴i1))
+                      desc←'Mixed rank nested & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TNest3'desc Assert mixedNested≡⌽⌽mixedNested
+                      r,←'TNest4'desc Assert (modelReverse mixedNested)≡⌽mixedNested
+                      
+                      ⍝ Pointer arrays (mixed nested types)
+                      ptr←(i1 i2 dbl)
+                      desc←'Pointer array (i1 i2 dbl) & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TPtr1'desc Assert (modelReverse ptr)≡⌽ptr
+                      r,←'TPtr2'desc Assert ptr≡⌽⌽ptr
+                      r,←'TPtr3'desc Assert (≢ptr)≡≢⌽ptr
+                      
+                      ⍝ Pointer array with different shapes
+                      ptr←(matrix (2 3⍴i1) i1)
+                      desc←'Pointer array mixed shapes & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'TPtr4'desc Assert (modelReverse ptr)≡⌽ptr
+                      r,←'TPtr5'desc Assert ptr≡⌽⌽ptr
+                      
+                      ⍝ ========== NAMESPACE TESTS (Tns) ==========
+
+                      desc←'Namespace reverse & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'Tns1'desc Assert ((# ⎕SE))≡⌽⌽(# ⎕SE)
+                      r,←'Tns2'desc Assert (modelReverse(# ⎕SE))≡⌽(# ⎕SE)
+                      
+                      desc←'Single namespace & ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV:',⍕quadparams
+                      r,←'Tns3'desc Assert (,#)≡⌽,#
+                  :EndFor
+              :EndFor
+          :EndFor
+      :EndFor
+    ∇
+:EndNamespace
