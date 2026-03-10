@@ -2,16 +2,12 @@
     Assert←#.unittest.Assert
     isDyalogClassic←#.utils.isClassic
 
-    ⍝ The current model does not depend on ⌽
-    ⍝ Handles scalars by returning ⍵
-    ⍝ Will be using rank operator to target the last axis.
-    ⍝ The guards are required here to return the scalar unchanged.
-    ⍝ I am not completely sure so do correct me if i am wrong but for a rank-0 scalar, r = 0, and ⍤1 would try to select 1-cells from an array of rank 0. Since, 
-    ⍝ There are no 1-cells to select,  `RandomScalar` will fail.
-    ⍝ Here: https://docs.dyalog.com/20.0/language-reference-guide/primitive-operators/rank/
-    ⍝ Although, i am still not sure if this is the best model function that can be used here
+    ⍝ Model implements reverse via rank operator and arithmetic indexing
+    ⍝ Does not use ⌽, providing a truly independent implementation for verification
+    ⍝ Guard handles rank-0 scalars where ⍤1 cannot operate
     modelReverse←{
         0=≢⍴⍵:⍵ 
+        ⎕IO←1  ⍝ Model requires ⎕IO←1 for index generation to work correctly
         n←(≢⍴⍵)⊃⍴⍵
         ({⍵[(n+1)-⍳n]}⍤1)⍵
     }
@@ -20,10 +16,10 @@
       r←'for ',case
     ∇
 
-    ∇ {r}←test_reverse;bool;i1;i2;i3;dbl;Hdbl;fl;Hfl;cmplx;Hcmplx;char0;char1;char2;char3;case;data;desc;scalar;empty;matrix;array3d;empty2d;empty3d;largeData;hashedData;RunVariations;data_rand_i1;data_rand_i2;data_rand_i4;data_rand_char1;data_rand_char2;quadparams
+    ∇ {r}←test_reverse;bool;i1;i2;i3;dbl;Hdbl;fl;Hfl;cmplx;Hcmplx;char0;char1;char2;char3;case;data;desc;scalar;empty;matrix;array3d;empty2d;empty3d;largeData;hashedData;RunVariations;data_rand_i1;data_rand_i2;data_rand_i4;data_rand_char1;data_rand_char2;quadparams;len;rows;cols;size;i1_min;i1_max;i2_min;i2_max;i4_min;i4_max;dbl_small;dbl_boundary;fl_small;fl_boundary
       r←⍬
 
-      ⍝ Monadic reverse has no implicit system variable dependencies so no need for the loops
+      ⍝ Monadic reverse has no implicit system variable dependencies
       ⍝ quadparams are set to defaults as required by RunVariations
       quadparams←(#.utils.ct_default) (#.utils.dct_default) (#.utils.fr_dbl) 1 (#.utils.div_0)
 
@@ -62,7 +58,23 @@
       cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100
       Hcmplx←{⍵,-⍵}(100000000000000J100000000000000×⍳20)
 
-      :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx'
+      ⍝ Extreme value testing: boundary values for each type
+      i1_min←¯128
+      i1_max←127
+      i2_min←¯32768
+      i2_max←32767
+      i4_min←¯2147483648
+      i4_max←2147483647
+      dbl_small←1E¯300+⍳10          ⍝ Very small positive decimals
+      dbl_boundary←i4_max+0.1 0.5 0.9 ⍝ Near int32 boundary
+      fl_small←⍬
+      fl_boundary←⍬
+      ⎕FR←#.utils.fr_decf
+      fl_small←1E¯6000+⍳10           ⍝ Very small positive decimals (decf)
+      fl_boundary←(2*127)+0.1 0.5 0.9 ⍝ Near decf boundary
+      ⎕FR←#.utils.fr_dbl
+
+      :For case :In 'bool' 'i1' 'i2' 'i3' 'dbl' 'Hdbl' 'fl' 'Hfl' 'cmplx' 'Hcmplx' 'i1_min' 'i1_max' 'i2_min' 'i2_max' 'i4_min' 'i4_max' 'dbl_small' 'dbl_boundary' 'fl_small' 'fl_boundary'
           data←⍎case
           desc←testDesc
 
@@ -86,6 +98,111 @@
               desc←'Hashed array reverse for ',case
               r,←'T5'desc Assert hashedData≡⌽⌽hashedData
           :EndIf
+      :EndFor
+
+      ⍝ Explicit tests with ⎕IO variation (not covered by RunVariations)
+      :For ⎕IO :In #.utils.io_default #.utils.io_0
+
+          ⍝ Explicit decimal precision preservation tests
+          desc←'Decimal precision: 0.1 0.2 0.3'
+          data←0.1 0.2 0.3
+          r,←'TPrec1'desc Assert data≡⌽⌽data
+          r,←'TPrec2'desc Assert data≡modelReverse⌽data
+
+          desc←'Decimal precision: repeating decimals'
+          data←(⍳10)÷3
+          r,←'TPrec3'desc Assert data≡⌽⌽data
+
+          desc←'Decimal precision: very small values'
+          data←1E¯15×⍳10
+          r,←'TPrec4'desc Assert data≡⌽⌽data
+
+          desc←'Decimal precision: mixed magnitude'
+          data←1E15 1 1E¯15
+          r,←'TPrec5'desc Assert data≡⌽⌽data
+
+          ⍝ Systematic shape variations for structural testing
+          ⍝ Different vector lengths
+          :For len :In 1 10 100 1000 10000
+              data←len⍴i1
+              desc←'Vector length ',⍕len
+              r,←('TLen',⍕len)desc Assert data≡⌽⌽data
+          :EndFor
+
+          ⍝ Tall matrices (many rows, few columns)
+          :For rows :In 10 100 1000
+              matrix←rows 11⍴i1
+              desc←'Tall matrix ',⍕rows,'x11'
+              r,←('TTall',⍕rows)desc Assert matrix≡⌽⌽matrix
+          :EndFor
+
+          ⍝ Wide matrices (few rows, many columns)
+          :For cols :In 10 100 1000
+              matrix←11 cols⍴i1
+              desc←'Wide matrix 11x',⍕cols
+              r,←('TWide',⍕cols)desc Assert matrix≡⌽⌽matrix
+          :EndFor
+
+          ⍝ Square matrices of different sizes
+          :For size :In 1 4 16 252
+              matrix←size size⍴i1
+              desc←'Square matrix ',⍕size,'x',⍕size
+              r,←('TSquare',⍕size)desc Assert matrix≡⌽⌽matrix
+          :EndFor
+
+          ⍝ Mixed numeric/character arrays (type 326)
+          desc←'Mixed array: numbers and characters'
+          data←(42 'Hello' 3.14)
+          r,←'TMix1'desc Assert data≡⌽⌽data
+          r,←'TMix2'desc Assert (modelReverse data)≡⌽data
+
+          desc←'Mixed array: numeric and character vectors'
+          data←(i1 char0 dbl)
+          r,←'TMix3'desc Assert data≡⌽⌽data
+          r,←'TMix4'desc Assert (modelReverse data)≡⌽data
+
+          ⍝ Namespace arrays
+          desc←'Namespace reverse'
+          r,←'Tns1'desc Assert ((# ⎕SE))≡⌽⌽(# ⎕SE)
+          r,←'Tns2'desc Assert (modelReverse(# ⎕SE))≡⌽(# ⎕SE)
+
+          desc←'Single namespace'
+          r,←'Tns3'desc Assert (,#)≡⌽,#
+
+          ⍝ Scalar edge case: rank 0 arrays
+          scalar←42
+          desc←'Scalar unchanged'
+          r,←'TE1'desc Assert scalar≡⌽scalar
+
+          ⍝ Empty vector
+          empty←⍬
+          desc←'Empty vector'
+          r,←'TE2'desc Assert empty≡⌽empty
+
+          ⍝ Empty arrays with non-zero trailing dimensions
+          empty2d←0 5⍴⍬
+          desc←'Empty 2D array'
+          r,←'TEmpty1'desc Assert empty2d≡⌽empty2d
+          r,←'TEmpty2'desc Assert (⍴empty2d)≡⍴⌽empty2d
+
+          empty3d←0 0 5⍴⍬
+          desc←'Empty 3D array'
+          r,←'TEmpty3'desc Assert empty3d≡⌽empty3d
+
+          ⍝ Multi-dimensional arrays: reverse along last axis
+          matrix←3 4⍴⍳12
+          desc←'Matrix reverse'
+          r,←'TE3'desc Assert matrix≡⌽⌽matrix
+          r,←'TE4'desc Assert (⍴matrix)≡⍴⌽matrix
+
+          array3d←2 3 4⍴⍳24
+          desc←'3D array reverse'
+          r,←'T3D1'desc Assert array3d≡⌽⌽array3d
+          r,←'T3D2'desc Assert (⍴array3d)≡⍴⌽array3d
+
+          array3d←4 5 6⍴⍳120
+          desc←'3D array (4x5x6) reverse'
+          r,←'T3D3'desc Assert array3d≡⌽⌽array3d
       :EndFor
 
       :For case :In 'char0' 'char1' 'char2' 'char3'
@@ -114,49 +231,5 @@
               r,←'TRandC1'desc quadparams RunVariations,⊂data
           :EndFor
       :EndIf
-
-      ⍝ Scalar edge case: rank 0 arrays
-      scalar←42
-      desc←'Scalar unchanged'
-      r,←'TE1'desc Assert scalar≡⌽scalar
-
-      ⍝ Empty vector
-      empty←⍬
-      desc←'Empty vector'
-      r,←'TE2'desc Assert empty≡⌽empty
-
-      ⍝ Empty arrays with non-zero trailing dimensions
-      empty2d←0 5⍴⍬
-      desc←'Empty 2D array'
-      r,←'TEmpty1'desc Assert empty2d≡⌽empty2d
-      r,←'TEmpty2'desc Assert (⍴empty2d)≡⍴⌽empty2d
-
-      empty3d←0 0 5⍴⍬
-      desc←'Empty 3D array'
-      r,←'TEmpty3'desc Assert empty3d≡⌽empty3d
-
-      ⍝ Multi-dimensional arrays: reverse along first axis
-      matrix←3 4⍴⍳12
-      desc←'Matrix reverse'
-      r,←'TE3'desc Assert matrix≡⌽⌽matrix
-      r,←'TE4'desc Assert (⍴matrix)≡⍴⌽matrix
-
-      array3d←2 3 4⍴⍳24
-      desc←'3D array reverse'
-      r,←'T3D1'desc Assert array3d≡⌽⌽array3d
-      r,←'T3D2'desc Assert (⍴array3d)≡⍴⌽array3d
-
-      array3d←4 5 6⍴⍳120
-      desc←'3D array (4x5x6) reverse'
-      r,←'T3D3'desc Assert array3d≡⌽⌽array3d
-
-      ⍝ Namespace arrays
-      desc←'Namespace reverse'
-      r,←'Tns1'desc Assert ((# ⎕SE))≡⌽⌽(# ⎕SE)
-      r,←'Tns2'desc Assert (modelReverse(# ⎕SE))≡⌽(# ⎕SE)
-
-      desc←'Single namespace'
-      r,←'Tns3'desc Assert (,#)≡⌽,#
     ∇
 :EndNamespace
-
