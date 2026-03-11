@@ -150,6 +150,22 @@
               r,←('TSquare',⍕size)desc Assert matrix≡⌽⌽matrix
           :EndFor
 
+          ⍝ Nested arrays: reverse reorders top-level elements, preserves nesting structure
+          desc←'Simple nested array (numeric)'
+          data←(i1 i2)
+          r,←'TNest1'desc Assert data≡⌽⌽data
+          r,←'TNest2'desc Assert (modelReverse data)≡⌽data
+
+          desc←'Deeply nested array (numeric)'
+          data←(i1 (i2 (i3 dbl)))
+          r,←'TNest3'desc Assert data≡⌽⌽data
+          r,←'TNest4'desc Assert (modelReverse data)≡⌽data
+
+          desc←'Mixed rank nested (numeric)'
+          data←(matrix (2 3 4⍴⍳24) (2 3⍴i1))
+          r,←'TNest5'desc Assert data≡⌽⌽data
+          r,←'TNest6'desc Assert (modelReverse data)≡⌽data
+
           ⍝ Mixed numeric/character arrays (type 326)
           desc←'Mixed array: numbers and characters'
           data←(42 'Hello' 3.14)
@@ -160,6 +176,16 @@
           data←(i1 char0 dbl)
           r,←'TMix3'desc Assert data≡⌽⌽data
           r,←'TMix4'desc Assert (modelReverse data)≡⌽data
+
+          desc←'Nested mixed array'
+          data←(i1 'ABC' dbl)
+          r,←'TMix5'desc Assert data≡⌽⌽data
+          r,←'TMix6'desc Assert (modelReverse data)≡⌽data
+
+          desc←'Deeply nested mixed array'
+          data←(42 ('Hello' 3.14) char0)
+          r,←'TMix7'desc Assert data≡⌽⌽data
+          r,←'TMix8'desc Assert (modelReverse data)≡⌽data
 
           ⍝ Namespace arrays
           desc←'Namespace reverse'
