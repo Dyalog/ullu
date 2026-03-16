@@ -7,10 +7,28 @@
     ⍝ Guard handles rank-0 scalars where ⍤1 cannot operate
     modelReverse←{
         0=≢⍴⍵:⍵ 
-        ⎕IO←1  ⍝ Model requires ⎕IO←1 for index generation to work correctly
+        ⎕IO←1  ⍝ Index generation (⍳) requires ⎕IO←1
         n←(≢⍴⍵)⊃⍴⍵
         ({⍵[(n+1)-⍳n]}⍤1)⍵
     }
+
+    ⍝ Model for bracket-axis reverse ⌽[k]
+    ⍝ Implements reverse along a specified axis using Squad indexing (⌷)
+    ⍝ ⍺ is the axis to reverse (1-indexed, per bracket-axis notation)
+    ⍝ Uses vector of index vectors with Squad to reverse the specified axis
+    ⍝ bracket-axis tests below are also commented
+    ⍝modelReverseBracket←{
+    ⍝    0=≢⍴⍵:⍵
+    ⍝    ⎕IO←1
+    ⍝    axis←⍺
+    ⍝    n←axis⊃⍴⍵
+    ⍝    ⍝ Build index vectors for each axis
+    ⍝    idxs←⍳¨⍴⍵
+    ⍝    ⍝ Reverse the specified axis
+    ⍝    idxs[axis]←⊂(n+1)-⍳n
+    ⍝    ⍝ Use Squad indexing (⌷) with enclosed indices
+    ⍝    idxs⌷⍵
+    ⍝}
 
     ∇ r←testDesc
       r←'for ',case
@@ -229,6 +247,28 @@
           array3d←4 5 6⍴⍳120
           desc←'3D array (4x5x6) reverse'
           r,←'T3D3'desc Assert array3d≡⌽⌽array3d
+
+          ⍝ Bracket-axis reverse ⌽[k] tests
+          ⍝ Test reversing along different axes of multi-dimensional arrays
+          ⍝ Bracket-axis notation is 1-indexed (independent of ⎕IO per APL docs)
+          ⍝ Uses Squad indexing (⌷) in model to reverse along specified axis
+          ⍝  requires modelReverseBracket above
+          ⍝desc←'Matrix reverse along axes'
+          ⍝matrix←3 4⍴⍳12
+          ⍝⎕IO←1  ⍝ Bracket-axis requires 1-based indexing
+          ⍝:For axis :In ⍳≢⍴matrix
+          ⍝    r,←('TAxisMat',⍕axis)desc Assert (axis modelReverseBracket matrix)≡⌽[axis]matrix
+          ⍝:EndFor
+          ⍝⍝ Verify first axis is ⊖
+          ⍝r,←'TAxisFirst'desc Assert (⌽[1]matrix)≡⊖matrix
+          ⍝
+          ⍝desc←'3D array reverse along axes'
+          ⍝array3d←2 3 4⍴⍳24
+          ⍝:For axis :In ⍳≢⍴array3d
+          ⍝    r,←('TAxis3D',⍕axis)desc Assert (axis modelReverseBracket array3d)≡⌽[axis]array3d
+          ⍝:EndFor
+          ⍝⍝ Verify last axis same as monadic
+          ⍝r,←'TAxisLast'desc Assert (⌽[(≢⍴array3d)]array3d)≡⌽array3d
       :EndFor
 
       :For case :In 'char0' 'char1' 'char2' 'char3'
