@@ -104,7 +104,7 @@
     ⍝ Run Variations of each test with normal, empty and multiple shaped data.
     ⍝ This operator is similar to _RunVariations_, but runs the model function and compares
     ⍝ the produced result/error messages with the primitive.
-    ∇ {tRes}←spec(rawModel _RunVariationsWithModel_ rawOp)args;ChkEqual;Eval;quadparams;shape;tCmt;tID;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
+    ∇ {tRes}←spec(rawModel _RunVariationsWithModel_ rawOp)args;ChkEqual;Eval;cols;len;quadparams;rows;shape;sq;tCmt;tID;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
       tRes←⍬
       (tID tCmt quadparams)←spec
       ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams
@@ -155,16 +155,55 @@
       ⍝ is generated in the longer run to test more data.
      
       #.random.VariationOf ChkEqual'RandModelTest'
-     
-        ⍝ todo:
-        ⍝ new variations needs more tests of:
-        ⍝ lengths of arrays from 1 to 10000
-        ⍝ and
-        ⍝ of kind
-        ⍝ scalar
-        ⍝ vector
-        ⍝ tall matrix, 11-column matrix with 10*0 1 2 4 rows
-        ⍝ wide matrix, 11-row matrix with 10*0 1 2 4 columns
-        ⍝ square matrix with ⌈10*0 1 2 4×0.6 (1 4 16 252) rows/columns
+
+      ⍝ Shuffle test: randomly reorder elements along first axis
+      {1≥≢⍵:⍵ ⋄ (⊂?⍨≢⍵)⌷⍵}ChkEqual'Shuffle'
+
+      ⍝ Intertwine test: create perfectly alternating duplicates
+      {⍵ #.utils.intertwine ⍵}ChkEqual'Intertwine'
+
+      ⍝ Hash test: pre-hash arrays with 1500⌶
+      ⍝ The model ignores hash metadata; the primitive uses it.
+      ⍝ Wrapped in :Trap because 1500⌶ may not support all data types.
+      :Trap 0
+          #.utils.hashArray ChkEqual'Hash'
+      :EndTrap
+
+      ⍝ Hash + Intertwine: pre-hash intertwined data
+      :Trap 0
+          {#.utils.hashArray ⍵ #.utils.intertwine ⍵}ChkEqual'HashIntertwine'
+      :EndTrap
+
+      ⍝ Length variations: different array sizes trigger different code paths
+      ⍝ (vectorization thresholds, hash table creation, etc.)
+      :For len :In 1 10 100
+          {len⍴⍵}ChkEqual('Len',⍕len)
+      :EndFor
+
+      ⍝ Tall matrix: 11-column matrix with varying rows (10*0 1 2)
+      :For rows :In 1 10 100
+          {(rows 11)⍴⍵}ChkEqual('Tall',(⍕rows),'x11')
+      :EndFor
+
+      ⍝ Wide matrix: 11-row matrix with varying columns (10*0 1 2)
+      :For cols :In 1 10 100
+          {(11 cols)⍴⍵}ChkEqual('Wide11x',⍕cols)
+      :EndFor
+
+      ⍝ Square matrix: ⌈10*0 1 2×0.6 → 1 4 16
+      :For sq :In 1 4 16
+          {(sq sq)⍴⍵}ChkEqual('Square',(⍕sq),'x',⍕sq)
+      :EndFor
+
+      ⍝ Slow variations (gated behind DYALOG_QA_SLOW_TESTS)
+      :If #.utils.doSlowTests
+          :For len :In 1000 10000
+              {len⍴⍵}ChkEqual('Len',⍕len)
+          :EndFor
+          ⍝ Tall 10*4, wide 10*4, square ⌈10*4×0.6=252
+          {(10000 11)⍴⍵}ChkEqual'Tall10000x11'
+          {(11 10000)⍴⍵}ChkEqual'Wide11x10000'
+          {(252 252)⍴⍵}ChkEqual'Square252x252'
+      :EndIf
     ∇
 :EndNamespace
