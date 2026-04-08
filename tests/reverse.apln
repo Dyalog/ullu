@@ -1,0 +1,95 @@
+:Namespace reverse
+    Assert←#.unittest.Assert
+    isDyalogClassic←#.utils.isClassic
+    Ints←#.random.Ints
+    Chars←#.random.Chars
+    shuffle←#.utils.shuffle
+    intertwine←#.utils.intertwine
+
+    ⍝ Model for monadic ⌽ (reverse along last axis)
+    ⍝ Scalars return unchanged. Vectors are indexed in reverse order.
+    ⍝ Higher ranks: split along first axis, recurse on each sub-array, recombine.
+    model←{0≥≢⍴⍵:⍵ ⋄ 0∊⍴⍵:⍵ ⋄ 1=≢⍴⍵:⍵[(1+≢⍵)-⍳≢⍵] ⋄ ↑∇¨↓⍵}
+
+    ∇ r←testDesc
+      r←'for ',case,{0∊⍴case2:'',⍵ ⋄ ' , ',case2,⍵}' & ⎕FR:',⍕⎕FR
+    ∇
+
+    ∇ {r}←test_reverse;RunVariations;case;case2;caselist;data;data2;desc;fr;quadparams;data_bool;data_i1;data_i2;data_i4;data_char0;data_char1;data_char2;data_char3;data_dbl;data_cmplx;data_fl;data_ptr;⎕FR;⎕IO
+      r←⍬
+      RunVariations←model #.testfns._RunVariationsWithModel_⌽
+
+      ⍝ Test data covering all datatypes
+      data_bool←0 1                                    ⍝ 11: 1 bit Boolean
+      data_i1←100 Ints 8                               ⍝ 83: 8 bit signed integer
+      data_i2←100 Ints 16                              ⍝ 163: 16 bit signed integer
+      data_i4←100 Ints 32                              ⍝ 323: 32 bit signed integer
+      data_char0←⎕AV                                   ⍝ 82: DyalogAPL classic char set
+      :If ~isDyalogClassic
+          data_char1←100 Chars 8                       ⍝ 80: 8 bit character
+          data_char2←100 Chars 16                      ⍝ 160: 16 bit character
+          data_char3←100 Chars 32                      ⍝ 320: 32 bit character
+      :EndIf
+      data_dbl←{⍵,-⍵}data_i4+0.1                       ⍝ 645: 64 bit Floating
+      data_cmplx←{⍵,-⍵}(0J1×⍳100)+⌽⍳100                ⍝ 1289: 128 bit Complex
+      data_ptr←data_i1 data_i2 data_i4                  ⍝ 326: Pointer
+
+      ⎕FR←#.utils.fr_decf
+      data_fl←{⍵,-⍵}data_i4+0.01                       ⍝ 1287: 128 bit Decimal
+      ⎕FR←#.utils.fr_dbl
+
+      :For fr :In 1 2
+          ⎕FR←fr⊃#.utils.(fr_dbl fr_decf)
+          ⎕IO←1
+
+          quadparams←⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV
+
+          caselist←⎕NL ¯2
+          caselist←caselist⌿⍨{'data_'⊃⍤⍷⍵}¨caselist
+
+          :For case :In caselist
+              data←⍎case
+              case2←⍬
+              desc←testDesc
+              r,←'T1'desc quadparams RunVariations⊂data                    ⍝ base data
+              r,←'T2'desc quadparams RunVariations⊂shuffle data            ⍝ shuffled data
+              r,←'T3'desc quadparams RunVariations⊂data intertwine data    ⍝ data intertwined with itself
+
+              ⍝ Cross-datatype tests
+              :For case2 :In caselist
+                  :If case≡case2
+                      :Continue
+                  :EndIf
+                  data2←⍎case2
+                  desc←testDesc
+                  r,←'TCross1'desc quadparams RunVariations⊂data,data2              ⍝ concatenated types
+                  r,←'TCross2'desc quadparams RunVariations⊂data intertwine data2   ⍝ intertwined types
+                  r,←'TCross3'desc quadparams RunVariations⊂shuffle data,data2      ⍝ shuffled concatenation
+              :EndFor
+          :EndFor
+
+          ⍝ Properties
+          case←'properties'
+          case2←⍬
+          desc←testDesc
+          data←100 Ints 16
+          r,←'TProp1'desc Assert data≡⌽⌽data              ⍝ double reverse is identity
+          r,←'TProp2'desc Assert(⍴data)≡⍴⌽data            ⍝ shape is preserved
+          r,←'TProp3'desc Assert(⎕DR data)≡⎕DR ⌽data      ⍝ datatype is preserved
+
+          ⍝ Matrix properties
+          data←4 5⍴data_i2
+          r,←'TMatProp1'desc Assert data≡⌽⌽data            ⍝ double reverse is identity for matrix
+          r,←'TMatProp2'desc Assert(⍴data)≡⍴⌽data          ⍝ shape is preserved for matrix
+
+          ⍝ Static tests
+          case←'static'
+          desc←testDesc
+          r,←'TStatic1'desc Assert(⍳0)≡⌽⍳0                 ⍝ empty vector
+          r,←'TStatic2'desc Assert 5≡⌽5                     ⍝ scalar
+          r,←'TStatic3'desc Assert(3 2 1)≡⌽1 2 3           ⍝ simple vector
+          r,←'TStatic4'desc Assert'cba'≡⌽'abc'             ⍝ character vector
+          r,←'TStatic5'desc Assert(2 3⍴3 2 1 6 5 4)≡⌽2 3⍴⍳6  ⍝ matrix: reverses each row
+      :EndFor
+    ∇
+:EndNamespace
