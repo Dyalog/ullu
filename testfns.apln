@@ -162,17 +162,11 @@
       ⍝ Intertwine test: create perfectly alternating duplicates
       {⍵ #.utils.intertwine ⍵}ChkEqual'Intertwine'
 
-      ⍝ Hash test: pre-hash arrays with 1500⌶
-      ⍝ The model ignores hash metadata; the primitive uses it.
-      ⍝ Wrapped in :Trap because 1500⌶ may not support all data types.
-      :Trap 0
-          #.utils.hashArray ChkEqual'Hash'
-      :EndTrap
-
-      ⍝ Hash + Intertwine: pre-hash intertwined data
-      :Trap 0
-          {#.utils.hashArray ⍵ #.utils.intertwine ⍵}ChkEqual'HashIntertwine'
-      :EndTrap
+      ⍝ Note: Hash testing (1500⌶) is NOT included here because it adds metadata
+      ⍝ (a pre-computed hash table) that the primitive may use but the model may not,
+      ⍝ causing false positives. Hash tests should be added manually in individual
+      ⍝ test files where the operation is known to work with pre-hashed data
+      ⍝ (e.g. set operations: ∪ ∩ ∊ ⍳ ≠).
 
       ⍝ Length variations: different array sizes trigger different code paths
       ⍝ (vectorization thresholds, hash table creation, etc.)
