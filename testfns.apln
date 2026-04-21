@@ -162,12 +162,6 @@
       ⍝ Intertwine test: create perfectly alternating duplicates
       {⍵ #.utils.intertwine ⍵}ChkEqual'Intertwine'
 
-      ⍝ Note: Hash testing (1500⌶) is NOT included here because it adds metadata
-      ⍝ (a pre-computed hash table) that the primitive may use but the model may not,
-      ⍝ causing false positives. Hash tests should be added manually in individual
-      ⍝ test files where the operation is known to work with pre-hashed data
-      ⍝ (e.g. set operations: ∪ ∩ ∊ ⍳ ≠).
-
       ⍝ Length variations: different array sizes trigger different code paths
       ⍝ (vectorization thresholds, hash table creation, etc.)
       :For len :In 1 10 100
