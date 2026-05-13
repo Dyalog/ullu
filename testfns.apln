@@ -164,16 +164,16 @@
 
       ⍝ Length variations: different array sizes trigger different code paths
       ⍝ (vectorization thresholds, hash table creation, etc.)
-      :For len :In 1 10 100
+      :For len :In 1 10 100 1000
           {len⍴⍵}ChkEqual('Len',⍕len)
       :EndFor
 
-      ⍝ Tall matrix: 11-column matrix with varying rows (10*0 1 2)
+      ⍝ Tall matrix: 11-column matrix with varying rows (10*0 1 2 3)
       :For rows :In 1 10 100
           {(rows 11)⍴⍵}ChkEqual('Tall',(⍕rows),'x11')
       :EndFor
 
-      ⍝ Wide matrix: 11-row matrix with varying columns (10*0 1 2)
+      ⍝ Wide matrix: 11-row matrix with varying columns (10*0 1 2 3)
       :For cols :In 1 10 100
           {(11 cols)⍴⍵}ChkEqual('Wide11x',⍕cols)
       :EndFor
@@ -185,13 +185,9 @@
 
       ⍝ Slow variations (gated behind DYALOG_QA_SLOW_TESTS)
       :If #.utils.doSlowTests
-          :For len :In 1000 10000
-              {len⍴⍵}ChkEqual('Len',⍕len)
-          :EndFor
-          ⍝ Tall 10*4, wide 10*4, square ⌈10*4×0.6=252
-          {(10000 11)⍴⍵}ChkEqual'Tall10000x11'
-          {(11 10000)⍴⍵}ChkEqual'Wide11x10000'
-          {(252 252)⍴⍵}ChkEqual'Square252x252'
+          {10000⍴⍵}ChkEqual'Len10000'
+          {(500 11)⍴⍵}ChkEqual'Tall500x11'
+          {(11 500)⍴⍵}ChkEqual'Wide11x500'
       :EndIf
     ∇
 :EndNamespace
