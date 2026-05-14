@@ -13,7 +13,7 @@
     div_1←1
 
     ⍝ utility functions
-    shuffle←{⊂⍤?⍨∘≢⌷⍵}              ⍝ completely Random shuffle
+    shuffle←{1≥≢⍵:⍵ ⋄ (⊂?⍨≢⍵)⌷⍵}    ⍝ random reorder of ⍵ along first axis
     intertwine←{(⊂⍋∊⍳∘≢¨⍺ ⍵)⌷⍺⍪⍵}   ⍝ perfectly intertwine two arrays
     hashArray←1500⌶                 ⍝ pre-hash array
     stripToSameLen←{(⍺(⌊⍥≢)⍵)↑¨⍺ ⍵} ⍝ get two arrays to the length of the shorter array

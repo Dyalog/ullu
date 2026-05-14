@@ -147,7 +147,7 @@ RunVariations is an operator described in [testfns.apln](../testfns.apln). It co
 - **Empty**: empty array of the same type
 - **RandomHighRank**: reshapes to a random shape of up to 4 dimensions
 - **RandomEmptyHighRank**: same as above but with at least one 0 in the shape
-- **RandModelTest**: generates random data matching the datatype and bounds (covers full datatype range over repeated runs)
+- **RandomData**: generates random data matching the datatype and bounds (covers full datatype range over repeated runs)
 - **Shuffle**: randomly reorders elements along the first axis
 - **Intertwine**: creates perfectly alternating duplicates (`data intertwine data`)
 - **Len1/Len10/Len100/Len1000**: cyclic reshape to test different array sizes (triggers different code paths for vectorization, hash tables, etc.)

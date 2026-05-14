@@ -74,8 +74,7 @@
           :If val=2
               nlarg←#.random.VariationOf larg
           :EndIf
-     
-     
+
           :If val=2
               actualR←nlarg(op runOrErr)nrarg
               expectedR←nlarg(model runOrErr)nrarg
@@ -83,7 +82,7 @@
               actualR←(op runOrErr)nrarg
               expectedR←(model runOrErr)nrarg
           :EndIf
-          tRes,←('RandModelTest',tID)tCmt Assert expectedR≡actualR
+          tRes,←('RandomData',tID)tCmt Assert expectedR≡actualR
       :EndIf
     ∇
 
@@ -140,10 +139,10 @@
       ⍝ The purpose of this test is to use the entire range of the datatype so a dataset
       ⍝ is generated in the longer run to test more data.
      
-      #.random.VariationOf ChkEqual'RandModelTest'
+      #.random.VariationOf ChkEqual'RandomData'
 
       ⍝ Shuffle test: randomly reorder elements along first axis
-      {1≥≢⍵:⍵ ⋄ (⊂?⍨≢⍵)⌷⍵}ChkEqual'Shuffle'
+      #.utils.shuffle ChkEqual'Shuffle'
 
       ⍝ Intertwine test: create perfectly alternating duplicates
       {⍵ #.utils.intertwine ⍵}ChkEqual'Intertwine'

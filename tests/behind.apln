@@ -4,7 +4,6 @@
     Ints←#.random.Ints
     Chars←#.random.Chars
     shuffle←#.utils.shuffle
-    intertwine←#.utils.intertwine
 
       model←{
           ⍺←⍵
@@ -177,20 +176,18 @@
                   :For case :In caselist
                       data←⍎case
                       desc←testDesc
-                      r,←('TGen1: ',order⊃'Asc' 'Desc')desc Assert(≢model⊃shuffle data)≡≢(sort⊃shuffle data) ⍝ length of result does not change
-     
-                      r,←('T1: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data ⍝ no shuffle
-                      r,←('T2: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data ⍝ shuffle data
-                      r,←('T3: ',order⊃'Asc' 'Desc')desc Assert(model⊃shuffle data)≡(sort⊃shuffle data) ⍝ different shuffles produce same result
+                      :If 1<≢data ⍝ skip scalars: ⍋ requires rank ≥ 1
+                          r,←('TGen1: ',order⊃'Asc' 'Desc')desc Assert(≢model shuffle data)≡≢(sort shuffle data) ⍝ length of result does not change
+                      :EndIf
+
+                      r,←('T1: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data
      
      
                       :For case2 :In caselist
                           data2←⍎case2
                           desc←testDesc
      
-                          r,←('T3: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data,data2 ⍝ no shuffle
-                          r,←('T4: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data intertwine data2 ⍝ intertwine data with data2
-                          r,←('T5: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂shuffle data,data2 ⍝ shuffle data and data2
+                          r,←('T2: ',order⊃'Asc' 'Desc')desc quadparams RunVariations⊂data,data2
                       :EndFor
                   :EndFor
               :EndFor
