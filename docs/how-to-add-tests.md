@@ -138,14 +138,26 @@ Assert is a function described in [`./unittest.apln`](../unittest.apln) that tak
 
 #### `RunVariations`
 
-RunVariations is a function described in [testfns.apln](../testfns.apln) which takes the expressions to be evaluated and does the following:
-- tests using the standard form it comes in
-- tests a scalar element from the data it gets
-- tests an empty array derived from the input
-- applies a different shape to the input and evaluates
-- creates a different shape that has a 0 in the shape of the input
-- tests the input with the model function to double check the result
-- RandModelTest takes the datatype and the boundary values of the expressions and generates a random array of the same datatype to increase the amount of data we have.
+RunVariations is an operator described in [testfns.apln](../testfns.apln). It comes in two forms: `_RunVariations_` (legacy — compares against a pre-computed expected result; used by add, subtract, multiply, divide, floor, magnitude, residue) and `_RunVariationsWithModel_` (preferred — compares the primitive against a model function, including error behavior).
+
+`_RunVariationsWithModel_` runs the following variations on each call:
+
+- **Base**: tests using the input as-is
+- **RandomScalar**: picks a random item from the data
+- **Empty**: empty array of the same type
+- **RandomHighRank**: reshapes to a random shape of up to 4 dimensions
+- **RandomEmptyHighRank**: same as above but with at least one 0 in the shape
+- **RandModelTest**: generates random data matching the datatype and bounds (covers full datatype range over repeated runs)
+- **Shuffle**: randomly reorders elements along the first axis
+- **Intertwine**: creates perfectly alternating duplicates (`data intertwine data`)
+- **Len1/Len10/Len100/Len1000**: cyclic reshape to test different array sizes (triggers different code paths for vectorization, hash tables, etc.)
+- **Tall1x11/Tall10x11/Tall100x11**: tall matrices with 11 columns
+- **Wide11x1/Wide11x10/Wide11x100**: wide matrices with 11 rows
+- **Square1x1/Square4x4/Square16x16**: square matrices
+
+Setting the `DYALOG_QA_SLOW_TESTS=1` environment variable enables additional slow variations: `Len10000`, `Tall500x11`, `Wide11x500`.
+
+New tests should use `_RunVariationsWithModel_`. The legacy `_RunVariations_` is kept only for tests that haven't been migrated yet.
 
 #### Model function
 
