@@ -13,12 +13,9 @@
     ⍝ in _RunVariations_ to skip part of the test for certain primitives.
     isCurrentlyRunning←{∨/⊃,/{∨/⍵⍷↑#.unittest.tests}¨⍵}
 
-    ⍝ tests that don't use this are:
-    ⍝ use a different runvariations:
-    ⍝ - unique
-    ⍝ - uniquemask
-    ⍝ - indexof
-    ⍝ - membership
+    ⍝ Legacy operator. New tests should use _RunVariationsWithModel_ below,
+    ⍝ which compares the primitive against a model function (including error
+    ⍝ behavior) instead of a pre-computed expected result.
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data
     ∇ {tRes}←tData(model _RunVariations_ op)exp;actualR;actualRE;actualRS;actualRSW0;expectedR;larg;nlarg;nrarg;randr;rarg;shape;shapeW0;skipRandom;tCmt;tID;trimmedrarg;val;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
@@ -77,8 +74,7 @@
           :If val=2
               nlarg←#.random.VariationOf larg
           :EndIf
-     
-     
+
           :If val=2
               actualR←nlarg(op runOrErr)nrarg
               expectedR←nlarg(model runOrErr)nrarg
@@ -86,25 +82,14 @@
               actualR←(op runOrErr)nrarg
               expectedR←(model runOrErr)nrarg
           :EndIf
-          tRes,←('RandModelTest',tID)tCmt Assert expectedR≡actualR
+          tRes,←('RandomData',tID)tCmt Assert expectedR≡actualR
       :EndIf
-     
-        ⍝ todo:
-        ⍝ new variations needs more tests of:
-        ⍝ lengths of arrays from 1 to 10000
-        ⍝ and
-        ⍝ of kind
-        ⍝ scalar
-        ⍝ vector
-        ⍝ tall matrix, 11-column matrix with 10*0 1 2 4 rows
-        ⍝ wide matrix, 11-row matrix with 10*0 1 2 4 columns
-        ⍝ square matrix with ⌈10*0 1 2 4×0.6 (1 4 16 252) rows/columns
     ∇
 
     ⍝ Run Variations of each test with normal, empty and multiple shaped data.
     ⍝ This operator is similar to _RunVariations_, but runs the model function and compares
     ⍝ the produced result/error messages with the primitive.
-    ∇ {tRes}←spec(rawModel _RunVariationsWithModel_ rawOp)args;ChkEqual;Eval;quadparams;shape;tCmt;tID;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
+    ∇ {tRes}←spec(rawModel _RunVariationsWithModel_ rawOp)args;ChkEqual;Eval;cols;len;quadparams;rows;shape;sq;tCmt;tID;⎕CT;⎕DCT;⎕DIV;⎕FR;⎕IO
       tRes←⍬
       (tID tCmt quadparams)←spec
       ⎕CT ⎕DCT ⎕FR ⎕IO ⎕DIV←quadparams
@@ -154,17 +139,40 @@
       ⍝ The purpose of this test is to use the entire range of the datatype so a dataset
       ⍝ is generated in the longer run to test more data.
      
-      #.random.VariationOf ChkEqual'RandModelTest'
-     
-        ⍝ todo:
-        ⍝ new variations needs more tests of:
-        ⍝ lengths of arrays from 1 to 10000
-        ⍝ and
-        ⍝ of kind
-        ⍝ scalar
-        ⍝ vector
-        ⍝ tall matrix, 11-column matrix with 10*0 1 2 4 rows
-        ⍝ wide matrix, 11-row matrix with 10*0 1 2 4 columns
-        ⍝ square matrix with ⌈10*0 1 2 4×0.6 (1 4 16 252) rows/columns
+      #.random.VariationOf ChkEqual'RandomData'
+
+      ⍝ Shuffle test: randomly reorder elements along first axis
+      #.utils.shuffle ChkEqual'Shuffle'
+
+      ⍝ Intertwine test: create perfectly alternating duplicates
+      {⍵ #.utils.intertwine ⍵}ChkEqual'Intertwine'
+
+      ⍝ Length variations: different array sizes trigger different code paths
+      ⍝ (vectorization thresholds, hash table creation, etc.)
+      :For len :In 1 10 100 1000
+          {len⍴⍵}ChkEqual('Len',⍕len)
+      :EndFor
+
+      ⍝ Tall matrix: 11-column matrix with varying rows (10*0 1 2 3)
+      :For rows :In 1 10 100
+          {(rows 11)⍴⍵}ChkEqual('Tall',(⍕rows),'x11')
+      :EndFor
+
+      ⍝ Wide matrix: 11-row matrix with varying columns (10*0 1 2 3)
+      :For cols :In 1 10 100
+          {(11 cols)⍴⍵}ChkEqual('Wide11x',⍕cols)
+      :EndFor
+
+      ⍝ Square matrix: ⌈10*0 1 2×0.6 → 1 4 16
+      :For sq :In 1 4 16
+          {(sq sq)⍴⍵}ChkEqual('Square',(⍕sq),'x',⍕sq)
+      :EndFor
+
+      ⍝ Slow variations (gated behind DYALOG_QA_SLOW_TESTS)
+      :If #.utils.doSlowTests
+          {10000⍴⍵}ChkEqual'Len10000'
+          {(500 11)⍴⍵}ChkEqual'Tall500x11'
+          {(11 500)⍴⍵}ChkEqual'Wide11x500'
+      :EndIf
     ∇
 :EndNamespace

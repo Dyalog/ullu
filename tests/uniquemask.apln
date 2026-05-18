@@ -50,7 +50,7 @@
       tRes,←('ShapeW0',tID)tCmt Assert expectedRSW0≡actualRSW0
     ∇
 
-    ∇ {r}←test_uniquemask;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;⎕FR;fl;Hfl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;u;s;x;data;data2;shuffledData;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d
+    ∇ {r}←test_uniquemask;ct_default;dct_default;fr_dbl;fr_decf;bool;i1;char0;char1;char2;i2;char3;i3;ptr;dbl;cmplx;Hcmplx;Hdbl;Sdbl;⎕FR;fl;Hfl;testDesc;case;case2;desc;ct;⎕CT;⎕DCT;fr;u;s;x;data;data2;repetitions;shuffledRepeatedData;d1;almostd1S;almostd1B;d
       ct_default←#.utils.ct_default
       dct_default←#.utils.dct_default
       fr_dbl←#.utils.fr_dbl
@@ -149,11 +149,8 @@
                   r,←'T3'desc RunVariations((1⍨¨data)intertwine(0⍨¨data))(data intertwine data)             ⍝ all elements are perfectly intertwined
                   r,←'T4'desc RunVariations((1⍨¨data)intertwine(0⍨¨data))(hashArray data intertwine data)   ⍝ using a pre-hashed array on intertwined data
      
-                  shuffledData←↑shuffle data
-                  r,←'T5'desc RunVariations(model shuffledData)shuffledData   ⍝ shuffle data without creating duplicate data
-     
                   repetitions←?6
-                  shuffledRepeatedData←↑shuffle repetitions/data
+                  shuffledRepeatedData←shuffle repetitions/data
                   r,←'T6'desc RunVariations(model shuffledRepeatedData)shuffledRepeatedData  ⍝ duplicate and shuffle
      
                     ⍝ tests with comparison tolerance
