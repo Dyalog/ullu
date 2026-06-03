@@ -18,7 +18,7 @@
     ∇ op_fn arg
     ∇
 
-    ∇ {r}←test_behind;flag;m;f;g;case;quadparams;desc;RunVariations
+    ∇ {r}←test_behind;flag;m;f;g;case;quadparams;desc;RunVariations;leftArgMsg
       r←⍬
      
       ⍝ Monadic behind
@@ -86,6 +86,13 @@
       :EndTrap
       r,←'TE3'desc Assert(flag∧m≡'No result was provided when the context expected one')
      
+      ⍝ 21.0 added the function name (in quotes) to this message.
+      :If 21≤#.utils.version
+          leftArgMsg←'The function "op_fn" does not take a left argument'
+      :Else
+          leftArgMsg←'The function does not take a left argument'
+      :EndIf
+
       ⍝ operand functions don't produce a result
       flag←0 ⍝ flag
       :Trap 2 ⍝ 2: Syntax error
@@ -94,8 +101,8 @@
           m←⎕DMX.Message
           flag←1
       :EndTrap
-      r,←'TE3'desc Assert(flag∧m≡'The function does not take a left argument')
-     
+      r,←'TE3'desc Assert(flag∧m≡leftArgMsg)
+
       ⍝ operand functions don't produce a result
       flag←0 ⍝ flag
       :Trap 2 ⍝ 2: Syntax error
@@ -104,7 +111,7 @@
           m←⎕DMX.Message
           flag←1
       :EndTrap
-      r,←'TE3'desc Assert(flag∧m≡'The function does not take a left argument')
+      r,←'TE3'desc Assert(flag∧m≡leftArgMsg)
      
      
     ∇
